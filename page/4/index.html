@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一个默默无闻的工程师的日常">
+<meta property="og:type" content="website">
+<meta property="og:title" content="谭明宵博客">
+<meta property="og:url" content="https://www.sunmite.com/page/4/index.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="一个默默无闻的工程师的日常">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="“Hexo, OpenStack, Linux, VMware, Docker, Kubernetes, Python, Crawler”">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunmite.com/page/4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>谭明宵博客 - Every day is May day!</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/can-not-access-to-console-in-HA.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/openstack/can-not-access-to-console-in-HA.html" class="post-title-link" itemprop="url">openstack HA模式下控制台无法访问的问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-05-08 09:59:00" itemprop="dateCreated datePublished" datetime="2017-05-08T09:59:00+08:00">2017-05-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/can-not-access-to-console-in-HA.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack HA模式下控制台无法访问的问题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/can-not-access-to-console-in-HA.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/can-not-access-to-console-in-HA.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="控制台无法访问，多次刷新才能访问，nova有如下报错"><a href="#控制台无法访问，多次刷新才能访问，nova有如下报错" class="headerlink" title="控制台无法访问，多次刷新才能访问，nova有如下报错"></a>控制台无法访问，多次刷新才能访问，nova有如下报错</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">2017-02-09 17:09:51.311 57467 INFO nova.console.websocketproxy [-] 192.168.170.41 - - [09/Feb/2017 17:09:51] &quot;GET /websockify HTTP/1.1&quot; 101 -</span><br><span class="line">2017-02-09 17:09:51.312 57467 INFO nova.console.websocketproxy [-] 192.168.170.41 - - [09/Feb/2017 17:09:51] 192.168.170.41: Plain non-SSL (ws://) WebSocket connection</span><br><span class="line">2017-02-09 17:09:51.313 57467 INFO nova.console.websocketproxy [-] 192.168.170.41 - - [09/Feb/2017 17:09:51] 192.168.170.41: Version hybi-13, base64: &#x27;False&#x27;</span><br><span class="line">2017-02-09 17:09:51.313 57467 INFO nova.console.websocketproxy [-] 192.168.170.41 - - [09/Feb/2017 17:09:51] 192.168.170.41: Path: &#x27;/websockify&#x27;</span><br><span class="line">2017-02-09 17:09:51.382 57467 INFO nova.console.websocketproxy [req-f51929d9-8c9b-4df0-abeb-247ce6ef5d65 - - - - -] handler exception: The token &#x27;1dfc9af9-8a49-44b3-a955-5196197bc8f7&#x27; is invalid or has expired</span><br></pre></td></tr></table></figure>
+
+<h3 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">When running a multi node environment with HA between two or more controller nodes(or controller plane service nodes), nova consoleauthservice must be configured with memcached.  </span><br><span class="line">If not, no more than one consoleauth service can berunning in active state, since it need to save the state of the sessions. Whenmemcached is not used, you can check that can connect to the vnc console only afew times when you refresh the page. If that occurs means that the connectionis handled by the consoleauth service that currently is issuing sessions.    </span><br><span class="line">To solve your issue, configure memcached as backend tonova-consoleauth service.  </span><br><span class="line">To solve your issue add this line to nova.conf:  </span><br><span class="line">memcached_servers = 192.168.100.2:11211,192.168.100.3:11211  </span><br><span class="line">This should work to solve your issue.  </span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/openstack/can-not-access-to-console-in-HA.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/vmware/vmware-resize-disk.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/vmware/vmware-resize-disk.html" class="post-title-link" itemprop="url">vmware 扩展分区大小</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-28 02:41:00" itemprop="dateCreated datePublished" datetime="2017-04-28T02:41:00+08:00">2017-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vmware/" itemprop="url" rel="index"><span itemprop="name">vmware</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/vmware/vmware-resize-disk.html" class="post-meta-item leancloud_visitors" data-flag-title="vmware 扩展分区大小" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/vmware/vmware-resize-disk.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/vmware/vmware-resize-disk.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>测试中遇到这样的情况，vmware虚拟机中增加的 sdb ,可用空间快要满了，需要增加空间，方法记录如下</p>
+<h3 id="1-在VMware上扩展磁盘"><a href="#1-在VMware上扩展磁盘" class="headerlink" title="1. 在VMware上扩展磁盘"></a>1. 在VMware上扩展磁盘</h3><p>在 vmware 虚拟机编辑页面，扩展磁盘的可用空间 (500GB -&gt; 800GB)<br><img data-src="/images/uploads/2017/05/1068317383.png" alt="image"></p>
+<h3 id="2-重启虚拟机"><a href="#2-重启虚拟机" class="headerlink" title="2. 重启虚拟机"></a>2. 重启虚拟机</h3><p>重启后查看分区是否正确识别，可以看到已经正确识别新的分区大小</p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> parted /dev/sdb</span></span><br><span class="line">GNU Parted 3.1</span><br><span class="line">Using /dev/sdb</span><br><span class="line">Welcome to GNU Parted! Type &#x27;help&#x27; to view a list of commands.</span><br><span class="line">(parted) p</span><br><span class="line">Model: VMware Virtual disk (scsi)</span><br><span class="line">Disk /dev/sdb: 859GB</span><br><span class="line">Sector size (logical/physical): 512B/512B</span><br><span class="line">Partition Table: msdos</span><br><span class="line">Disk Flags: </span><br><span class="line"></span><br><span class="line">Number  Start   End    Size   Type     File system  Flags</span><br><span class="line"> 1      1049kB  537GB  537GB  primary  xfs</span><br><span class="line"></span><br><span class="line">(parted) quit</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/vmware/vmware-resize-disk.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/linux/centos-make-local-mirrors.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/linux/centos-make-local-mirrors.html" class="post-title-link" itemprop="url">centos制作本地源</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-10 01:04:00" itemprop="dateCreated datePublished" datetime="2017-02-10T01:04:00+08:00">2017-02-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/linux/centos-make-local-mirrors.html" class="post-meta-item leancloud_visitors" data-flag-title="centos制作本地源" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/linux/centos-make-local-mirrors.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/linux/centos-make-local-mirrors.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-列出所有源"><a href="#1-列出所有源" class="headerlink" title="1. 列出所有源"></a>1. 列出所有源</h2>  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum repolist</span></span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">* base: mirrors.aliyun.com</span><br><span class="line">* extras: mirrors.aliyun.com</span><br><span class="line">* updates: mirrors.aliyun.com</span><br><span class="line">repo id repo name status</span><br><span class="line">base/7/x86_64 CentOS-7 - Base - mirrors.aliyun.com 9,363</span><br><span class="line">epel/x86_64 Extra Packages for Enterprise Linux 7 - x86_64 11,135</span><br><span class="line">extras/7/x86_64 CentOS-7 - Extras - mirrors.aliyun.com 263</span><br><span class="line">openstack-mitaka/7/x86_64 OpenStack Newton Repository 1,675</span><br><span class="line">openstack-newton/7/x86_64 OpenStack Newton Repository 1,486</span><br><span class="line">updates/7/x86_64 CentOS-7 - Updates - mirrors.aliyun.com 807</span><br><span class="line">repolist: 24,729</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/linux/centos-make-local-mirrors.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/linux/e450c-install-rtl8723be-driver.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/linux/e450c-install-rtl8723be-driver.html" class="post-title-link" itemprop="url">解决lenove e450c安装centos7无线网卡（RTL8723BE）无法使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-11-28 02:05:00" itemprop="dateCreated datePublished" datetime="2016-11-28T02:05:00+08:00">2016-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/linux/e450c-install-rtl8723be-driver.html" class="post-meta-item leancloud_visitors" data-flag-title="解决lenove e450c安装centos7无线网卡（RTL8723BE）无法使用" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/linux/e450c-install-rtl8723be-driver.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/linux/e450c-install-rtl8723be-driver.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="1-查询无线网卡型号"><a href="#1-查询无线网卡型号" class="headerlink" title="1. 查询无线网卡型号"></a>1. 查询无线网卡型号</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /sbin/lspci | grep Network</span></span><br><span class="line">04:00.0 Network controller: Realtek Semiconductor Co., Ltd. RTL8723BE PCIe Wireless Network Adapter</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找驱动"><a href="#2-查找驱动" class="headerlink" title="2. 查找驱动"></a>2. 查找驱动</h3><p>github上有个项目提供Realtek的无线网卡驱动 <a target="_blank" rel="noopener" href="https://github.com/lwfinger/rtlwifi_new">https://github.com/lwfinger/rtlwifi_new</a> 但是编译报错，查询得知需要3.12以上内核，而centos7 自带的内核是3.10</p>
+<h3 id="3-安装-elrepo-org-中的驱动"><a href="#3-安装-elrepo-org-中的驱动" class="headerlink" title="3. 安装 elrepo.org 中的驱动"></a>3. 安装 elrepo.org 中的驱动</h3><p>升级内核时，发现 elrepo.org 中提供 RTL8723BE 的驱动，下载安装，重启成功识别无线网卡</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> yum install kmod-rtl8723be.x86_64</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> reboot</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/use-kolla-deploy-openstack-all-in-one.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/openstack/use-kolla-deploy-openstack-all-in-one.html" class="post-title-link" itemprop="url">使用kolla快速部署openstack all-in-one环境</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-09-09 07:36:00" itemprop="dateCreated datePublished" datetime="2016-09-09T07:36:00+08:00">2016-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/use-kolla-deploy-openstack-all-in-one.html" class="post-meta-item leancloud_visitors" data-flag-title="使用kolla快速部署openstack all-in-one环境" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/use-kolla-deploy-openstack-all-in-one.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/use-kolla-deploy-openstack-all-in-one.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>kolla项目是为了容器化openstack，目标是做到100个节点的开箱即用，所有的组件的HA都具备。kolla是一个革命性的项目，我们以前积累的安装部署经验，全部都报废。使用kolla可以快速部署可扩展，可靠的生产就绪的openstack环境。</p>
+<h2 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a>基本环境</h2><p>操作系统：CentOS Linux release 7.2.1511 (Core)<br>内核版本：3.10.0-327.28.3.el7.x86_64<br>docker版本：Docker version 1.12.1, build 23cf638</p>
+<h2 id="部署kolla"><a href="#部署kolla" class="headerlink" title="部署kolla"></a>部署kolla</h2><h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install epel-release python-pip</span><br><span class="line">yum install -y python-devel libffi-devel openssl-devel gcc</span><br><span class="line">pip install -U pip</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-修改docker启动文件"><a href="#2-修改docker启动文件" class="headerlink" title="2. 修改docker启动文件"></a>2. 修改docker启动文件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Create the drop-in unit directory <span class="keyword">for</span> docker.service</span></span><br><span class="line">mkdir -p /etc/systemd/system/docker.service.d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Create the drop-in unit file</span></span><br><span class="line">tee /etc/systemd/system/docker.service.d/kolla.conf &lt;&lt;-&#x27;EOF&#x27;</span><br><span class="line">[Service]</span><br><span class="line">MountFlags=shared</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/openstack/use-kolla-deploy-openstack-all-in-one.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/openstack-use-nova-docker-driver.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/docker/openstack-use-nova-docker-driver.html" class="post-title-link" itemprop="url">openstack 使用 nova docker driver</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-08 07:37:13" itemprop="dateCreated datePublished" datetime="2016-08-08T07:37:13+08:00">2016-08-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/docker/openstack-use-nova-docker-driver.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack 使用 nova docker driver" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker/openstack-use-nova-docker-driver.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker/openstack-use-nova-docker-driver.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="一、安装docker并修改使用阿里云的镜像加速"><a href="#一、安装docker并修改使用阿里云的镜像加速" class="headerlink" title="一、安装docker并修改使用阿里云的镜像加速"></a>一、安装docker并修改使用阿里云的镜像加速</h2><p>以下操作在controller节点和compute节点进行（controller节点安装docker是为了方便下载docker镜像直接导入glance）</p>
+<ol>
+<li>创建yum repo文件（这里使用阿里云的源)</li>
+</ol>
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line"><span class="comment"># tee /etc/yum.repos.d/docker.repo &amp;lt;&amp;lt;-&#x27;EOF&#x27;</span></span><br><span class="line">[dockerrepo]</span><br><span class="line"><span class="attribute">name</span>=Docker Repository</span><br><span class="line"><span class="attribute">baseurl</span>=http://mirrors.aliyun.com/docker-engine/yum/repo/main/centos/7/</span><br><span class="line"><span class="attribute">enabled</span>=1</span><br><span class="line"><span class="attribute">gpgcheck</span>=1</span><br><span class="line"><span class="attribute">gpgkey</span>=http://mirrors.aliyun.com/docker-engine/yum/gpg</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>安装docker</li>
+</ol>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install docker-engine</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>修改docker使用阿里云镜像加速</li>
+</ol>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># cp -n <span class="regexp">/lib/</span>systemd<span class="regexp">/system/</span>docker.service <span class="regexp">/etc/</span>systemd<span class="regexp">/system/</span>docker.service</span><br><span class="line"># sed -i <span class="string">&quot;s|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --registry-mirror=https://dhxb****.mirror.aliyuncs.com|g&quot;</span> <span class="regexp">/etc/</span>systemd<span class="regexp">/system/</span>docker.service</span><br><span class="line"># systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/docker/openstack-use-nova-docker-driver.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/openstack/use-local-storage-for-different-hypervisors.html" class="post-title-link" itemprop="url">openstack nova-compute在不同的hypervisors上使用不同的存储后端</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-27 02:55:00" itemprop="dateCreated datePublished" datetime="2016-07-27T02:55:00+08:00">2016-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/use-local-storage-for-different-hypervisors.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack nova-compute在不同的hypervisors上使用不同的存储后端" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/use-local-storage-for-different-hypervisors.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/use-local-storage-for-different-hypervisors.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>controller1</td>
+<td>192.168.2.240</td>
+</tr>
+<tr>
+<td>compute1</td>
+<td>192.168.2.242</td>
+</tr>
+<tr>
+<td>compute2</td>
+<td>192.168.2.243</td>
+</tr>
+<tr>
+<td>compute3</td>
+<td>192.168.2.248</td>
+</tr>
+<tr>
+<td>compute4</td>
+<td>192.168.2.249</td>
+</tr>
+</tbody></table>
+<p>在不同的计算节点使用不同的存储后端<br><img data-src="/images/uploads/2016/07/agregate-local-ceph-storage.png" alt="image"></p>
+<h1 id="计算节点配置"><a href="#计算节点配置" class="headerlink" title="计算节点配置"></a>计算节点配置</h1><h2 id="1-Scheduler"><a href="#1-Scheduler" class="headerlink" title="1. Scheduler"></a>1. Scheduler</h2><p>为了使nova的调度程序支持下面的过滤算法，需要修改使之支持 AggregateInstanceExtraSpecsFilter ，编辑控制节点的 /etc/nova/nova.conf 文件加入修改以下选项,然后重启nova-scheduler服务</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/nova/nova.conf</span></span><br><span class="line"><span class="attr">scheduler_default_filters</span>=RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,AggregateInstanceExtraSpecsFilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemctl restart openstack-nova-scheduler.service</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-本地存储配置"><a href="#2-本地存储配置" class="headerlink" title="2. 本地存储配置"></a>2. 本地存储配置</h2><p>nova默认支持，无需配置。为了支持迁移可以配置共享存储（NFS等）</p>
+<h2 id="3-ceph存储配置"><a href="#3-ceph存储配置" class="headerlink" title="3. ceph存储配置"></a>3. ceph存储配置</h2><p>编辑计算节点的 /etc/nova/nova.conf 文件加入修改以下选项,然后重启nova-compute服务（这里没有详细写，例如导入secret-uuid等操作请自行添加）</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/openstack/use-local-storage-for-different-hypervisors.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/openstack-use-rabbitmq-cluster.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/openstack/openstack-use-rabbitmq-cluster.html" class="post-title-link" itemprop="url">openstack配置rabbit cluster并使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-03-24 11:12:00" itemprop="dateCreated datePublished" datetime="2016-03-24T11:12:00+08:00">2016-03-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/openstack-use-rabbitmq-cluster.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack配置rabbit cluster并使用" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/openstack-use-rabbitmq-cluster.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/openstack-use-rabbitmq-cluster.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>生产环境中至少运行3个rabbitmq服务器，测试环境中我们可以只运行两个，我们配置了两个节点，分别为controller1和controller2。</p>
+<h1 id="为HA队列配置RabbitMQ"><a href="#为HA队列配置RabbitMQ" class="headerlink" title="为HA队列配置RabbitMQ"></a>为HA队列配置RabbitMQ</h1><ol>
+<li><p>在controller1上启动使用以下命令启动rabbitmq</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl start rabbitmq</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从controller1上复制cookie到其他的节点</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># scp root@NODE:<span class="regexp">/var/</span>lib<span class="regexp">/rabbitmq/</span>.erlang.cookie <span class="regexp">/var/</span>lib<span class="regexp">/rabbitmq/</span>.erlang.cookie</span><br></pre></td></tr></table></figure>
+<p>需要修改NODE为controller1或者对应</p>
+</li>
+<li><p>在每个目标节点上确认 erlang.cookie 文件的用户，组和权限</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># chown rabbitmq:rabbitmq <span class="regexp">/var/</span>lib<span class="regexp">/rabbitmq/</span>.erlang.cookie</span><br><span class="line"># chmod <span class="number">400</span> <span class="regexp">/var/</span>lib<span class="regexp">/rabbitmq/</span>.erlang.cookie</span><br></pre></td></tr></table></figure></li>
+<li><p>设置rabbitmq开机自启并启动其他节点的rabbitmq-server</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># systemctl <span class="keyword">enable</span> rabbitmq-<span class="keyword">server</span></span><br><span class="line"># systemctl <span class="keyword">start</span> rabbitmq-<span class="keyword">server</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/openstack/openstack-use-rabbitmq-cluster.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/centos7-devstack-openstack-liberty.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/openstack/centos7-devstack-openstack-liberty.html" class="post-title-link" itemprop="url">centos7 devstack 安装openstack liberty</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2015-12-29 07:06:00" itemprop="dateCreated datePublished" datetime="2015-12-29T07:06:00+08:00">2015-12-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/centos7-devstack-openstack-liberty.html" class="post-meta-item leancloud_visitors" data-flag-title="centos7 devstack 安装openstack liberty" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/centos7-devstack-openstack-liberty.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/centos7-devstack-openstack-liberty.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="本机环境"><a href="#本机环境" class="headerlink" title="本机环境"></a>本机环境</h3><p>操作系统：CentOS Linux release 7.2.1511 (Core)<br>本机IP:172.16.33.201<br>网关:172.16.33.254  </p>
+<h3 id="下载devstack和前期准备"><a href="#下载devstack和前期准备" class="headerlink" title="下载devstack和前期准备"></a>下载devstack和前期准备</h3><p>这里和别人的文章有点出入，git clone devstack的时候需要指定分支，不然安装openstack的时候会提示一个脚本不存在</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /opt</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> git <span class="built_in">clone</span> https://git.openstack.org/openstack-dev/devstack -b stable/liberty</span></span><br></pre></td></tr></table></figure>
+
+<p>新建stack用户，修改devstack文件夹所有者</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># cd <span class="regexp">/opt/</span>devstack<span class="regexp">/tools/</span></span><br><span class="line"># ./create-stack-user.sh</span><br><span class="line"># chown -R stack:stack <span class="regexp">/opt/</span>devstack</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/openstack/centos7-devstack-openstack-liberty.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/kube-ui.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/docker/kube-ui.html" class="post-title-link" itemprop="url">kubernetes 安装配置 kube-ui</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2015-11-27 04:21:00" itemprop="dateCreated datePublished" datetime="2015-11-27T04:21:00+08:00">2015-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/docker/kube-ui.html" class="post-meta-item leancloud_visitors" data-flag-title="kubernetes 安装配置 kube-ui" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker/kube-ui.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker/kube-ui.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>接上文：<a href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html">在centos7上安装和配置Kubernetes</a></p>
+<h3 id="下载kube-ui镜像并导入"><a href="#下载kube-ui镜像并导入" class="headerlink" title="下载kube-ui镜像并导入"></a>下载kube-ui镜像并导入</h3><p>谷歌的镜像地址被墙了，无法pull拉取镜像，只能手动下载。<br>在每个minion上导入镜像：</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">docker</span> load  kube-ui_v<span class="number">3</span>.tar</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建kube-system-namespace"><a href="#创建kube-system-namespace" class="headerlink" title="创建kube-system namespace"></a>创建kube-system namespace</h3><p>创建kube-system.json，内容如下：</p>
+<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line"># vim kube-<span class="keyword">system</span>.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;kind&quot;</span>: <span class="string">&quot;Namespace&quot;</span>,</span><br><span class="line">  <span class="string">&quot;apiVersion&quot;</span>: <span class="string">&quot;v1&quot;</span>,</span><br><span class="line">  <span class="string">&quot;metadata&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;kube-system&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/docker/kube-ui.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/page/4/',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

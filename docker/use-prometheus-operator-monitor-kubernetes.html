@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简介Prometheus Operator 是 CoreOS 开发的基于 Prometheus 的 Kubernete s监控方案，也可能是目前功能最全面的开源方案。更多信息可以查看https:&#x2F;&#x2F;github.com&#x2F;coreos&#x2F;prometheus-operator 部署 Prometheus Operator前期准备1. 创建命名空间为方便管理，创建一个单独的 Namespace moni">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Prometheus Operator 监控 Kubernetes">
+<meta property="og:url" content="https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="简介Prometheus Operator 是 CoreOS 开发的基于 Prometheus 的 Kubernete s监控方案，也可能是目前功能最全面的开源方案。更多信息可以查看https:&#x2F;&#x2F;github.com&#x2F;coreos&#x2F;prometheus-operator 部署 Prometheus Operator前期准备1. 创建命名空间为方便管理，创建一个单独的 Namespace moni">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/unhealthy.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/healthy.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/prometheus.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/alertmanager.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/grafana.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/grafana-1.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/grafana-2.png">
+<meta property="article:published_time" content="2019-01-09T02:29:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.345Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="helm">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="prometheus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2019/01/unhealthy.png">
+
+<link rel="canonical" href="https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用 Prometheus Operator 监控 Kubernetes | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Prometheus Operator 监控 Kubernetes
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-09 10:29:00" itemprop="dateCreated datePublished" datetime="2019-01-09T10:29:00+08:00">2019-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/docker/use-prometheus-operator-monitor-kubernetes.html" class="post-meta-item leancloud_visitors" data-flag-title="使用 Prometheus Operator 监控 Kubernetes" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker/use-prometheus-operator-monitor-kubernetes.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker/use-prometheus-operator-monitor-kubernetes.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Prometheus Operator 是 CoreOS 开发的基于 Prometheus 的 Kubernete s监控方案，也可能是目前功能最全面的开源方案。更多信息可以查看<a target="_blank" rel="noopener" href="https://github.com/coreos/prometheus-operator">https://github.com/coreos/prometheus-operator</a></p>
+<h1 id="部署-Prometheus-Operator"><a href="#部署-Prometheus-Operator" class="headerlink" title="部署 Prometheus Operator"></a>部署 Prometheus Operator</h1><h2 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h2><h3 id="1-创建命名空间"><a href="#1-创建命名空间" class="headerlink" title="1. 创建命名空间"></a>1. 创建命名空间</h3><p>为方便管理，创建一个单独的 Namespace monitoring，Prometheus Operator 相关的组件都会部署到这个 Namespace。</p>
+<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line"># kubectl create <span class="keyword">namespace</span> <span class="symbol">monitoring</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-导入相关镜像"><a href="#2-导入相关镜像" class="headerlink" title="2. 导入相关镜像"></a>2. 导入相关镜像</h3><p>所有节点上面导入 prometheus-operator.tar，下载地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1dKNbg7b9IBtPBnadLUADlg">prometheus-operator.tar</a></p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># docker <span class="keyword">load</span> -i prometheus-<span class="keyword">operator</span>.tar</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="安装-Prometheus-Operator"><a href="#安装-Prometheus-Operator" class="headerlink" title="安装 Prometheus Operator"></a>安装 Prometheus Operator</h2><h3 id="1-使用-Helm-安装-Prometheus-Operator"><a href="#1-使用-Helm-安装-Prometheus-Operator" class="headerlink" title="1. 使用 Helm 安装 Prometheus Operator"></a>1. 使用 Helm 安装 Prometheus Operator</h3><p>Prometheus Operator 所有的组件都打包成 Helm Chart，安装部署非常方便。</p>
+<figure class="highlight delphi"><table><tr><td class="code"><pre><span class="line"># helm install --<span class="keyword">name</span> prometheus-<span class="keyword">operator</span> --namespace=monitoring stable/prometheus-<span class="keyword">operator</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-查看创建的资源"><a href="#2-查看创建的资源" class="headerlink" title="2. 查看创建的资源"></a>2. 查看创建的资源</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get all -n monitoring </span></span><br><span class="line"><span class="attribute">NAME</span>                                                          READY   STATUS    RESTARTS   AGE</span><br><span class="line"><span class="attribute">pod</span>/alertmanager-prometheus-operator-alertmanager-<span class="number">0</span>           <span class="number">2</span>/<span class="number">2</span>     Running   <span class="number">0</span>          <span class="number">60</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-operator-grafana-<span class="number">6</span>c<span class="number">8</span>f<span class="number">4</span>bcfb<span class="number">4</span>-jp<span class="number">5</span>bh              <span class="number">3</span>/<span class="number">3</span>     Running   <span class="number">0</span>          <span class="number">65</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-operator-kube-state-metrics-<span class="number">6</span>b<span class="number">6</span>d<span class="number">6</span>b<span class="number">8</span>bbd-gff<span class="number">7</span>j   <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">65</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-operator-operator-<span class="number">76</span>f<span class="number">78</span>fd<span class="number">685</span>-<span class="number">295</span>rb             <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">65</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-operator-prometheus-node-exporter-<span class="number">44</span>tgz        <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">65</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-operator-prometheus-node-exporter-<span class="number">6</span>t<span class="number">4</span>sc        <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">65</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-operator-prometheus-node-exporter-vnwrv        <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">65</span>s</span><br><span class="line"><span class="attribute">pod</span>/prometheus-prometheus-operator-prometheus-<span class="number">0</span>               <span class="number">3</span>/<span class="number">3</span>     Running   <span class="number">1</span>          <span class="number">54</span>s</span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE</span><br><span class="line"><span class="attribute">service</span>/alertmanager-operated                          ClusterIP   None             &lt;none&gt;        <span class="number">9093</span>/TCP,<span class="number">6783</span>/TCP   <span class="number">60</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operated                            ClusterIP   None             &lt;none&gt;        <span class="number">9090</span>/TCP            <span class="number">54</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operator-alertmanager               ClusterIP   <span class="number">10.105.62.219</span>    &lt;none&gt;        <span class="number">9093</span>/TCP            <span class="number">65</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operator-grafana                    ClusterIP   <span class="number">10.103.30.59</span>     &lt;none&gt;        <span class="number">80</span>/TCP              <span class="number">65</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operator-kube-state-metrics         ClusterIP   <span class="number">10.105.189.63</span>    &lt;none&gt;        <span class="number">8080</span>/TCP            <span class="number">65</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operator-operator                   ClusterIP   <span class="number">10.105.212.90</span>    &lt;none&gt;        <span class="number">8080</span>/TCP            <span class="number">65</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operator-prometheus                 ClusterIP   <span class="number">10.104.229.158</span>   &lt;none&gt;        <span class="number">9090</span>/TCP            <span class="number">65</span>s</span><br><span class="line"><span class="attribute">service</span>/prometheus-operator-prometheus-node-exporter   ClusterIP   <span class="number">10.103.226.249</span>   &lt;none&gt;        <span class="number">9100</span>/TCP            <span class="number">65</span>s</span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                                          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span><br><span class="line"><span class="attribute">daemonset</span>.apps/prometheus-operator-prometheus-node-exporter   <span class="number">3</span>         <span class="number">3</span>         <span class="number">3</span>       <span class="number">3</span>            <span class="number">3</span>           &lt;none&gt;          <span class="number">65</span>s</span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                                     READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line"><span class="attribute">deployment</span>.apps/prometheus-operator-grafana              <span class="number">1</span>/<span class="number">1</span>     <span class="number">1</span>            <span class="number">1</span>           <span class="number">65</span>s</span><br><span class="line"><span class="attribute">deployment</span>.apps/prometheus-operator-kube-state-metrics   <span class="number">1</span>/<span class="number">1</span>     <span class="number">1</span>            <span class="number">1</span>           <span class="number">65</span>s</span><br><span class="line"><span class="attribute">deployment</span>.apps/prometheus-operator-operator             <span class="number">1</span>/<span class="number">1</span>     <span class="number">1</span>            <span class="number">1</span>           <span class="number">65</span>s</span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                                                DESIRED   CURRENT   READY   AGE</span><br><span class="line"><span class="attribute">replicaset</span>.apps/prometheus-operator-grafana-<span class="number">6</span>c<span class="number">8</span>f<span class="number">4</span>bcfb<span class="number">4</span>              <span class="number">1</span>         <span class="number">1</span>         <span class="number">1</span>       <span class="number">65</span>s</span><br><span class="line"><span class="attribute">replicaset</span>.apps/prometheus-operator-kube-state-metrics-<span class="number">6</span>b<span class="number">6</span>d<span class="number">6</span>b<span class="number">8</span>bbd   <span class="number">1</span>         <span class="number">1</span>         <span class="number">1</span>       <span class="number">65</span>s</span><br><span class="line"><span class="attribute">replicaset</span>.apps/prometheus-operator-operator-<span class="number">76</span>f<span class="number">78</span>fd<span class="number">685</span>             <span class="number">1</span>         <span class="number">1</span>         <span class="number">1</span>       <span class="number">65</span>s</span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                                             READY   AGE</span><br><span class="line"><span class="attribute">statefulset</span>.apps/alertmanager-prometheus-operator-alertmanager   <span class="number">1</span>/<span class="number">1</span>     <span class="number">60</span>s</span><br><span class="line"><span class="attribute">statefulset</span>.apps/prometheus-prometheus-operator-prometheus       <span class="number">1</span>/<span class="number">1</span>     <span class="number">54</span>s</span><br></pre></td></tr></table></figure>
+<h3 id="3-查看安装后的-release"><a href="#3-查看安装后的-release" class="headerlink" title="3.查看安装后的 release"></a>3.查看安装后的 release</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm list </span></span><br><span class="line"><span class="attribute">NAME</span>               	REVISION	UPDATED                 	STATUS  	CHART                    	APP VERSION	NAMESPACE </span><br><span class="line"><span class="attribute">prometheus</span>-operator	<span class="number">1</span>       	Tue Jan  <span class="number">8</span> <span class="number">13</span>:<span class="number">49</span>:<span class="number">12</span> <span class="number">2019</span>	DEPLOYED	prometheus-operator-<span class="number">1</span>.<span class="number">5</span>.<span class="number">1</span>	<span class="number">0</span>.<span class="number">26</span>.<span class="number">0</span>     	monitoring</span><br></pre></td></tr></table></figure>
+<p>prometheus-operator 的 charts 会自动安装 Prometheus、Alertmanager 和 Grafana。</p>
+<h2 id="修改访问模式"><a href="#修改访问模式" class="headerlink" title="修改访问模式"></a>修改访问模式</h2><h3 id="1-查看访问类型"><a href="#1-查看访问类型" class="headerlink" title="1. 查看访问类型"></a>1. 查看访问类型</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get svc -n monitoring </span></span><br><span class="line"><span class="attribute">NAME</span>                                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE</span><br><span class="line"><span class="attribute">alertmanager</span>-operated                          ClusterIP   None             &lt;none&gt;        <span class="number">9093</span>/TCP,<span class="number">6783</span>/TCP   <span class="number">7</span>m<span class="number">30</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operated                            ClusterIP   None             &lt;none&gt;        <span class="number">9090</span>/TCP            <span class="number">7</span>m<span class="number">24</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operator-alertmanager               ClusterIP   <span class="number">10.105.62.219</span>    &lt;none&gt;        <span class="number">9093</span>/TCP            <span class="number">7</span>m<span class="number">35</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operator-grafana                    ClusterIP   <span class="number">10.103.30.59</span>     &lt;none&gt;        <span class="number">80</span>/TCP              <span class="number">7</span>m<span class="number">35</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operator-kube-state-metrics         ClusterIP   <span class="number">10.105.189.63</span>    &lt;none&gt;        <span class="number">8080</span>/TCP            <span class="number">7</span>m<span class="number">35</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operator-operator                   ClusterIP   <span class="number">10.105.212.90</span>    &lt;none&gt;        <span class="number">8080</span>/TCP            <span class="number">7</span>m<span class="number">35</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operator-prometheus                 ClusterIP   <span class="number">10.104.229.158</span>   &lt;none&gt;        <span class="number">9090</span>/TCP            <span class="number">7</span>m<span class="number">35</span>s</span><br><span class="line"><span class="attribute">prometheus</span>-operator-prometheus-node-exporter   ClusterIP   <span class="number">10.103.226.249</span>   &lt;none&gt;        <span class="number">9100</span>/TCP            <span class="number">7</span>m<span class="number">35</span>s</span><br></pre></td></tr></table></figure>
+<p>默认的访问类型为 ClusterIP 无法外部访问，只能集群内访问。</p>
+<h3 id="2-修改-alertmanager、prometheus、grafana的访问类型"><a href="#2-修改-alertmanager、prometheus、grafana的访问类型" class="headerlink" title="2. 修改 alertmanager、prometheus、grafana的访问类型"></a>2. 修改 alertmanager、prometheus、grafana的访问类型</h3><p>grafana：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl edit svc prometheus-operator-grafana -n monitoring</span></span><br><span class="line"></span><br><span class="line"><span class="string">……</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="number">10.103</span><span class="number">.30</span><span class="number">.59</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">service</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">3000</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">grafana</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">prometheus-operator</span></span><br><span class="line">  <span class="attr">sessionAffinity:</span> <span class="string">None</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>        <span class="comment">#修改此行</span></span><br></pre></td></tr></table></figure>
+<p>alertmanager：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl edit svc prometheus-operator-alertmanager -n monitoring</span></span><br><span class="line"></span><br><span class="line"><span class="string">……</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="number">10.105</span><span class="number">.62</span><span class="number">.219</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">9093</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">9093</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">alertmanager:</span> <span class="string">prometheus-operator-alertmanager</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">alertmanager</span></span><br><span class="line">  <span class="attr">sessionAffinity:</span> <span class="string">None</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>       <span class="comment">#修改此行</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">loadBalancer:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>prometheus：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl edit svc prometheus-operator-prometheus -n monitoring</span></span><br><span class="line"></span><br><span class="line"><span class="string">……</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="number">10.104</span><span class="number">.229</span><span class="number">.158</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">9090</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">prometheus</span></span><br><span class="line">    <span class="attr">prometheus:</span> <span class="string">prometheus-operator-prometheus</span></span><br><span class="line">  <span class="attr">sessionAffinity:</span> <span class="string">None</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>      <span class="comment">#修改此行</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">loadBalancer:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-查看修改后的访问类型"><a href="#3-查看修改后的访问类型" class="headerlink" title="3. 查看修改后的访问类型"></a>3. 查看修改后的访问类型</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get svc -n monitoring </span></span><br><span class="line"><span class="attribute">NAME</span>                                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE</span><br><span class="line"><span class="attribute">alertmanager</span>-operated                          ClusterIP   None             &lt;none&gt;        <span class="number">9093</span>/TCP,<span class="number">6783</span>/TCP   <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operated                            ClusterIP   None             &lt;none&gt;        <span class="number">9090</span>/TCP            <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operator-alertmanager               NodePort    <span class="number">10.105.62.219</span>    &lt;none&gt;        <span class="number">9093</span>:<span class="number">32645</span>/TCP      <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operator-grafana                    NodePort    <span class="number">10.103.30.59</span>     &lt;none&gt;        <span class="number">80</span>:<span class="number">30043</span>/TCP        <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operator-kube-state-metrics         ClusterIP   <span class="number">10.105.189.63</span>    &lt;none&gt;        <span class="number">8080</span>/TCP            <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operator-operator                   ClusterIP   <span class="number">10.105.212.90</span>    &lt;none&gt;        <span class="number">8080</span>/TCP            <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operator-prometheus                 NodePort    <span class="number">10.104.229.158</span>   &lt;none&gt;        <span class="number">9090</span>:<span class="number">32275</span>/TCP      <span class="number">23</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-operator-prometheus-node-exporter   ClusterIP   <span class="number">10.103.226.249</span>   &lt;none&gt;        <span class="number">9100</span>/TCP            <span class="number">23</span>m</span><br></pre></td></tr></table></figure>
+<h2 id="修改-kubelet-打开只读端口"><a href="#修改-kubelet-打开只读端口" class="headerlink" title="修改 kubelet 打开只读端口"></a>修改 kubelet 打开只读端口</h2><p>prometheus 需要访问 kubelet 的 10255 端口获取 metrics。但是默认情况下 10255 端口是不开放的，会导致 prometheus 上有 unhealthy，如下图：<br><img data-src="/images/uploads/2019/01/unhealthy.png" alt="unhealthy"><br>打开只读端口需要编辑所有节点的 /var/lib/kubelet/config.yaml 文件，加入以下内容</p>
+<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="meta"># /var/lib/kubelet/config.yaml</span></span><br><span class="line"></span><br><span class="line">……</span><br><span class="line"><span class="symbol">oomScoreAdj:</span> <span class="number">-999</span></span><br><span class="line"><span class="symbol">podPidsLimit:</span> <span class="number">-1</span></span><br><span class="line"><span class="symbol">port:</span> <span class="number">10250</span></span><br><span class="line"><span class="symbol">readOnlyPort:</span> <span class="number">10255</span>          <span class="meta">#增加此行</span></span><br><span class="line"><span class="symbol">registryBurst:</span> <span class="number">10</span></span><br><span class="line"><span class="symbol">registryPullQPS:</span> <span class="number">5</span></span><br><span class="line"><span class="symbol">resolvConf:</span> <span class="meta-keyword">/etc/</span>resolv.conf</span><br></pre></td></tr></table></figure>
+<p>重启 kubelet 服务</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl restart kubelet.service</span></span><br></pre></td></tr></table></figure>
+<p>查看 prometheus target<br><img data-src="/images/uploads/2019/01/healthy.png" alt="healthy"></p>
+<h1 id="访问-dashboard"><a href="#访问-dashboard" class="headerlink" title="访问 dashboard"></a>访问 dashboard</h1><ol>
+<li><p> Pormetheus 的 Web UI<br>访问地址为：<a target="_blank" rel="noopener" href="http://nodeip:32275/target%EF%BC%8C%E5%A6%82%E4%B8%8B%E5%9B%BE%EF%BC%9A">http://nodeip:32275/target，如下图：</a><br><img data-src="/images/uploads/2019/01/prometheus.png" alt="prometheus"></p>
+</li>
+<li><p>Alertmanager 的 Web UI<br>访问地址为：<a target="_blank" rel="noopener" href="http://nodeip:32645/%EF%BC%8C%E5%A6%82%E4%B8%8B%E5%9B%BE%EF%BC%9A">http://nodeip:32645/，如下图：</a><br><img data-src="/images/uploads/2019/01/alertmanager.png" alt="alertmanager"></p>
+</li>
+<li><p>Grafana Dashboard<br>访问地址为：<a target="_blank" rel="noopener" href="http://nodeip:30043/%EF%BC%8C%E9%BB%98%E8%AE%A4%E7%9A%84%E7%94%A8%E6%88%B7%E5%90%8D/%E5%AF%86%E7%A0%81%E4%B8%BA%EF%BC%9Aadmin/prom-operator%EF%BC%8C%E7%99%BB%E9%99%86%E5%90%8E%E5%A6%82%E4%B8%8B%E5%9B%BE%EF%BC%9A">http://nodeip:30043/，默认的用户名/密码为：admin/prom-operator，登陆后如下图：</a><br><img data-src="/images/uploads/2019/01/grafana.png" alt="grafana"><br><img data-src="/images/uploads/2019/01/grafana-1.png" alt="grafana-1"><br><img data-src="/images/uploads/2019/01/grafana-2.png" alt="grafana-2"></p>
+</li>
+</ol>
+<h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><h2 id="1-prometheus-operator-coredns-无数据"><a href="#1-prometheus-operator-coredns-无数据" class="headerlink" title="1. prometheus-operator-coredns 无数据"></a>1. prometheus-operator-coredns 无数据</h2><p>问题详情见：<a target="_blank" rel="noopener" href="https://github.com/coreos/prometheus-operator/issues/2110">Don’t scrape metrics from coreDNS</a><br>解决方法如下：修改 prometheus-operator-coredns 服务的 selector 为 kube-dns</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl edit svc prometheus-operator-coredns  -n kube-system</span></span><br><span class="line"></span><br><span class="line"><span class="string">……</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">None</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http-metrics</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">9153</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">9153</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kube-dns</span>         <span class="comment">#修改此行</span></span><br><span class="line">  <span class="attr">sessionAffinity:</span> <span class="string">None</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-prometheus-operator-kube-etcd-无数据"><a href="#2-prometheus-operator-kube-etcd-无数据" class="headerlink" title="2. prometheus-operator-kube-etcd 无数据"></a>2. prometheus-operator-kube-etcd 无数据</h2><p>prometheus 通过 4001 端口访问 etcd metrics，但是 etcd 默认监听 2379。<br>解决方法如下：</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># vim <span class="regexp">/etc/</span>kubernetes<span class="regexp">/manifests/</span>etcd.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    scheduler.alpha.kubernetes.io/critical-pod: <span class="string">&quot;&quot;</span></span><br><span class="line">  creationTimestamp: <span class="keyword">null</span></span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: etcd-server                                                       #增加此行</span><br><span class="line">    component: etcd</span><br><span class="line">    tier: control-plane</span><br><span class="line">  name: etcd</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - command:</span><br><span class="line">    - etcd</span><br><span class="line">    - --advertise-client-urls=https:<span class="comment">//172.20.6.116:2379</span></span><br><span class="line">    - --cert-<span class="keyword">file</span>=<span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd/server.crt</span><br><span class="line">    - --client-cert-auth=<span class="keyword">true</span></span><br><span class="line">    - --data-dir=<span class="regexp">/var/</span>lib/etcd</span><br><span class="line">    - --initial-advertise-peer-urls=https:<span class="comment">//172.20.6.116:2380</span></span><br><span class="line">    - --initial-cluster=k8s-master=https:<span class="comment">//172.20.6.116:2380</span></span><br><span class="line">    - --key-<span class="keyword">file</span>=<span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd/server.key</span><br><span class="line">    - --listen-client-urls=https:<span class="comment">//127.0.0.1:2379,https://172.20.6.116:2379,http://172.20.6.116:4001         #增加 4001 端口的 http 监听</span></span><br><span class="line">    - --listen-peer-urls=https:<span class="comment">//172.20.6.116:2380</span></span><br><span class="line">    - --name=k8s-master</span><br><span class="line">    - --peer-cert-<span class="keyword">file</span>=<span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd/peer.crt</span><br><span class="line">    - --peer-client-cert-auth=<span class="keyword">true</span></span><br><span class="line">    - --peer-key-<span class="keyword">file</span>=<span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd/peer.key</span><br><span class="line">    - --peer-trusted-ca-<span class="keyword">file</span>=<span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd/ca.crt</span><br><span class="line">    - --snapshot-<span class="keyword">count</span>=<span class="number">10000</span></span><br><span class="line">    - --trusted-ca-<span class="keyword">file</span>=<span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd/ca.crt</span><br></pre></td></tr></table></figure>
+<p>重启 kubelet 服务即可</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl restart kubelet.service</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-prometheus-operator-kube-controller-manager-和-prometheus-operator-kube-scheduler-无数据"><a href="#3-prometheus-operator-kube-controller-manager-和-prometheus-operator-kube-scheduler-无数据" class="headerlink" title="3. prometheus-operator-kube-controller-manager 和 prometheus-operator-kube-scheduler 无数据"></a>3. prometheus-operator-kube-controller-manager 和 prometheus-operator-kube-scheduler 无数据</h2><p>由于 kube-controller-manager 和 kube-scheduler 默认监听 127.0.0.1 ，prometheus 无法通过本机地址获取数据，需要修改kube-controller-manager 和 kube-scheduler 监听地址。<br>解决办法如下：<br>kube-controller-manager:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/manifests/kube-controller-manager.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">scheduler.alpha.kubernetes.io/critical-pod:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kube-controller-manager</span>               <span class="comment">#增加此行</span></span><br><span class="line">    <span class="attr">component:</span> <span class="string">kube-controller-manager</span></span><br><span class="line">    <span class="attr">tier:</span> <span class="string">control-plane</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kube-controller-manager</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kube-controller-manager</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--address=0.0.0.0</span>                                   <span class="comment">#修改监听地址</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--allocate-node-cidrs=true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>kube-scheduler:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/manifests/kube-scheduler.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">scheduler.alpha.kubernetes.io/critical-pod:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kube-scheduler</span>                         <span class="comment">#增加此行</span></span><br><span class="line">    <span class="attr">component:</span> <span class="string">kube-scheduler</span></span><br><span class="line">    <span class="attr">tier:</span> <span class="string">control-plane</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kube-scheduler</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kube-scheduler</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--address=0.0.0.0</span>                                   <span class="comment">#修改监听地址</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--kubeconfig=/etc/kubernetes/scheduler.conf</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--leader-elect=true</span></span><br></pre></td></tr></table></figure>
+<p>重启 kubelet 服务即可</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl restart kubelet.service</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>使用 Prometheus Operator 监控 Kubernetes</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html" title="使用 Prometheus Operator 监控 Kubernetes">https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/helm/" rel="tag"><i class="fa fa-tag"></i> helm</a>
+              <a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a>
+              <a href="/tags/prometheus/" rel="tag"><i class="fa fa-tag"></i> prometheus</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MacOS/use-expect-remember-passwd.html" rel="prev" title="MacOS 上让 iTerm2 记住SSH用户名密码">
+      <i class="fa fa-chevron-left"></i> MacOS 上让 iTerm2 记住SSH用户名密码
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/docker/kubernetes-install-helm-and-wordpress.html" rel="next" title="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress">
+      Kubernetes 安装 Helm 并使用 Helm 安装 wordpress <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2-Prometheus-Operator"><span class="nav-text">部署 Prometheus Operator</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-text">前期准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="nav-text">1. 创建命名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AF%BC%E5%85%A5%E7%9B%B8%E5%85%B3%E9%95%9C%E5%83%8F"><span class="nav-text">2. 导入相关镜像</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Prometheus-Operator"><span class="nav-text">安装 Prometheus Operator</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8-Helm-%E5%AE%89%E8%A3%85-Prometheus-Operator"><span class="nav-text">1. 使用 Helm 安装 Prometheus Operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9F%A5%E7%9C%8B%E5%88%9B%E5%BB%BA%E7%9A%84%E8%B5%84%E6%BA%90"><span class="nav-text">2. 查看创建的资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9F%A5%E7%9C%8B%E5%AE%89%E8%A3%85%E5%90%8E%E7%9A%84-release"><span class="nav-text">3.查看安装后的 release</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%AE%BF%E9%97%AE%E6%A8%A1%E5%BC%8F"><span class="nav-text">修改访问模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9F%A5%E7%9C%8B%E8%AE%BF%E9%97%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1. 查看访问类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9-alertmanager%E3%80%81prometheus%E3%80%81grafana%E7%9A%84%E8%AE%BF%E9%97%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">2. 修改 alertmanager、prometheus、grafana的访问类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9F%A5%E7%9C%8B%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E8%AE%BF%E9%97%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">3. 查看修改后的访问类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-kubelet-%E6%89%93%E5%BC%80%E5%8F%AA%E8%AF%BB%E7%AB%AF%E5%8F%A3"><span class="nav-text">修改 kubelet 打开只读端口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE-dashboard"><span class="nav-text">访问 dashboard</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="nav-text">问题记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-prometheus-operator-coredns-%E6%97%A0%E6%95%B0%E6%8D%AE"><span class="nav-text">1. prometheus-operator-coredns 无数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-prometheus-operator-kube-etcd-%E6%97%A0%E6%95%B0%E6%8D%AE"><span class="nav-text">2. prometheus-operator-kube-etcd 无数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-prometheus-operator-kube-controller-manager-%E5%92%8C-prometheus-operator-kube-scheduler-%E6%97%A0%E6%95%B0%E6%8D%AE"><span class="nav-text">3. prometheus-operator-kube-controller-manager 和 prometheus-operator-kube-scheduler 无数据</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="host-only 联网   iptables -t nat -A POSTROUTING -s 10.20.0.0&#x2F;24 -j MASQUERADE10.20.0.0&#x2F;24 为 host-only 网段  制作源# vim &#x2F;usr&#x2F;share&#x2F;fuel-mirror&#x2F;ubuntu.yaml- ubuntu_baseurl: &amp;ubuntu_baseurl http:&#x2F;&#x2F;archive.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fuel 9.0 制作本地源、bootstrap以及升级9.2">
+<meta property="og:url" content="https://www.sunmite.com/openstack/fuel-something.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="host-only 联网   iptables -t nat -A POSTROUTING -s 10.20.0.0&#x2F;24 -j MASQUERADE10.20.0.0&#x2F;24 为 host-only 网段  制作源# vim &#x2F;usr&#x2F;share&#x2F;fuel-mirror&#x2F;ubuntu.yaml- ubuntu_baseurl: &amp;ubuntu_baseurl http:&#x2F;&#x2F;archive.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-02-27T02:47:45.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.338Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="openstack">
+<meta property="article:tag" content="fuel">
+<meta property="article:tag" content="bootstrap">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunmite.com/openstack/fuel-something.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>fuel 9.0 制作本地源、bootstrap以及升级9.2 | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/fuel-something.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          fuel 9.0 制作本地源、bootstrap以及升级9.2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-02-27 10:47:45" itemprop="dateCreated datePublished" datetime="2018-02-27T10:47:45+08:00">2018-02-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/fuel-something.html" class="post-meta-item leancloud_visitors" data-flag-title="fuel 9.0 制作本地源、bootstrap以及升级9.2" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/fuel-something.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/fuel-something.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>host-only 联网  </p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">iptables</span> -t nat -A POSTROUTING -s <span class="number">10.20.0.0</span>/<span class="number">24</span> -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="attribute">10</span>.<span class="number">20</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">24</span> 为 host-only 网段</span><br></pre></td></tr></table></figure>
+
+<h2 id="制作源"><a href="#制作源" class="headerlink" title="制作源"></a>制作源</h2><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"># vim /usr/share/fuel-mirror/ubuntu.yaml</span><br><span class="line"><span class="deletion">- ubuntu_baseurl: &amp;ubuntu_baseurl http://archive.ubuntu.com/ubuntu</span></span><br><span class="line"><span class="addition">+ ubuntu_baseurl: &amp;ubuntu_baseurl http://mirrors.aliyun.com/ubuntu</span></span><br><span class="line">mos_baseurl: &amp;mos_baseurl http://mirror.fuel-infra.org/mos-repos/ubuntu/$mos_version</span><br></pre></td></tr></table></figure>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fuel-createmirror</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="bootstrap"><a href="#bootstrap" class="headerlink" title="bootstrap"></a>bootstrap</h2><h3 id="更换国内源"><a href="#更换国内源" class="headerlink" title="更换国内源"></a>更换国内源</h3><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"># vim /etc/fuel-bootstrap-cli/fuel_bootstrap_cli.yaml</span><br><span class="line"></span><br><span class="line">repos:</span><br><span class="line">    - name: ubuntu</span><br><span class="line">      section: &quot;main universe multiverse&quot;</span><br><span class="line"><span class="deletion">-     uri: &quot;http://archive.ubuntu.com/ubuntu&quot;</span></span><br><span class="line"><span class="addition">+     uri: &quot;http://mirrors.aliyun.com/ubuntu&quot;</span></span><br><span class="line">      priority:</span><br><span class="line">      suite: trusty</span><br><span class="line">      type: deb</span><br><span class="line">    - name: ubuntu-updates</span><br><span class="line">      section: &quot;main universe multiverse&quot;</span><br><span class="line"><span class="deletion">-     uri: &quot;http://archive.ubuntu.com/ubuntu&quot;</span></span><br><span class="line"><span class="addition">+     uri: &quot;http://mirrors.aliyun.com/ubuntu&quot;</span></span><br><span class="line">      priority:</span><br><span class="line">      suite: trusty-updates</span><br><span class="line">      type: deb</span><br><span class="line">    - name: ubuntu-security</span><br><span class="line">      section: &quot;main universe multiverse&quot;</span><br><span class="line"><span class="deletion">-      uri: &quot;http://archive.ubuntu.com/ubuntu&quot;</span></span><br><span class="line"><span class="addition">+      uri: &quot;http://mirrors.aliyun.com/ubuntu&quot;</span></span><br><span class="line">      priority:</span><br><span class="line">      suite: trusty-security</span><br><span class="line">      type: deb</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="开始制作-bootstrap"><a href="#开始制作-bootstrap" class="headerlink" title="开始制作 bootstrap"></a>开始制作 bootstrap</h3><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment"># fuel-bootstrap build</span></span><br><span class="line"></span><br><span class="line">……</span><br><span class="line">Building initramfs</span><br><span class="line">Building squashfs</span><br><span class="line">squashfs_image clean-up</span><br><span class="line">Creating archive: <span class="regexp">/tmp/</span><span class="number">59129</span>ecd-cccd-<span class="number">4</span>a13-<span class="number">943</span>b-ed6000d2aa02.tar.gz</span><br><span class="line">--- Building bootstrap image <span class="keyword">END</span> (do_mkbootstrap) ---</span><br><span class="line">Cleanup chroot</span><br><span class="line">Bootstrap image <span class="number">59129</span>ecd-cccd-<span class="number">4</span>a13-<span class="number">943</span>b-ed6000d2aa02 has been built: <span class="regexp">/tmp/</span><span class="number">59129</span>ecd-cccd-<span class="number">4</span>a13-<span class="number">943</span>b-ed6000d2aa02.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="导入-bootstrap"><a href="#导入-bootstrap" class="headerlink" title="导入 bootstrap"></a>导入 bootstrap</h3><p>成功后在 /tmp/ 下有如下文件</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># ls <span class="regexp">/tmp/</span>*.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="regexp">/tmp/</span><span class="number">59129</span>ecd-cccd-<span class="number">4</span>a13-<span class="number">943</span>b-ed6000d2aa02.tar.gz</span><br></pre></td></tr></table></figure>
+<p>导入 bootstrap</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># fuel-bootstrap import /tmp/59129ecd-cccd-4a13-943b-ed6000d2aa02.tar.gz</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">Try</span> extract /tmp/<span class="number">59129</span>ecd-cccd-<span class="number">4</span>a<span class="number">13</span>-<span class="number">943</span>b-ed<span class="number">6000</span>d<span class="number">2</span>aa<span class="number">02</span>.tar.gz to /tmp/tmpnixoNM</span><br><span class="line"><span class="attribute">Bootstrap</span> image <span class="number">59129</span>ecd-cccd-<span class="number">4</span>a<span class="number">13</span>-<span class="number">943</span>b-ed<span class="number">6000</span>d<span class="number">2</span>aa<span class="number">02</span> has been imported.</span><br></pre></td></tr></table></figure>
+<p>激活 bootstrap</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># fuel-bootstrap activate 59129ecd-cccd-4a13-943b-ed6000d2aa02</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">Bootstrap</span> image <span class="number">59129</span>ecd-cccd-<span class="number">4</span>a<span class="number">13</span>-<span class="number">943</span>b-ed<span class="number">6000</span>d<span class="number">2</span>aa<span class="number">02</span> has been activated.</span><br></pre></td></tr></table></figure>
+<p>查看新增bootstrap</p>
+<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"># fuel-bootstrap list</span><br><span class="line"></span><br><span class="line"><span class="code">+--------------------------------------+</span>--------------------------------------<span class="code">+--------+</span></span><br><span class="line">| uuid                                 | label                                | status |</span><br><span class="line"><span class="code">+--------------------------------------+</span>--------------------------------------<span class="code">+--------+</span></span><br><span class="line">| 59129ecd-cccd-4a13-943b-ed6000d2aa02 | 59129ecd-cccd-4a13-943b-ed6000d2aa02 | active |</span><br><span class="line"><span class="code">+--------------------------------------+</span>--------------------------------------<span class="code">+--------+</span></span><br></pre></td></tr></table></figure>
+<h2 id="升级-Mirantis-OpenStack-9-x-到-9-2"><a href="#升级-Mirantis-OpenStack-9-x-到-9-2" class="headerlink" title="升级 Mirantis OpenStack 9.x 到 9.2"></a>升级 Mirantis OpenStack 9.x 到 9.2</h2><h3 id="1-添加mos92-updates更新源"><a href="#1-添加mos92-updates更新源" class="headerlink" title="1. 添加mos92-updates更新源"></a>1. 添加mos92-updates更新源</h3><figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line"># yum install -y http://mirror.fuel-infra.org/mos-repos/centos/mos<span class="number">9.0</span>-centos<span class="number">7</span>/<span class="number">9.2</span>-updates/<span class="keyword">x</span><span class="number">86</span>_<span class="number">64</span>/Packages/mos-<span class="keyword">release</span><span class="number">-9.2</span><span class="number">-1</span>.el<span class="number">7</span>.<span class="keyword">x</span><span class="number">86</span>_<span class="number">64</span>.rpm</span><br></pre></td></tr></table></figure>
+<h3 id="2-清除-yum-缓存"><a href="#2-清除-yum-缓存" class="headerlink" title="2. 清除 yum 缓存"></a>2. 清除 yum 缓存</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum clean all</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-安装-mos-playbooks"><a href="#3-安装-mos-playbooks" class="headerlink" title="3. 安装 mos-playbooks"></a>3. 安装 mos-playbooks</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y mos-updates</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-切换到mos-playbooks-mos-mu-目录"><a href="#4-切换到mos-playbooks-mos-mu-目录" class="headerlink" title="4. 切换到mos_playbooks/mos_mu/ 目录"></a>4. 切换到mos_playbooks/mos_mu/ 目录</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># cd mos_playbooks<span class="regexp">/mos_mu/</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-执行环境准备的playbook"><a href="#5-执行环境准备的playbook" class="headerlink" title="5. 执行环境准备的playbook"></a>5. 执行环境准备的playbook</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># ansible-playbook playbooks/mos9_prepare_fuel.yml</span></span><br></pre></td></tr></table></figure>
+<h3 id="6-升级Fuel-节点上的包、服务、配置，期间各服务都会重启"><a href="#6-升级Fuel-节点上的包、服务、配置，期间各服务都会重启" class="headerlink" title="6. 升级Fuel 节点上的包、服务、配置，期间各服务都会重启"></a>6. 升级Fuel 节点上的包、服务、配置，期间各服务都会重启</h3><figure class="highlight ada"><table><tr><td class="code"><pre><span class="line"># ansible-playbook playbooks/update_fuel.yml -e &#x27;&#123;<span class="string">&quot;rebuild_bootstrap&quot;</span>:<span class="literal">false</span>&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<h3 id="7-升级Fuel-bootstrap-内核"><a href="#7-升级Fuel-bootstrap-内核" class="headerlink" title="7. 升级Fuel bootstrap 内核"></a>7. 升级Fuel bootstrap 内核</h3><figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line"><span class="attr"># ansible-playbook playbooks/mos9</span>_fuel_upgrade_ker<span class="symbol">nel_4</span><span class="number">.4</span>.yml</span><br></pre></td></tr></table></figure>
+<h3 id="8-确认升级成功"><a href="#8-确认升级成功" class="headerlink" title="8. 确认升级成功"></a>8. 确认升级成功</h3><figure class="highlight vbnet"><table><tr><td class="code"><pre><span class="line"># fuel2 fuel-version</span><br><span class="line"> </span><br><span class="line"><span class="symbol">api:</span> <span class="comment">&#x27;1&#x27;</span></span><br><span class="line"><span class="symbol">auth_required:</span> <span class="literal">true</span></span><br><span class="line"><span class="symbol">feature_groups:</span> []</span><br><span class="line"><span class="symbol">openstack_version:</span> mitaka-<span class="number">9.0</span></span><br><span class="line"><span class="symbol">release:</span> <span class="comment">&#x27;9.2&#x27;</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://docs.mirantis.com/openstack/fuel/fuel-9.2/release-notes/update-product.html#update-from-9-to-9-2">Update to minor releases (9.x)</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>fuel 9.0 制作本地源、bootstrap以及升级9.2</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/openstack/fuel-something.html" title="fuel 9.0 制作本地源、bootstrap以及升级9.2">https://www.sunmite.com/openstack/fuel-something.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/openstack/" rel="tag"><i class="fa fa-tag"></i> openstack</a>
+              <a href="/tags/fuel/" rel="tag"><i class="fa fa-tag"></i> fuel</a>
+              <a href="/tags/bootstrap/" rel="tag"><i class="fa fa-tag"></i> bootstrap</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/openstack/cinder-multi-attch.html" rel="prev" title="OpenStack Queens Cinder Multi-Attach 功能">
+      <i class="fa fa-chevron-left"></i> OpenStack Queens Cinder Multi-Attach 功能
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/linux/from-typecho-to-hexo.html" rel="next" title="博客从 typecho 迁移到 Hexo">
+      博客从 typecho 迁移到 Hexo <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E6%BA%90"><span class="nav-text">制作源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bootstrap"><span class="nav-text">bootstrap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%8D%A2%E5%9B%BD%E5%86%85%E6%BA%90"><span class="nav-text">更换国内源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%88%B6%E4%BD%9C-bootstrap"><span class="nav-text">开始制作 bootstrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5-bootstrap"><span class="nav-text">导入 bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7-Mirantis-OpenStack-9-x-%E5%88%B0-9-2"><span class="nav-text">升级 Mirantis OpenStack 9.x 到 9.2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%B7%BB%E5%8A%A0mos92-updates%E6%9B%B4%E6%96%B0%E6%BA%90"><span class="nav-text">1. 添加mos92-updates更新源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B8%85%E9%99%A4-yum-%E7%BC%93%E5%AD%98"><span class="nav-text">2. 清除 yum 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%85-mos-playbooks"><span class="nav-text">3. 安装 mos-playbooks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%87%E6%8D%A2%E5%88%B0mos-playbooks-mos-mu-%E7%9B%AE%E5%BD%95"><span class="nav-text">4. 切换到mos_playbooks&#x2F;mos_mu&#x2F; 目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87%E7%9A%84playbook"><span class="nav-text">5. 执行环境准备的playbook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%8D%87%E7%BA%A7Fuel-%E8%8A%82%E7%82%B9%E4%B8%8A%E7%9A%84%E5%8C%85%E3%80%81%E6%9C%8D%E5%8A%A1%E3%80%81%E9%85%8D%E7%BD%AE%EF%BC%8C%E6%9C%9F%E9%97%B4%E5%90%84%E6%9C%8D%E5%8A%A1%E9%83%BD%E4%BC%9A%E9%87%8D%E5%90%AF"><span class="nav-text">6. 升级Fuel 节点上的包、服务、配置，期间各服务都会重启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%8D%87%E7%BA%A7Fuel-bootstrap-%E5%86%85%E6%A0%B8"><span class="nav-text">7. 升级Fuel bootstrap 内核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E7%A1%AE%E8%AE%A4%E5%8D%87%E7%BA%A7%E6%88%90%E5%8A%9F"><span class="nav-text">8. 确认升级成功</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">参考文章</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/openstack/fuel-something.html',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

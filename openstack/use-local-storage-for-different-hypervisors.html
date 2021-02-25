@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="实验环境   主机名 IP    controller1 192.168.2.240   compute1 192.168.2.242   compute2 192.168.2.243   compute3 192.168.2.248   compute4 192.168.2.249   在不同的计算节点使用不同的存储后端 计算节点配置1. Scheduler为了使nova的调度程序支持下面的过滤">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openstack nova-compute在不同的hypervisors上使用不同的存储后端">
+<meta property="og:url" content="https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="实验环境   主机名 IP    controller1 192.168.2.240   compute1 192.168.2.242   compute2 192.168.2.243   compute3 192.168.2.248   compute4 192.168.2.249   在不同的计算节点使用不同的存储后端 计算节点配置1. Scheduler为了使nova的调度程序支持下面的过滤">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2016/07/agregate-local-ceph-storage.png">
+<meta property="article:published_time" content="2016-07-26T18:55:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.341Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="openstack">
+<meta property="article:tag" content="nova">
+<meta property="article:tag" content="hypervisors">
+<meta property="article:tag" content="ceph">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2016/07/agregate-local-ceph-storage.png">
+
+<link rel="canonical" href="https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>openstack nova-compute在不同的hypervisors上使用不同的存储后端 | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          openstack nova-compute在不同的hypervisors上使用不同的存储后端
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-27 02:55:00" itemprop="dateCreated datePublished" datetime="2016-07-27T02:55:00+08:00">2016-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/use-local-storage-for-different-hypervisors.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack nova-compute在不同的hypervisors上使用不同的存储后端" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/use-local-storage-for-different-hypervisors.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/use-local-storage-for-different-hypervisors.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>controller1</td>
+<td>192.168.2.240</td>
+</tr>
+<tr>
+<td>compute1</td>
+<td>192.168.2.242</td>
+</tr>
+<tr>
+<td>compute2</td>
+<td>192.168.2.243</td>
+</tr>
+<tr>
+<td>compute3</td>
+<td>192.168.2.248</td>
+</tr>
+<tr>
+<td>compute4</td>
+<td>192.168.2.249</td>
+</tr>
+</tbody></table>
+<p>在不同的计算节点使用不同的存储后端<br><img data-src="/images/uploads/2016/07/agregate-local-ceph-storage.png" alt="image"></p>
+<h1 id="计算节点配置"><a href="#计算节点配置" class="headerlink" title="计算节点配置"></a>计算节点配置</h1><h2 id="1-Scheduler"><a href="#1-Scheduler" class="headerlink" title="1. Scheduler"></a>1. Scheduler</h2><p>为了使nova的调度程序支持下面的过滤算法，需要修改使之支持 AggregateInstanceExtraSpecsFilter ，编辑控制节点的 /etc/nova/nova.conf 文件加入修改以下选项,然后重启nova-scheduler服务</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/nova/nova.conf</span></span><br><span class="line"><span class="attr">scheduler_default_filters</span>=RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,AggregateInstanceExtraSpecsFilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemctl restart openstack-nova-scheduler.service</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-本地存储配置"><a href="#2-本地存储配置" class="headerlink" title="2. 本地存储配置"></a>2. 本地存储配置</h2><p>nova默认支持，无需配置。为了支持迁移可以配置共享存储（NFS等）</p>
+<h2 id="3-ceph存储配置"><a href="#3-ceph存储配置" class="headerlink" title="3. ceph存储配置"></a>3. ceph存储配置</h2><p>编辑计算节点的 /etc/nova/nova.conf 文件加入修改以下选项,然后重启nova-compute服务（这里没有详细写，例如导入secret-uuid等操作请自行添加）</p>
+<span id="more"></span>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/nova/nova.conf</span></span><br><span class="line"><span class="section">[libvirt]</span></span><br><span class="line"><span class="attr">images_type</span> = rbd</span><br><span class="line"><span class="attr">images_rbd_pool</span> = vms</span><br><span class="line"><span class="attr">images_rbd_ceph_conf</span> = /etc/ceph/ceph.conf</span><br><span class="line"><span class="attr">rbd_user</span> = cinder</span><br><span class="line"><span class="attr">rbd_secret_uuid</span> =<span class="number">20</span>c3fd98-<span class="number">2</span>bab-<span class="number">457</span>a-b1e2-<span class="number">12</span>e50dc6c98e</span><br><span class="line"><span class="attr">disk_cachemodes</span>=<span class="string">&quot;network=writeback&quot;</span></span><br><span class="line"><span class="attr">inject_partition</span>=-<span class="number">2</span></span><br><span class="line"><span class="attr">inject_key</span>=<span class="literal">False</span></span><br><span class="line"><span class="attr">live_migration_flag</span>=VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_PERSIST_DEST</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemctl restart openstack-nova-compute.service</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="openstack配置"><a href="#openstack配置" class="headerlink" title="openstack配置"></a>openstack配置</h1><p>创建主机集合，包含ceph compute nodes 和 local storage compute nodes</p>
+<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"># nova aggregate-create ephemeral-compute-storage</span><br><span class="line"><span class="code">+----+</span>---------------------------<span class="code">+-------------------+</span>-------<span class="code">+----------+</span></span><br><span class="line">| Id | Name                      | Availability Zone | Hosts | Metadata |</span><br><span class="line"><span class="code">+----+</span>---------------------------<span class="code">+-------------------+</span>-------<span class="code">+----------+</span></span><br><span class="line">| 8  | ephemeral-compute-storage | -                 |       |          |</span><br><span class="line"><span class="code">+----+</span>---------------------------<span class="code">+-------------------+</span>-------<span class="code">+----------+</span></span><br><span class="line"></span><br><span class="line"># nova aggregate-create ceph-compute-storage</span><br><span class="line"><span class="code">+----+</span>----------------------<span class="code">+-------------------+</span>-------<span class="code">+----------+</span></span><br><span class="line">| Id | Name                 | Availability Zone | Hosts | Metadata |</span><br><span class="line"><span class="code">+----+</span>----------------------<span class="code">+-------------------+</span>-------<span class="code">+----------+</span></span><br><span class="line">| 9  | ceph-compute-storage | -                 |       |          |</span><br><span class="line"><span class="code">+----+</span>----------------------<span class="code">+-------------------+</span>-------<span class="code">+----------+</span></span><br></pre></td></tr></table></figure>
+
+<p>可以使用 nova hypervisor-list 命令来查看自己的hypervisor name</p>
+<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"># nova hypervisor-list</span><br><span class="line"><span class="code">+----+</span>---------------------<span class="code">+-------+</span>---------+</span><br><span class="line">| ID | Hypervisor hostname | State | Status  |</span><br><span class="line"><span class="code">+----+</span>---------------------<span class="code">+-------+</span>---------+</span><br><span class="line">| 1  | compute1            | up    | enabled |</span><br><span class="line">| 2  | compute2            | up    | enabled |</span><br><span class="line">| 4  | compute4            | up    | enabled |</span><br><span class="line">| 7  | compute3            | up    | enabled |</span><br><span class="line"><span class="code">+----+</span>---------------------<span class="code">+-------+</span>---------+</span><br></pre></td></tr></table></figure>
+
+<p>在本例中，使用以下分类<br>Local storage:compute1,compute2<br>Ceph storage: conpute3,compute4<br>添加主机到主机集合</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># nova <span class="keyword">aggregate</span>-<span class="keyword">add</span>-host ephemeral-compute-<span class="keyword">storage</span> compute1</span><br><span class="line"># nova <span class="keyword">aggregate</span>-<span class="keyword">add</span>-host ephemeral-compute-<span class="keyword">storage</span> compute2</span><br><span class="line"># nova <span class="keyword">aggregate</span>-<span class="keyword">add</span>-host ceph-compute-<span class="keyword">storage</span> compute3</span><br><span class="line"># nova <span class="keyword">aggregate</span>-<span class="keyword">add</span>-host ceph-compute-<span class="keyword">storage</span> compute4</span><br></pre></td></tr></table></figure>
+
+<p>为主机集合创建新的metadata</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># nova <span class="keyword">aggregate</span>-<span class="keyword">set</span>-metadata ephemeral-compute-<span class="keyword">storage</span> ephemeralcomputestorage=<span class="keyword">true</span></span><br><span class="line"># nova <span class="keyword">aggregate</span>-<span class="keyword">set</span>-metadata ceph-compute-<span class="keyword">storage</span> cephcomputestorage=<span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+
+<p>为使用本地存储和ceph存储的虚拟机创建flavor</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># nova flavor-<span class="keyword">create</span> m1.ephemeral-compute-<span class="keyword">storage</span> <span class="number">8</span> <span class="number">128</span> <span class="number">1</span> <span class="number">1</span></span><br><span class="line"># nova flavor-<span class="keyword">create</span> m1.ceph-compute-<span class="keyword">storage</span> <span class="number">9</span> <span class="number">128</span> <span class="number">1</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>为flavor绑定指定的属性</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># nova flavor-key m1.ceph-compute-<span class="keyword">storage</span> <span class="keyword">set</span> aggregate_instance_extra_specs:cephcomputestorage=<span class="keyword">true</span></span><br><span class="line"># nova flavor-key m1.ephemeral-compute-<span class="keyword">storage</span> <span class="keyword">set</span> aggregate_instance_extra_specs:ephemeralcomputestorage=<span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="结果验证"><a href="#结果验证" class="headerlink" title="结果验证"></a>结果验证</h1><p>使用flavor m1.ceph-compute-storage 启动4台虚拟机，发现虚拟机磁盘文件全部在ceph的pool中</p>
+<figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line"><span class="comment"># nova list</span></span><br><span class="line">+--------------------------------------+--------+--------+------------+-------------+---------------------+</span><br><span class="line">|<span class="string"> ID                                   </span>|<span class="string"> Name   </span>|<span class="string"> Status </span>|<span class="string"> Task State </span>|<span class="string"> Power State </span>|<span class="string"> Networks            </span>|</span><br><span class="line">+--------------------------------------+--------+--------+------------+-------------+---------------------+</span><br><span class="line">|<span class="string"> 5d6bd85e-9b75-4035-876c-30e997ea0a98 </span>|<span class="string"> ceph-1 </span>|<span class="string"> BUILD  </span>|<span class="string"> spawning   </span>|<span class="string"> NOSTATE     </span>|<span class="string"> private=172.16.1.49 </span>|</span><br><span class="line">|<span class="string"> aa666bd9-e370-4c53-8af3-f1bf7ba77900 </span>|<span class="string"> ceph-2 </span>|<span class="string"> BUILD  </span>|<span class="string"> spawning   </span>|<span class="string"> NOSTATE     </span>|<span class="string"> private=172.16.1.48 </span>|</span><br><span class="line">|<span class="string"> 56d6a3a8-e6c4-4860-bd72-2e0aa0fa55f2 </span>|<span class="string"> ceph-3 </span>|<span class="string"> BUILD  </span>|<span class="string"> spawning   </span>|<span class="string"> NOSTATE     </span>|<span class="string"> private=172.16.1.47 </span>|</span><br><span class="line">|<span class="string"> 2b9577d8-2448-4d8a-ba98-253b0f597b12 </span>|<span class="string"> ceph-4 </span>|<span class="string"> BUILD  </span>|<span class="string"> spawning   </span>|<span class="string"> NOSTATE     </span>|<span class="string"> private=172.16.1.50 </span>|</span><br><span class="line">+--------------------------------------+--------+--------+------------+-------------+---------------------+</span><br><span class="line"></span><br><span class="line">[root<span class="meta">@node1</span> ~]<span class="comment"># rbd ls vms</span></span><br><span class="line">2b9577d8-2448-4d8a-ba98-253b0f597b12_disk</span><br><span class="line">56d6a3a8-e6c4-4860-bd72-2e0aa0fa55f2_disk</span><br><span class="line">5d6bd85e-9b75-4035-876c-30e997ea0a98_disk</span><br><span class="line">aa666bd9-e370-4c53-8af3-f1bf7ba77900_disk</span><br></pre></td></tr></table></figure>
+
+<p>删除所有虚拟机（便于验证），使用flavor m1.ephemeral-compute-storage 启动四台虚拟机，发现虚拟机磁盘文件分布于compute1 和 compute2 的本地存储中（没有配置NFS等共享存储）</p>
+<figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line"><span class="comment"># nova list</span></span><br><span class="line">+--------------------------------------+---------+--------+------------+-------------+---------------------+</span><br><span class="line">|<span class="string"> ID                                   </span>|<span class="string"> Name    </span>|<span class="string"> Status </span>|<span class="string"> Task State </span>|<span class="string"> Power State </span>|<span class="string"> Networks            </span>|</span><br><span class="line">+--------------------------------------+---------+--------+------------+-------------+---------------------+</span><br><span class="line">|<span class="string"> 1c1ce5f3-b5aa-47dd-806c-e2eba60b9eb0 </span>|<span class="string"> local-1 </span>|<span class="string"> ACTIVE </span>|<span class="string"> -          </span>|<span class="string"> Running     </span>|<span class="string"> private=172.16.1.51 </span>|</span><br><span class="line">|<span class="string"> 5a3e4074-619e-423a-a649-e24771f9fbd1 </span>|<span class="string"> local-2 </span>|<span class="string"> ACTIVE </span>|<span class="string"> -          </span>|<span class="string"> Running     </span>|<span class="string"> private=172.16.1.54 </span>|</span><br><span class="line">|<span class="string"> 5b838406-b9cf-4943-89f3-79866f8e6e19 </span>|<span class="string"> local-3 </span>|<span class="string"> ACTIVE </span>|<span class="string"> -          </span>|<span class="string"> Running     </span>|<span class="string"> private=172.16.1.52 </span>|</span><br><span class="line">|<span class="string"> 30e7289f-bc80-4374-aabb-906897b8141c </span>|<span class="string"> local-4 </span>|<span class="string"> ACTIVE </span>|<span class="string"> -          </span>|<span class="string"> Running     </span>|<span class="string"> private=172.16.1.53 </span>|</span><br><span class="line">+--------------------------------------+---------+--------+------------+-------------+---------------------+</span><br><span class="line"></span><br><span class="line">[root<span class="meta">@compute1</span> ~]<span class="comment"># ll /var/lib/nova/instances/</span></span><br><span class="line">total 4</span><br><span class="line">drwxr-xr-x 2 nova nova  69 Jul 27 10:40 1c1ce5f3-b5aa-47dd-806c-e2eba60b9eb0</span><br><span class="line">drwxr-xr-x 2 nova nova  69 Jul 27 10:40 5b838406-b9cf-4943-89f3-79866f8e6e19</span><br><span class="line">drwxr-xr-x 2 nova nova  53 Jul 25 16:01 _base</span><br><span class="line">-rw-r--r-- 1 nova nova  31 Jul 27 10:33 compute_nodes</span><br><span class="line">drwxr-xr-x 2 nova nova 143 Jul 25 16:01 locks</span><br><span class="line">drwxr-xr-x 2 nova nova   6 Jul  6 15:51 snapshots</span><br><span class="line"></span><br><span class="line">[root<span class="meta">@compute2</span> ~]<span class="comment"># ll /var/lib/nova/instances/</span></span><br><span class="line">total 4</span><br><span class="line">drwxr-xr-x 2 nova nova  69 Jul 27 10:40 30e7289f-bc80-4374-aabb-906897b8141c</span><br><span class="line">drwxr-xr-x 2 nova nova  69 Jul 27 10:40 5a3e4074-619e-423a-a649-e24771f9fbd1</span><br><span class="line">drwxr-xr-x 2 nova nova  53 Jul 25 16:02 _base</span><br><span class="line">-rw-r--r-- 1 nova nova  62 Jul 27 10:33 compute_nodes</span><br><span class="line">drwxr-xr-x 2 nova nova 143 Jul 25 16:01 locks</span><br></pre></td></tr></table></figure>
+
+<h1 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h1><p>在线迁移虚拟机的时候，不在同一个主机集合的主机仍然可以选择，但是无法迁移，需要增加只能在所在主机集合内迁移的功能  </p>
+<hr>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="http://www.sebastien-han.fr/blog/2014/09/01/openstack-use-ephemeral-and-persistent-root-storage-for-different-hypervisors/">OpenStack: use ephemeral and persistent root storage for different hypervisors</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>openstack nova-compute在不同的hypervisors上使用不同的存储后端</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html" title="openstack nova-compute在不同的hypervisors上使用不同的存储后端">https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/openstack/" rel="tag"><i class="fa fa-tag"></i> openstack</a>
+              <a href="/tags/nova/" rel="tag"><i class="fa fa-tag"></i> nova</a>
+              <a href="/tags/hypervisors/" rel="tag"><i class="fa fa-tag"></i> hypervisors</a>
+              <a href="/tags/ceph/" rel="tag"><i class="fa fa-tag"></i> ceph</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/docker/openstack-use-nova-docker-driver.html" rel="prev" title="openstack 使用 nova docker driver">
+      <i class="fa fa-chevron-left"></i> openstack 使用 nova docker driver
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/openstack/openstack-use-rabbitmq-cluster.html" rel="next" title="openstack配置rabbit cluster并使用">
+      openstack配置rabbit cluster并使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-text">计算节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Scheduler"><span class="nav-text">1. Scheduler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9C%AC%E5%9C%B0%E5%AD%98%E5%82%A8%E9%85%8D%E7%BD%AE"><span class="nav-text">2. 本地存储配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ceph%E5%AD%98%E5%82%A8%E9%85%8D%E7%BD%AE"><span class="nav-text">3. ceph存储配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#openstack%E9%85%8D%E7%BD%AE"><span class="nav-text">openstack配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E9%AA%8C%E8%AF%81"><span class="nav-text">结果验证</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E"><span class="nav-text">补充说明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

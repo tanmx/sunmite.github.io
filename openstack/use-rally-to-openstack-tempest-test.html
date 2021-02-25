@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Rally 基本介绍Rally 是OpenStack社区推出开源测试工具，可用于对OpenStack各个组件进行性能测试。通过使用Rally组件，用户可完成OpenStack云计算平台的安装部署、功能验证、大规模负载测试(性能测试)、输出测试报告等一系列动作。Rally 的概况和结构如下图所示：Rally 主要包括三大部分：  Deploy engine：这不是一个真的部署工具，它只是一个插件形式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过 Rally 进行 OpenStack Tempest 测试">
+<meta property="og:url" content="https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="Rally 基本介绍Rally 是OpenStack社区推出开源测试工具，可用于对OpenStack各个组件进行性能测试。通过使用Rally组件，用户可完成OpenStack云计算平台的安装部署、功能验证、大规模负载测试(性能测试)、输出测试报告等一系列动作。Rally 的概况和结构如下图所示：Rally 主要包括三大部分：  Deploy engine：这不是一个真的部署工具，它只是一个插件形式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2017/09/2916469037.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2017/09/3580198831.png">
+<meta property="article:published_time" content="2017-09-04T00:33:07.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.362Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="openstack">
+<meta property="article:tag" content="rally">
+<meta property="article:tag" content="tempest">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2017/09/2916469037.png">
+
+<link rel="canonical" href="https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>通过 Rally 进行 OpenStack Tempest 测试 | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          通过 Rally 进行 OpenStack Tempest 测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-09-04 08:33:07" itemprop="dateCreated datePublished" datetime="2017-09-04T08:33:07+08:00">2017-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/use-rally-to-openstack-tempest-test.html" class="post-meta-item leancloud_visitors" data-flag-title="通过 Rally 进行 OpenStack Tempest 测试" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/use-rally-to-openstack-tempest-test.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/use-rally-to-openstack-tempest-test.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Rally-基本介绍"><a href="#Rally-基本介绍" class="headerlink" title="Rally 基本介绍"></a>Rally 基本介绍</h2><p>Rally 是OpenStack社区推出开源测试工具，可用于对OpenStack各个组件进行性能测试。通过使用Rally组件，用户可完成OpenStack云计算平台的安装部署、功能验证、大规模负载测试(性能测试)、输出测试报告等一系列动作。<br>Rally 的概况和结构如下图所示：<br><img data-src="/images/uploads/2017/09/2916469037.png" alt="image"><br>Rally 主要包括三大部分：</p>
+<ul>
+<li>Deploy engine：这不是一个真的部署工具，它只是一个插件形式的东西，它可以和其他部署工具（比如 DevStack，Fuel，Anvil 等）一起工作来简化和统一部署流程。</li>
+<li>Verification：使用tempest验证已经部署的openstack云环境的功能。</li>
+<li>Benchmark engine：性能测试</li>
+</ul>
+<h2 id="Tempest-基本介绍"><a href="#Tempest-基本介绍" class="headerlink" title="Tempest 基本介绍"></a>Tempest 基本介绍</h2><p>Tempest 是一个旨在为云计算平台 OpenStack 提供集成功能测试的开源项目，包含了 Openstack 基本组件（nova, keystone, glance, neutron, cinder 等）的 API 测试用例与场景。它是基于 unittest2 和 nose 建立的，灵活且易于扩展及维护，使得 OpenStack 相关测试效率得到大幅度提升。</p>
+<h2 id="安装-Rally"><a href="#安装-Rally" class="headerlink" title="安装 Rally"></a>安装 Rally</h2><span id="more"></span>
+<h3 id="1-安装依赖包"><a href="#1-安装依赖包" class="headerlink" title="1. 安装依赖包"></a>1. 安装依赖包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># yum install python-pip lsb_release gcc gmp-devel libffi-devel libxml2-devel libxslt-devel openssl-devel postgresql-devel python-devel redhat-rpm-config</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-安装-rally-最简单的方法就是使用下面的安装脚本"><a href="#2-安装-rally-最简单的方法就是使用下面的安装脚本" class="headerlink" title="2. 安装 rally 最简单的方法就是使用下面的安装脚本"></a>2. 安装 rally 最简单的方法就是使用下面的安装脚本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -q -O- https://raw.githubusercontent.com/openstack/rally/master/install_rally.sh | bash</span><br><span class="line"><span class="comment"># or using curl:</span></span><br><span class="line">curl https://raw.githubusercontent.com/openstack/rally/master/install_rally.sh | bash</span><br></pre></td></tr></table></figure>
+<p>如果用普通用户执行脚本，Rally 会在 ==~/rally/== 下创建一个新的虚拟环境并安装在这里，使用 sqlite作为数据库后端。如果使用 root 用户执行脚本，Rally 会安装在系统路径，更多的安装选项，可以参考<a target="_blank" rel="noopener" href="https://rally.readthedocs.io/en/latest/install_and_upgrade/install.html#install">安装页面</a>。</p>
+<h2 id="Rally-配置"><a href="#Rally-配置" class="headerlink" title="Rally 配置"></a>Rally 配置</h2><h3 id="1-创建-openstack-环境变量文件，加入以下内容，注意修改用户名、密码、认证地址、region-name-等内容。"><a href="#1-创建-openstack-环境变量文件，加入以下内容，注意修改用户名、密码、认证地址、region-name-等内容。" class="headerlink" title="1. 创建 openstack 环境变量文件，加入以下内容，注意修改用户名、密码、认证地址、region_name 等内容。"></a>1. 创建 openstack 环境变量文件，加入以下内容，注意修改用户名、密码、认证地址、region_name 等内容。</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim admin-openrc</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">unset</span> OS_SERVICE_TOKEN</span><br><span class="line">    <span class="built_in">export</span> OS_USERNAME=admin</span><br><span class="line">    <span class="built_in">export</span> OS_PASSWORD=admin</span><br><span class="line">    <span class="built_in">export</span> OS_AUTH_URL=http://192.168.3.222:5000/v3</span><br><span class="line">    </span><br><span class="line"><span class="built_in">export</span> OS_PROJECT_NAME=admin</span><br><span class="line"><span class="built_in">export</span> OS_USER_DOMAIN_NAME=default</span><br><span class="line"><span class="built_in">export</span> OS_PROJECT_DOMAIN_NAME=Default</span><br><span class="line"><span class="built_in">export</span> OS_IDENTITY_API_VERSION=3</span><br><span class="line"><span class="built_in">export</span> OS_REGION_NAME=RegionOne</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-加载环境变量"><a href="#2-加载环境变量" class="headerlink" title="2. 加载环境变量"></a>2. 加载环境变量</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># . admin-openrc</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-注册一个-Openstack-deployment，注册成功后，将会默认使用这个-deployment，同时在主目录下会有一个新的目录出现：-rally。"><a href="#3-注册一个-Openstack-deployment，注册成功后，将会默认使用这个-deployment，同时在主目录下会有一个新的目录出现：-rally。" class="headerlink" title="3. 注册一个 Openstack deployment，注册成功后，将会默认使用这个 deployment，同时在主目录下会有一个新的目录出现：.rally。"></a>3. 注册一个 Openstack deployment，注册成功后，将会默认使用这个 deployment，同时在主目录下会有一个新的目录出现：.rally。</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally deployment create --fromenv --name=openstack</span></span><br><span class="line"></span><br><span class="line">2017-07-31 15:44:12.509 20293 INFO rally.deployment.engines.existing [-] Save deployment <span class="string">&#x27;openstack&#x27;</span> (uuid=3403b234-76ae-4afb-9d96-49ef2d872069) with <span class="string">&#x27;openstack&#x27;</span> platform.</span><br><span class="line">+--------------------------------------+---------------------+-----------+------------------+--------+</span><br><span class="line">| uuid                                 | created_at          | name      | status           | active |</span><br><span class="line">+--------------------------------------+---------------------+-----------+------------------+--------+</span><br><span class="line">| 3403b234-76ae-4afb-9d96-49ef2d872069 | 2017-07-31T07:44:12 | openstack | deploy-&gt;finished |        |</span><br><span class="line">+--------------------------------------+---------------------+-----------+------------------+--------+</span><br><span class="line">Using deployment: 3403b234-76ae-4afb-9d96-49ef2d872069</span><br><span class="line">~/.rally/openrc was updated</span><br><span class="line"></span><br><span class="line">HINTS:</span><br><span class="line"></span><br><span class="line">* To use standard OpenStack clients, <span class="built_in">set</span> up your env by running:</span><br><span class="line">	<span class="built_in">source</span> ~/.rally/openrc</span><br><span class="line">  OpenStack clients are now configured, e.g run:</span><br><span class="line">	openstack image list</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-检查一下刚注册的-deployment-是否存在。"><a href="#4-检查一下刚注册的-deployment-是否存在。" class="headerlink" title="4. 检查一下刚注册的 deployment 是否存在。"></a>4. 检查一下刚注册的 deployment 是否存在。</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally deployment list</span></span><br><span class="line">+--------------------------------------+---------------------+-----------+------------------+--------+</span><br><span class="line">| uuid                                 | created_at          | name      | status           | active |</span><br><span class="line">+--------------------------------------+---------------------+-----------+------------------+--------+</span><br><span class="line">| 3403b234-76ae-4afb-9d96-49ef2d872069 | 2017-07-31T07:44:12 | openstack | deploy-&gt;finished | *      |</span><br><span class="line">+--------------------------------------+---------------------+-----------+------------------+--------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-检查-deployment-是否可行"><a href="#5-检查-deployment-是否可行" class="headerlink" title="5. 检查 deployment 是否可行"></a>5. 检查 deployment 是否可行</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally deployment check</span></span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Platform openstack:</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">Available services:</span><br><span class="line">+-------------+----------------+-----------+</span><br><span class="line">| Service     | Service Type   | Status    |</span><br><span class="line">+-------------+----------------+-----------+</span><br><span class="line">| __unknown__ | alarming       | Available |</span><br><span class="line">| __unknown__ | compute_legacy | Available |</span><br><span class="line">| __unknown__ | event          | Available |</span><br><span class="line">| __unknown__ | placement      | Available |</span><br><span class="line">| __unknown__ | volumev2       | Available |</span><br><span class="line">| __unknown__ | volumev3       | Available |</span><br><span class="line">| cinder      | volume         | Available |</span><br><span class="line">| glance      | image          | Available |</span><br><span class="line">| gnocchi     | metric         | Available |</span><br><span class="line">| keystone    | identity       | Available |</span><br><span class="line">| neutron     | network        | Available |</span><br><span class="line">| nova        | compute        | Available |</span><br><span class="line">+-------------+----------------+-----------+</span><br></pre></td></tr></table></figure>
+
+<p>关于 service 显示 <strong>unknown</strong> 的问题可以参看以下文章：<br><a target="_blank" rel="noopener" href="https://bugs.launchpad.net/rally/+bug/1618121">rally deployment check is giving <em>unknown</em> under services</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/wtfbk/p/4316335.html">OpenStack Rally 性能测试</a></p>
+<h2 id="通过-Tempest-verifier-验证云环境"><a href="#通过-Tempest-verifier-验证云环境" class="headerlink" title="通过 Tempest verifier 验证云环境"></a>通过 Tempest verifier 验证云环境</h2><h3 id="1-创建-Tempest-verifier"><a href="#1-创建-Tempest-verifier" class="headerlink" title="1. 创建 Tempest verifier"></a>1. 创建 Tempest verifier</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#  rally verify create-verifier --type tempest --name tempest-verifier</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-验证是否安装完成"><a href="#2-验证是否安装完成" class="headerlink" title="2. 验证是否安装完成"></a>2. 验证是否安装完成</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify list-verifiers</span></span><br><span class="line">+--------------------------------------+------------------+---------+-----------+---------------------+---------------------+-----------+---------+-------------+--------+</span><br><span class="line">| UUID                                 | Name             | Type    | Namespace | Created at          | Updated at          | Status    | Version | System-wide | Active |</span><br><span class="line">+--------------------------------------+------------------+---------+-----------+---------------------+---------------------+-----------+---------+-------------+--------+</span><br><span class="line">| 4f4db99c-3930-442e-b592-bed5f428814e | tempest-verifier | tempest | openstack | 2017-07-31T05:24:09 | 2017-07-31T05:25:28 | installed | master  | False       | ✔      |</span><br><span class="line">+--------------------------------------+------------------+---------+-----------+---------------------+---------------------+-----------+---------+-------------+--------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-配置-Tempest-verifier"><a href="#3-配置-Tempest-verifier" class="headerlink" title="3. 配置 Tempest verifier"></a>3. 配置 Tempest verifier</h3><p>执行以下命令为当前部署配置 Tempest verifier</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify configure-verifier</span></span><br><span class="line"></span><br><span class="line">2017-07-31 15:56:33.940 20338 INFO rally.api [-] Configuring verifier <span class="string">&#x27;tempest-verifier&#x27;</span> (UUID=4f4db99c-3930-442e-b592-bed5f428814e) <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069).</span><br><span class="line">2017-07-31 15:56:35.945 20338 INFO rally.api [-] Verifier <span class="string">&#x27;tempest-verifier&#x27;</span> (UUID=4f4db99c-3930-442e-b592-bed5f428814e) has been successfully configured <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069)!</span><br></pre></td></tr></table></figure>
+
+<p>查看配置信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify configure-verifier --show</span></span><br><span class="line"></span><br><span class="line">[DEFAULT]</span><br><span class="line">debug = True</span><br><span class="line">use_stderr = False</span><br><span class="line">log_file = </span><br><span class="line"></span><br><span class="line">[auth]</span><br><span class="line">use_dynamic_credentials = True</span><br><span class="line">admin_username = admin</span><br><span class="line">admin_password = admin</span><br><span class="line">admin_project_name = admin</span><br><span class="line">admin_domain_name = default</span><br><span class="line">…………</span><br><span class="line">[service_available]</span><br><span class="line">cinder = True</span><br><span class="line">glance = True</span><br><span class="line">heat = False</span><br><span class="line">ironic = False</span><br><span class="line">neutron = True</span><br><span class="line">nova = True</span><br><span class="line">sahara = False</span><br><span class="line">swift = False</span><br><span class="line"></span><br><span class="line">[validation]</span><br><span class="line">run_validation = True</span><br><span class="line">image_ssh_user = cirros</span><br><span class="line">connect_method = floating</span><br><span class="line"></span><br><span class="line">[volume-feature-enabled]</span><br><span class="line">bootable = True</span><br></pre></td></tr></table></figure>
+
+<h2 id="开始验证"><a href="#开始验证" class="headerlink" title="开始验证"></a>开始验证</h2><h3 id="1-执行以下命令开始验证"><a href="#1-执行以下命令开始验证" class="headerlink" title="1. 执行以下命令开始验证"></a>1. 执行以下命令开始验证</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify start</span></span><br><span class="line">2017-07-31 16:02:14.679 20417 INFO rally.api [-] Starting verification (UUID=ddca5b4b-03a9-49e4-8c91-1d53943ad10b) <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069) by verifier <span class="string">&#x27;tempest-verifier&#x27;</span> (UUID=4f4db99c-3930-442e-b592-bed5f428814e).</span><br><span class="line">2017-07-31 16:02:25.381 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_create_agent ... success [0.752s]</span><br><span class="line">2017-07-31 16:02:25.972 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_delete_agent ... success [0.588s]</span><br><span class="line">2017-07-31 16:02:26.458 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_list_agents ... success [0.486s]</span><br><span class="line">2017-07-31 16:02:27.335 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_list_agents_with_filter ... success [0.877s]</span><br><span class="line">2017-07-31 16:02:27.975 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_update_agent ... success [0.639s]</span><br><span class="line">2017-07-31 16:02:37.491 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_availability_zone.AZAdminV2TestJSON.test_get_availability_zone_list ... success [0.498s]</span><br><span class="line">2017-07-31 16:02:38.042 20417 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_availability_zone.AZAdminV2TestJSON.test_get_availability_zone_list_detail ... success [0.551s]</span><br></pre></td></tr></table></figure>
+<p>默认情况下，以上命令会为当前部署执行完整的 tempest测试。</p>
+<h3 id="2-可以使用-–pattern-选项只执行部分tempest测试"><a href="#2-可以使用-–pattern-选项只执行部分tempest测试" class="headerlink" title="2. 可以使用 –pattern 选项只执行部分tempest测试"></a>2. 可以使用 –pattern 选项只执行部分tempest测试</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify start --pattern set=compute</span></span><br><span class="line">2017-07-31 16:07:12.163 20459 INFO rally.api [-] Starting verification (UUID=4e36a2fb-5780-4db0-86bf-fe2b0ab92bf2) <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069) by verifier <span class="string">&#x27;tempest-verifier&#x27;</span> (UUID=4f4db99c-3930-442e-b592-bed5f428814e).</span><br><span class="line">2017-07-31 16:07:17.189 20459 INFO tempest-verifier [-] &#123;1&#125; tempest.api.compute.admin.test_auto_allocate_network.AutoAllocateNetworkTest ... skip: The microversion range[2.37 - latest] of this <span class="built_in">test</span> is out of the configuration range[None - None].</span><br><span class="line">2017-07-31 16:07:21.786 20459 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_create_agent ... success [0.836s]</span><br><span class="line">2017-07-31 16:07:23.170 20459 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_delete_agent ... success [1.382s]</span><br><span class="line">2017-07-31 16:07:25.590 20459 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_list_agents ... success [2.422s]</span><br><span class="line">2017-07-31 16:07:27.447 20459 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_list_agents_with_filter ... success [1.856s]</span><br><span class="line">2017-07-31 16:07:28.135 20459 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_agents.AgentsAdminTestJSON.test_update_agent ... success [0.686s]</span><br></pre></td></tr></table></figure>
+<p>如 –pattern set=compute 选项，只会执行compute相关的测试。当前可供选择的测试内容有 <strong>full, smoke, compute, identity, image, network, object_storage, orchestration, volume, scenario</strong></p>
+<h3 id="3-用户可以使用正则表达式运行某些的测试集"><a href="#3-用户可以使用正则表达式运行某些的测试集" class="headerlink" title="3. 用户可以使用正则表达式运行某些的测试集"></a>3. 用户可以使用正则表达式运行某些的测试集</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify start --pattern tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON</span></span><br><span class="line">2017-07-31 16:25:55.659 20502 INFO rally.api [-] Starting verification (UUID=84fce1ca-304b-4663-bba5-185f24d013a1) <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069) by verifier <span class="string">&#x27;tempest-verifier&#x27;</span> (UUID=4f4db99c-3930-442e-b592-bed5f428814e).</span><br><span class="line">2017-07-31 16:26:03.792 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_using_string_ram ... success [0.683s]</span><br><span class="line">2017-07-31 16:26:04.703 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_verify_entry_in_list_details ... success [0.910s]</span><br><span class="line">2017-07-31 16:26:05.478 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_with_int_id ... success [0.774s]</span><br><span class="line">2017-07-31 16:26:06.230 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_with_none_id ... success [0.750s]</span><br><span class="line">2017-07-31 16:26:06.906 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_with_uuid_id ... success [0.677s]</span><br><span class="line">2017-07-31 16:26:08.224 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_list_flavor_without_extra_data ... success [1.317s]</span><br><span class="line">2017-07-31 16:26:09.264 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_server_with_non_public_flavor ... success [1.038s]</span><br><span class="line">2017-07-31 16:26:13.144 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_is_public_string_variations ... success [3.873s]</span><br><span class="line">2017-07-31 16:26:14.477 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_list_non_public_flavor ... success [1.336s]</span><br><span class="line">2017-07-31 16:26:15.548 20502 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_list_public_flavor_with_other_user ... success [1.067s]</span><br><span class="line">2017-07-31 16:26:22.767 20502 INFO rally.api [-] Verification (UUID=84fce1ca-304b-4663-bba5-185f24d013a1) has been successfully finished <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069)!</span><br><span class="line"></span><br><span class="line">======</span><br><span class="line">Totals</span><br><span class="line">======</span><br><span class="line"></span><br><span class="line">Ran: 10 tests <span class="keyword">in</span> 14.768 sec.</span><br><span class="line"> - Success: 10</span><br><span class="line"> - Skipped: 0</span><br><span class="line"> - Expected failures: 0</span><br><span class="line"> - Unexpected success: 0</span><br><span class="line"> - Failures: 0</span><br><span class="line"></span><br><span class="line">Using verification (UUID=84fce1ca-304b-4663-bba5-185f24d013a1) as the default verification <span class="keyword">for</span> the future operations.</span><br></pre></td></tr></table></figure>
+<p>只会运行compute中和flavor相关的测试</p>
+<h3 id="4-以这种方式，可以从某个目录或类运行测试，甚至可以运行单个测试"><a href="#4-以这种方式，可以从某个目录或类运行测试，甚至可以运行单个测试" class="headerlink" title="4. 以这种方式，可以从某个目录或类运行测试，甚至可以运行单个测试"></a>4. 以这种方式，可以从某个目录或类运行测试，甚至可以运行单个测试</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify start --pattern tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_using_string_ram</span></span><br><span class="line">2017-07-31 16:30:28.586 20533 INFO rally.api [-] Starting verification (UUID=181d37bd-d9a7-46fa-9311-ffe09d81e84c) <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069) by verifier <span class="string">&#x27;tempest-verifier&#x27;</span> (UUID=4f4db99c-3930-442e-b592-bed5f428814e).</span><br><span class="line">2017-07-31 16:30:36.781 20533 INFO tempest-verifier [-] &#123;0&#125; tempest.api.compute.admin.test_flavors.FlavorsAdminTestJSON.test_create_flavor_using_string_ram ... success [0.772s]</span><br><span class="line">2017-07-31 16:30:42.064 20533 INFO rally.api [-] Verification (UUID=181d37bd-d9a7-46fa-9311-ffe09d81e84c) has been successfully finished <span class="keyword">for</span> deployment <span class="string">&#x27;openstack&#x27;</span> (UUID=3403b234-76ae-4afb-9d96-49ef2d872069)!</span><br><span class="line"></span><br><span class="line">======</span><br><span class="line">Totals</span><br><span class="line">======</span><br><span class="line"></span><br><span class="line">Ran: 1 tests <span class="keyword">in</span> 2.734 sec.</span><br><span class="line"> - Success: 1</span><br><span class="line"> - Skipped: 0</span><br><span class="line"> - Expected failures: 0</span><br><span class="line"> - Unexpected success: 0</span><br><span class="line"> - Failures: 0</span><br><span class="line"></span><br><span class="line">Using verification (UUID=181d37bd-d9a7-46fa-9311-ffe09d81e84c) as the default verification <span class="keyword">for</span> the future operations.</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看结果"><a href="#查看结果" class="headerlink" title="查看结果"></a>查看结果</h2><p>我们可以报错结果为html、json等格式，一般保存为 html 格式，可以在浏览器中直观的查看</p>
+<h3 id="1-获得-verify-id"><a href="#1-获得-verify-id" class="headerlink" title="1. 获得 verify id"></a>1. 获得 verify id</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify list</span></span><br><span class="line">+--------------------------------------+------+------------------+-----------------+---------------------+---------------------+----------+----------+</span><br><span class="line">| UUID                                 | Tags | Verifier name    | Deployment name | Started at          | Finished at         | Duration | Status   |</span><br><span class="line">+--------------------------------------+------+------------------+-----------------+---------------------+---------------------+----------+----------+</span><br><span class="line">| db55c49c-9316-4353-94db-e0c777831157 | -    | tempest-verifier | openstack       | 2017-07-31T08:37:28 | 2017-07-31T14:40:46 | 6:03:18  | failed   |</span><br><span class="line">+--------------------------------------+------+------------------+-----------------+---------------------+---------------------+----------+----------+</span><br></pre></td></tr></table></figure>
+<p>如果进行了多次测试会有多条劫夺，可以根据时间来区分，每次测试结束的时候都会提示本次测试的UUID</p>
+<h3 id="2-导出为-html-文件"><a href="#2-导出为-html-文件" class="headerlink" title="2. 导出为 html 文件"></a>2. 导出为 html 文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rally verify report --uuid db55c49c-9316-4353-94db-e0c777831157 --type html --to export-name.html</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-在浏览器中查看"><a href="#3-在浏览器中查看" class="headerlink" title="3. 在浏览器中查看"></a>3. 在浏览器中查看</h3><p>如图，可以显示所有的测试用例，错误的用例也会给出详细的错误信息<br><img data-src="/images/uploads/2017/09/3580198831.png" alt="image"></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>通过 Rally 进行 OpenStack Tempest 测试</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html" title="通过 Rally 进行 OpenStack Tempest 测试">https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/openstack/" rel="tag"><i class="fa fa-tag"></i> openstack</a>
+              <a href="/tags/rally/" rel="tag"><i class="fa fa-tag"></i> rally</a>
+              <a href="/tags/tempest/" rel="tag"><i class="fa fa-tag"></i> tempest</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/openstack/rabbitmq-network-partition.html" rel="prev" title="RabbitMQ Network Partition">
+      <i class="fa fa-chevron-left"></i> RabbitMQ Network Partition
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/docker/use-docker-deploy-ceph.html" rel="next" title="使用 docker 快速部署 ceph">
+      使用 docker 快速部署 ceph <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Rally-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-text">Rally 基本介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tempest-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-text">Tempest 基本介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Rally"><span class="nav-text">安装 Rally</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="nav-text">1. 安装依赖包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85-rally-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E6%96%B9%E6%B3%95%E5%B0%B1%E6%98%AF%E4%BD%BF%E7%94%A8%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC"><span class="nav-text">2. 安装 rally 最简单的方法就是使用下面的安装脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rally-%E9%85%8D%E7%BD%AE"><span class="nav-text">Rally 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA-openstack-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6%EF%BC%8C%E5%8A%A0%E5%85%A5%E4%BB%A5%E4%B8%8B%E5%86%85%E5%AE%B9%EF%BC%8C%E6%B3%A8%E6%84%8F%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E5%90%8D%E3%80%81%E5%AF%86%E7%A0%81%E3%80%81%E8%AE%A4%E8%AF%81%E5%9C%B0%E5%9D%80%E3%80%81region-name-%E7%AD%89%E5%86%85%E5%AE%B9%E3%80%82"><span class="nav-text">1. 创建 openstack 环境变量文件，加入以下内容，注意修改用户名、密码、认证地址、region_name 等内容。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8A%A0%E8%BD%BD%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">2. 加载环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%B3%A8%E5%86%8C%E4%B8%80%E4%B8%AA-Openstack-deployment%EF%BC%8C%E6%B3%A8%E5%86%8C%E6%88%90%E5%8A%9F%E5%90%8E%EF%BC%8C%E5%B0%86%E4%BC%9A%E9%BB%98%E8%AE%A4%E4%BD%BF%E7%94%A8%E8%BF%99%E4%B8%AA-deployment%EF%BC%8C%E5%90%8C%E6%97%B6%E5%9C%A8%E4%B8%BB%E7%9B%AE%E5%BD%95%E4%B8%8B%E4%BC%9A%E6%9C%89%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84%E7%9B%AE%E5%BD%95%E5%87%BA%E7%8E%B0%EF%BC%9A-rally%E3%80%82"><span class="nav-text">3. 注册一个 Openstack deployment，注册成功后，将会默认使用这个 deployment，同时在主目录下会有一个新的目录出现：.rally。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%A3%80%E6%9F%A5%E4%B8%80%E4%B8%8B%E5%88%9A%E6%B3%A8%E5%86%8C%E7%9A%84-deployment-%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E3%80%82"><span class="nav-text">4. 检查一下刚注册的 deployment 是否存在。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%A3%80%E6%9F%A5-deployment-%E6%98%AF%E5%90%A6%E5%8F%AF%E8%A1%8C"><span class="nav-text">5. 检查 deployment 是否可行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-Tempest-verifier-%E9%AA%8C%E8%AF%81%E4%BA%91%E7%8E%AF%E5%A2%83"><span class="nav-text">通过 Tempest verifier 验证云环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA-Tempest-verifier"><span class="nav-text">1. 创建 Tempest verifier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E5%AE%8C%E6%88%90"><span class="nav-text">2. 验证是否安装完成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AE-Tempest-verifier"><span class="nav-text">3. 配置 Tempest verifier</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E9%AA%8C%E8%AF%81"><span class="nav-text">开始验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%89%A7%E8%A1%8C%E4%BB%A5%E4%B8%8B%E5%91%BD%E4%BB%A4%E5%BC%80%E5%A7%8B%E9%AA%8C%E8%AF%81"><span class="nav-text">1. 执行以下命令开始验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8-%E2%80%93pattern-%E9%80%89%E9%A1%B9%E5%8F%AA%E6%89%A7%E8%A1%8C%E9%83%A8%E5%88%86tempest%E6%B5%8B%E8%AF%95"><span class="nav-text">2. 可以使用 –pattern 选项只执行部分tempest测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%94%A8%E6%88%B7%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%90%E8%A1%8C%E6%9F%90%E4%BA%9B%E7%9A%84%E6%B5%8B%E8%AF%95%E9%9B%86"><span class="nav-text">3. 用户可以使用正则表达式运行某些的测试集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%BB%A5%E8%BF%99%E7%A7%8D%E6%96%B9%E5%BC%8F%EF%BC%8C%E5%8F%AF%E4%BB%A5%E4%BB%8E%E6%9F%90%E4%B8%AA%E7%9B%AE%E5%BD%95%E6%88%96%E7%B1%BB%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95%EF%BC%8C%E7%94%9A%E8%87%B3%E5%8F%AF%E4%BB%A5%E8%BF%90%E8%A1%8C%E5%8D%95%E4%B8%AA%E6%B5%8B%E8%AF%95"><span class="nav-text">4. 以这种方式，可以从某个目录或类运行测试，甚至可以运行单个测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%9C"><span class="nav-text">查看结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%8E%B7%E5%BE%97-verify-id"><span class="nav-text">1. 获得 verify id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AF%BC%E5%87%BA%E4%B8%BA-html-%E6%96%87%E4%BB%B6"><span class="nav-text">2. 导出为 html 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E6%9F%A5%E7%9C%8B"><span class="nav-text">3. 在浏览器中查看</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

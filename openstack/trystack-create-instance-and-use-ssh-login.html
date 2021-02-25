@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="这是Trystack的官方介绍：  The Easiest Way To Try Out OpenStack. We’ve set up large clusters of hardware running OpenStack on both x86 and ARM architectures. The best part? It’s totally free for you to try &amp;am">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Trystack创建实例并通过ssh远程登录虚拟机">
+<meta property="og:url" content="https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="这是Trystack的官方介绍：  The Easiest Way To Try Out OpenStack. We’ve set up large clusters of hardware running OpenStack on both x86 and ARM architectures. The best part? It’s totally free for you to try &amp;am">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/1.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/3.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/4.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/5.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/7.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/8.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/9.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/10.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/11.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/121.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/131.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/141.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/151.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/16.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/17.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/18.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/19.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/20.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/21.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/22.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/23.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/24.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/26.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/27.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/28.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/29.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2014/12/30.png">
+<meta property="article:published_time" content="2014-12-15T23:47:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.337Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="openstack">
+<meta property="article:tag" content="trystack">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2014/12/1.png">
+
+<link rel="canonical" href="https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Trystack创建实例并通过ssh远程登录虚拟机 | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Trystack创建实例并通过ssh远程登录虚拟机
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2014-12-16 07:47:00" itemprop="dateCreated datePublished" datetime="2014-12-16T07:47:00+08:00">2014-12-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/trystack-create-instance-and-use-ssh-login.html" class="post-meta-item leancloud_visitors" data-flag-title="Trystack创建实例并通过ssh远程登录虚拟机" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/trystack-create-instance-and-use-ssh-login.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/trystack-create-instance-and-use-ssh-login.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这是Trystack的官方介绍：</p>
+<blockquote>
+<p>The Easiest Way To Try Out OpenStack. We’ve set up large clusters of hardware running OpenStack on both x86 and ARM architectures. The best part? It’s totally free for you to try &amp; test your apps—thanks to our generous individual and corporate contributors.<br>trystack提供一个免费的openstack环境给你尝试测试你的apps,你新建的虚拟机只会存在24小时，所以只能用于测试，不能用于生产环境。</p>
+</blockquote>
+<p>Trystack传送门:<a target="_blank" rel="noopener" href="http://trystack.org/">http://trystack.org</a></p>
+<p>下面介绍详细步骤：</p>
+<h3 id="1-申请加入trystack的facebook小组"><a href="#1-申请加入trystack的facebook小组" class="headerlink" title="1. 申请加入trystack的facebook小组"></a>1. 申请加入trystack的facebook小组</h3><p>点击首页的 Join Our Facebook Group，申请加入trystack的facebook小组，这个不是立即生效的，基本上申请了都会加入，请等待小组的管理员通过你的申请。（facebook被墙了，怎么访问的话我这里不做介绍）<br><img data-src="/images/uploads/2014/12/1.png" alt="image"></p>
+<h3 id="2-登录trystack"><a href="#2-登录trystack" class="headerlink" title="2. 登录trystack"></a>2. 登录trystack</h3><p>确保你加入了小组之后，就能点击trystack首页的登录按钮，使用facebook帐号验证，登录成功后如下图所示，可以看到，你的用户名形如 facebook*<strong>**</strong><br><img data-src="/images/uploads/2014/12/3.png" alt="image"></p>
+<span id="more"></span>
+<h3 id="3-创建子网"><a href="#3-创建子网" class="headerlink" title="3. 创建子网"></a>3. 创建子网</h3><p>点击openstack dashboard左侧的网络，在点击展开后的网络选项，点击右侧的“创建网络”按钮，打开创建网络的对话框。<br><img data-src="/images/uploads/2014/12/4.png" alt="image"></p>
+<p>在网络选项中输入网络的名称，子网选项中输入子网名称，子网地址（注意格式），其他默认即可，点击下一步完成创建。（也可以在子网详情中设置DHCP，ip的范围，和主机路由等选项，这里不多介绍），创建成功后如下图所示。<br><img data-src="/images/uploads/2014/12/5.png" alt="image"></p>
+<h3 id="4-创建路由"><a href="#4-创建路由" class="headerlink" title="4. 创建路由"></a>4. 创建路由</h3><p>点击openstack dashboard左侧的网络，在点击展开后的路由选项，点击右侧的 “新建路由”按钮，打开新建路由的对话框。</p>
+<p>输入路由名字就可以了，就不上图了，创建完成后点击“设置网关”打开路由的网关设置页，选择默认的 external 网络。<br><img data-src="/images/uploads/2014/12/7.png" alt="image"></p>
+<p>完成后点击路由的名称，进入路由的详情页面，点击“增加接口”按钮，增加前面创建的子网。<br><img data-src="/images/uploads/2014/12/8.png" alt="image"></p>
+<h3 id="5-创建密钥对"><a href="#5-创建密钥对" class="headerlink" title="5. 创建密钥对"></a>5. 创建密钥对</h3><p>trystack的镜像没有用户名、密码，需要是要密钥登录。点击openstack dashboard左侧的compute，在点击展开后的“访问&amp;安全”选项，选择 “密钥对”选项，点击左侧的“创建密钥对”按钮，打开创建密钥对的窗口。<br><img data-src="/images/uploads/2014/12/9.png" alt="image"><br><img data-src="/images/uploads/2014/12/10.png" alt="image"></p>
+<p>创建成功后会自动打开下载窗口，保存私钥到本地磁盘，后面用来ssh登录虚拟机。<br><img data-src="/images/uploads/2014/12/11.png" alt="image"></p>
+<h3 id="6-创建虚拟机"><a href="#6-创建虚拟机" class="headerlink" title="6. 创建虚拟机"></a>6. 创建虚拟机</h3><p>点击openstack dashboard左侧的compute，在点击展开后的“实例”选项，点击右侧的 “启动云主机”选项，打开新建虚拟机的窗口。<br><img data-src="/images/uploads/2014/12/121.png" alt="image"></p>
+<p>依次填入云主机名称，选择云主机类型，启动源，镜像名称等选项，选择上方的“访问&amp;安全”选项，选择前面创建的密钥对。<br><img data-src="/images/uploads/2014/12/131.png" alt="image"></p>
+<p>然后下一步，点击“网络”选项，选择前面创建的网络。<br><img data-src="/images/uploads/2014/12/141.png" alt="image"></p>
+<p>其他选项可以忽略，直接点击“运行”按钮，完成创建后如下图所示：<br><img data-src="/images/uploads/2014/12/151.png" alt="image"></p>
+<h3 id="7-绑定floating-ip"><a href="#7-绑定floating-ip" class="headerlink" title="7. 绑定floating ip"></a>7. 绑定floating ip</h3><p>选择虚拟机最后行的动作中的“绑定浮动ip”<br><img data-src="/images/uploads/2014/12/16.png" alt="image"></p>
+<p>打开绑定浮动ip的窗口，如果没有分配过浮动ip，需要点击下图的“+”号，分配一个浮动ip<br><img data-src="/images/uploads/2014/12/17.png" alt="image"></p>
+<p>关联成功后如下图所示，图中的红色标记既为分配到的浮动ip，可以通过这个地址远程访问虚拟机。<br><img data-src="/images/uploads/2014/12/18.png" alt="image"></p>
+<h3 id="8-设置安全组规则"><a href="#8-设置安全组规则" class="headerlink" title="8. 设置安全组规则"></a>8. 设置安全组规则</h3><p>点击openstack dashboard左侧的compute，在点击展开后的“访问&amp;安全”选项，选择 “安全组”选项，点击管理规则，打开规则的新窗口。<br><img data-src="/images/uploads/2014/12/19.png" alt="image"></p>
+<p>点击“添加规则”按钮，依次添加ICMP出入站规则和SSH规则。<br><img data-src="/images/uploads/2014/12/20.png" alt="image"><br><img data-src="/images/uploads/2014/12/21.png" alt="image"><br><img data-src="/images/uploads/2014/12/22.png" alt="image"><br><img data-src="/images/uploads/2014/12/23.png" alt="image"></p>
+<p>至此，openstack上的设置全部完成，我们已经可以在本地计算机ping通虚拟机的floating ip。<br><img data-src="/images/uploads/2014/12/24.png" alt="image"></p>
+<h3 id="9-SSH登录虚拟机"><a href="#9-SSH登录虚拟机" class="headerlink" title="9. SSH登录虚拟机"></a>9. SSH登录虚拟机</h3><p>打开PuTTYGen，首先导入前面保存的私钥。导入的时候选择所有文件，这样才能导入openstack的密钥 *.pem<br><img data-src="/images/uploads/2014/12/26.png" alt="image"></p>
+<p>导入成功后保存私钥为putty使用的格式（经测试putty直接使用openstack的私钥*.pem会报错）<br><img data-src="/images/uploads/2014/12/27.png" alt="image"></p>
+<p>保存成功后打开putty导入保存的私钥。<br><img data-src="/images/uploads/2014/12/28.png" alt="image"></p>
+<p>转到Session，输入floating ip登录<br><img data-src="/images/uploads/2014/12/29.png" alt="image"></p>
+<p>连接成功后使用用户名“centos”，无需密码即可登录。<br><img data-src="/images/uploads/2014/12/30.png" alt="image">  </p>
+<hr>
+<h3 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h3><p><a target="_blank" rel="noopener" href="http://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">RSA加密算法</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>Trystack创建实例并通过ssh远程登录虚拟机</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html" title="Trystack创建实例并通过ssh远程登录虚拟机">https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/openstack/" rel="tag"><i class="fa fa-tag"></i> openstack</a>
+              <a href="/tags/trystack/" rel="tag"><i class="fa fa-tag"></i> trystack</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/openstack/openstack-apis-authenticate.html" rel="prev" title="OpenStack Apis Authenticate (Token ID&Tenant ID)">
+      <i class="fa fa-chevron-left"></i> OpenStack Apis Authenticate (Token ID&Tenant ID)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/life/i-miss-you.html" rel="next" title="纵有千言万语，却不知道从何而说，也不知道该说些什么……">
+      纵有千言万语，却不知道从何而说，也不知道该说些什么…… <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%B3%E8%AF%B7%E5%8A%A0%E5%85%A5trystack%E7%9A%84facebook%E5%B0%8F%E7%BB%84"><span class="nav-text">1. 申请加入trystack的facebook小组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%99%BB%E5%BD%95trystack"><span class="nav-text">2. 登录trystack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E5%AD%90%E7%BD%91"><span class="nav-text">3. 创建子网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%9B%E5%BB%BA%E8%B7%AF%E7%94%B1"><span class="nav-text">4. 创建路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5%E5%AF%B9"><span class="nav-text">5. 创建密钥对</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">6. 创建虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E7%BB%91%E5%AE%9Afloating-ip"><span class="nav-text">7. 绑定floating ip</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E8%AE%BE%E7%BD%AE%E5%AE%89%E5%85%A8%E7%BB%84%E8%A7%84%E5%88%99"><span class="nav-text">8. 设置安全组规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-SSH%E7%99%BB%E5%BD%95%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">9. SSH登录虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A"><span class="nav-text">附录：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

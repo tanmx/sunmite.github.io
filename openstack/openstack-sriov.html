@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="关于 SR-IOV 本文就不再介绍了,具体可以查看 Intel® 82599 SR-IOV Driver Companion Guide。 一、系统环境操作系统: RHEL 7.2OpenStack版本: OpenStack Mitaka Allinone网卡型号: Intel Corporation 82599ESSR-IVO网卡名: ens1f0, ens1f0 二、服务器配置在服务器 BIO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenStack SR-IOV研究">
+<meta property="og:url" content="https://www.sunmite.com/openstack/openstack-sriov.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="关于 SR-IOV 本文就不再介绍了,具体可以查看 Intel® 82599 SR-IOV Driver Companion Guide。 一、系统环境操作系统: RHEL 7.2OpenStack版本: OpenStack Mitaka Allinone网卡型号: Intel Corporation 82599ESSR-IVO网卡名: ens1f0, ens1f0 二、服务器配置在服务器 BIO">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2018/06/ethtool.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2018/06/ethernet.png">
+<meta property="article:published_time" content="2018-06-15T09:14:23.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.336Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="openstack">
+<meta property="article:tag" content="sr-iov">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2018/06/ethtool.png">
+
+<link rel="canonical" href="https://www.sunmite.com/openstack/openstack-sriov.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OpenStack SR-IOV研究 | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/openstack-sriov.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenStack SR-IOV研究
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-15 17:14:23" itemprop="dateCreated datePublished" datetime="2018-06-15T17:14:23+08:00">2018-06-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/openstack/openstack-sriov.html" class="post-meta-item leancloud_visitors" data-flag-title="OpenStack SR-IOV研究" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/openstack/openstack-sriov.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/openstack/openstack-sriov.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于 SR-IOV 本文就不再介绍了,具体可以查看 <a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/embedded/products/networking/82599-sr-iov-driver-companion-guide.html">Intel® 82599 SR-IOV Driver Companion Guide</a>。</p>
+<h2 id="一、系统环境"><a href="#一、系统环境" class="headerlink" title="一、系统环境"></a>一、系统环境</h2><p>操作系统: RHEL 7.2<br>OpenStack版本: OpenStack Mitaka Allinone<br>网卡型号: Intel Corporation 82599ES<br>SR-IVO网卡名: ens1f0, ens1f0</p>
+<h2 id="二、服务器配置"><a href="#二、服务器配置" class="headerlink" title="二、服务器配置"></a>二、服务器配置</h2><p>在服务器 BIOS 中开启 VT-d 和 SR-IOV</p>
+<h2 id="三、操作系统配置"><a href="#三、操作系统配置" class="headerlink" title="三、操作系统配置"></a>三、操作系统配置</h2><h3 id="1-编辑-etc-default-grub-文件-加入以下内容"><a href="#1-编辑-etc-default-grub-文件-加入以下内容" class="headerlink" title="1. 编辑 /etc/default/grub 文件,加入以下内容"></a>1. 编辑 /etc/default/grub 文件,加入以下内容</h3><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"># vim /etc/default/grub</span><br><span class="line"></span><br><span class="line">GRUB_TIMEOUT=5</span><br><span class="line">GRUB_DISTRIBUTOR=&quot;$(sed &#x27;s, release .*$,,g&#x27; /etc/system-release)&quot;</span><br><span class="line">GRUB_DEFAULT=saved</span><br><span class="line">GRUB_DISABLE_SUBMENU=true</span><br><span class="line">GRUB_TERMINAL_OUTPUT=&quot;console&quot;</span><br><span class="line"><span class="deletion">-GRUB_CMDLINE_LINUX=&quot;rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet&quot;</span></span><br><span class="line"><span class="addition">+GRUB_CMDLINE_LINUX=&quot;rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet intel_iommu=on&quot;</span></span><br><span class="line">GRUB_DISABLE_RECOVERY=&quot;true&quot;</span><br></pre></td></tr></table></figure>
+<p>需要说明的是: ixgbe.max_vfs 参数已经废弃，故没有加入到内核参数中。</p>
+<span id="more"></span>
+<h3 id="2-重新生成-grub-文件"><a href="#2-重新生成-grub-文件" class="headerlink" title="2. 重新生成 grub 文件"></a>2. 重新生成 grub 文件</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># grub2-mkconfig -o <span class="regexp">/boot/g</span>rub2/grub.cfg</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-配置-SR-IOV-的网卡开机自启"><a href="#3-配置-SR-IOV-的网卡开机自启" class="headerlink" title="3. 配置 SR-IOV 的网卡开机自启"></a>3. 配置 SR-IOV 的网卡开机自启</h3><p>编辑网卡配置文件，修改以下内容</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">BOOTPROTO</span>=none</span><br><span class="line"><span class="attr">ONBOOT</span>=<span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-设置开机自动创建-VF-计算节点"><a href="#4-设置开机自动创建-VF-计算节点" class="headerlink" title="4. 设置开机自动创建 VF(计算节点)"></a>4. 设置开机自动创建 VF(计算节点)</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># vim <span class="regexp">/etc/</span>rc.d/rc.local</span><br><span class="line"></span><br><span class="line">echo <span class="string">&#x27;0&#x27;</span> &gt; <span class="regexp">/sys/</span><span class="keyword">class</span><span class="regexp">/net/</span>ens1f0<span class="regexp">/device/</span>sriov_numvfs</span><br><span class="line">echo <span class="string">&#x27;7&#x27;</span> &gt; <span class="regexp">/sys/</span><span class="keyword">class</span><span class="regexp">/net/</span>ens1f0<span class="regexp">/device/</span>sriov_numvfs</span><br><span class="line">echo <span class="string">&#x27;0&#x27;</span> &gt; <span class="regexp">/sys/</span><span class="keyword">class</span><span class="regexp">/net/</span>ens1f1<span class="regexp">/device/</span>sriov_numvfs</span><br><span class="line">echo <span class="string">&#x27;7&#x27;</span> &gt; <span class="regexp">/sys/</span><span class="keyword">class</span><span class="regexp">/net/</span>ens1f1<span class="regexp">/device/</span>sriov_numvfs</span><br><span class="line"></span><br><span class="line">chmod +x <span class="regexp">/etc/</span>rc.d/rc.local</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-重启服务器"><a href="#5-重启服务器" class="headerlink" title="5. 重启服务器"></a>5. 重启服务器</h3><h3 id="6-验证-VF-已经创建，并且是-up-状态"><a href="#6-验证-VF-已经创建，并且是-up-状态" class="headerlink" title="6. 验证 VF 已经创建，并且是 up 状态"></a>6. 验证 VF 已经创建，并且是 up 状态</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># lspci | grep Ethernet</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">05</span>:<span class="number">00</span>.<span class="number">0</span> Ethernet controller: Intel Corporation <span class="number">82599</span>ES <span class="number">10</span>-Gigabit SFI/SFP+ Network Connection (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">00</span>.<span class="number">1</span> Ethernet controller: Intel Corporation <span class="number">82599</span>ES <span class="number">10</span>-Gigabit SFI/SFP+ Network Connection (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">0</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">1</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">2</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">3</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">4</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">5</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">6</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">10</span>.<span class="number">7</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">0</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">1</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">2</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">3</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">4</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">5</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">6</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"><span class="attribute">05</span>:<span class="number">11</span>.<span class="number">7</span> Ethernet controller: Intel Corporation <span class="number">82599</span> Ethernet Controller Virtual Function (rev <span class="number">01</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ip link show ens1f0</span></span><br><span class="line"><span class="attribute">6</span>: ens<span class="number">1</span>f<span class="number">0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="number">1500</span> qdisc mq state UP mode DEFAULT qlen <span class="number">1000</span></span><br><span class="line">    <span class="attribute">link</span>/ether <span class="number">14</span>:<span class="number">02</span>:ec:<span class="number">82</span>:<span class="number">96</span>:c<span class="number">0</span> brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">0</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">1</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">2</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">3</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">4</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">5</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">6</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">7</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line"></span><br><span class="line"><span class="comment"># ip link show ens1f1</span></span><br><span class="line"><span class="attribute">7</span>: ens<span class="number">1</span>f<span class="number">1</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="number">1500</span> qdisc mq state UP mode DEFAULT qlen <span class="number">1000</span></span><br><span class="line">    <span class="attribute">link</span>/ether <span class="number">14</span>:<span class="number">02</span>:ec:<span class="number">82</span>:<span class="number">96</span>:c<span class="number">1</span> brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">0</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">1</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">2</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">3</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">4</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">5</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">6</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">7</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、OpenStack-配置"><a href="#四、OpenStack-配置" class="headerlink" title="四、OpenStack 配置"></a>四、OpenStack 配置</h2><h3 id="安装-sr-iov-agent-计算节点"><a href="#安装-sr-iov-agent-计算节点" class="headerlink" title="安装 sr-iov agent(计算节点)"></a>安装 sr-iov agent(计算节点)</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum -y install openstack-neutron-sriov-nic-agent.noarch</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="控制节点配置"><a href="#控制节点配置" class="headerlink" title="控制节点配置"></a>控制节点配置</h3><h4 id="1-修改-nova-调度，启用-PciPassthrough-Filter"><a href="#1-修改-nova-调度，启用-PciPassthrough-Filter" class="headerlink" title="1. 修改 nova 调度，启用 PciPassthrough Filter"></a>1. 修改 nova 调度，启用 PciPassthrough Filter</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/nova/nova.conf</span></span><br><span class="line"></span><br><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="attr">scheduler_available_filters</span>=nova.scheduler.filters.all_filters</span><br><span class="line"><span class="attr">scheduler_default_filters</span>=RetryFilter,AvailabilityZoneFilter,RamFilter,DiskFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-在-ML2-中加载-sriovnicswitch-mechanism-driver-并设置网络绑定"><a href="#2-在-ML2-中加载-sriovnicswitch-mechanism-driver-并设置网络绑定" class="headerlink" title="2. 在 ML2 中加载 sriovnicswitch  mechanism driver,并设置网络绑定"></a>2. 在 ML2 中加载 sriovnicswitch  mechanism driver,并设置网络绑定</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/neutron/plugins/ml2/ml2_conf.ini</span></span><br><span class="line"></span><br><span class="line"><span class="section">[ml2]</span></span><br><span class="line"><span class="attr">type_drivers</span> = flat,vlan</span><br><span class="line">tenant_network_types =</span><br><span class="line"><span class="attr">mechanism_drivers</span> = openvswitch,sriovnicswitch</span><br><span class="line"><span class="attr">extension_drivers</span> = port_security</span><br><span class="line"></span><br><span class="line"><span class="section">[ml2_type_vlan]</span></span><br><span class="line"><span class="attr">network_vlan_ranges</span> = provider,sriov1,sriov2</span><br><span class="line"></span><br><span class="line"><span class="section">[securitygroup]</span></span><br><span class="line"><span class="attr">firewall_driver</span> = neutron.agent.firewall.NoopFirewallDriver</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-增加支持的-PCI-厂家的-VF-设备"><a href="#3-增加支持的-PCI-厂家的-VF-设备" class="headerlink" title="3. 增加支持的 PCI 厂家的 VF 设备"></a>3. 增加支持的 PCI 厂家的 VF 设备</h4><ul>
+<li>查看id<figure class="highlight less"><table><tr><td class="code"><pre><span class="line"># <span class="selector-tag">lspci</span> <span class="selector-tag">-nn</span> | <span class="selector-tag">grep</span> <span class="selector-tag">-i</span> <span class="selector-tag">ethernet</span></span><br><span class="line"></span><br><span class="line"><span class="selector-tag">02</span>:<span class="selector-tag">00</span><span class="selector-class">.0</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Broadcom</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">NetXtreme</span> <span class="selector-tag">BCM5719</span> <span class="selector-tag">Gigabit</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">PCIe</span> <span class="selector-attr">[14e4:1657]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">02</span>:<span class="selector-tag">00</span><span class="selector-class">.1</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Broadcom</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">NetXtreme</span> <span class="selector-tag">BCM5719</span> <span class="selector-tag">Gigabit</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">PCIe</span> <span class="selector-attr">[14e4:1657]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">02</span>:<span class="selector-tag">00</span><span class="selector-class">.2</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Broadcom</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">NetXtreme</span> <span class="selector-tag">BCM5719</span> <span class="selector-tag">Gigabit</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">PCIe</span> <span class="selector-attr">[14e4:1657]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">02</span>:<span class="selector-tag">00</span><span class="selector-class">.3</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Broadcom</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">NetXtreme</span> <span class="selector-tag">BCM5719</span> <span class="selector-tag">Gigabit</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">PCIe</span> <span class="selector-attr">[14e4:1657]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">00</span><span class="selector-class">.0</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599ES</span> <span class="selector-tag">10-Gigabit</span> <span class="selector-tag">SFI</span>/<span class="selector-tag">SFP</span>+ <span class="selector-tag">Network</span> <span class="selector-tag">Connection</span> <span class="selector-attr">[8086:10fb]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">00</span><span class="selector-class">.1</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599ES</span> <span class="selector-tag">10-Gigabit</span> <span class="selector-tag">SFI</span>/<span class="selector-tag">SFP</span>+ <span class="selector-tag">Network</span> <span class="selector-tag">Connection</span> <span class="selector-attr">[8086:10fb]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.0</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.1</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.2</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.3</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.4</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.5</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.6</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">10</span><span class="selector-class">.7</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.0</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.1</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.2</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.3</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.4</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.5</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.6</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br><span class="line"><span class="selector-tag">05</span>:<span class="selector-tag">11</span><span class="selector-class">.7</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">controller</span> <span class="selector-attr">[0200]</span>: <span class="selector-tag">Intel</span> <span class="selector-tag">Corporation</span> <span class="selector-tag">82599</span> <span class="selector-tag">Ethernet</span> <span class="selector-tag">Controller</span> <span class="selector-tag">Virtual</span> <span class="selector-tag">Function</span> <span class="selector-attr">[8086:10ed]</span> (rev <span class="number">01</span>)</span><br></pre></td></tr></table></figure></li>
+<li>配置设备ID<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># vim <span class="regexp">/etc/</span>neutron<span class="regexp">/plugins/m</span>l2/ml2_conf_sriov.ini</span><br><span class="line"></span><br><span class="line">[ml2_sriov]</span><br><span class="line">supported_pci_vendor_devs = <span class="number">8086</span>:<span class="number">10</span>ed</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="4-修改-neutron-server-启动文件-加载-ml2-conf-sriov-ini-文件"><a href="#4-修改-neutron-server-启动文件-加载-ml2-conf-sriov-ini-文件" class="headerlink" title="4. 修改 neutron-server 启动文件,加载 ml2_conf_sriov.ini 文件"></a>4. 修改 neutron-server 启动文件,加载 ml2_conf_sriov.ini 文件</h4><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># vim <span class="regexp">/usr/</span>lib<span class="regexp">/systemd/</span>system/neutron-server.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=notify</span><br><span class="line">User=neutron</span><br><span class="line">ExecStart=<span class="regexp">/usr/</span>bin<span class="regexp">/neutron-server --config-file /u</span>sr<span class="regexp">/share/</span>neutron<span class="regexp">/neutron-dist.conf --config-dir /u</span>sr<span class="regexp">/share/</span>neutron<span class="regexp">/server --config-file /</span>etc<span class="regexp">/neutron/</span>neutron.conf --config-<span class="keyword">file</span> <span class="regexp">/etc/</span>neutron<span class="regexp">/plugin.ini --config-file /</span>etc<span class="regexp">/neutron/</span>plugins<span class="regexp">/ml2/m</span>l2_conf_sriov.ini --config-dir <span class="regexp">/etc/</span>neutron<span class="regexp">/conf.d/</span>common --config-dir <span class="regexp">/etc/</span>neutron<span class="regexp">/conf.d/</span>neutron-server --log-<span class="keyword">file</span> <span class="regexp">/var/</span>log<span class="regexp">/neutron/</span>server.log</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-重启服务"><a href="#5-重启服务" class="headerlink" title="5. 重启服务"></a>5. 重启服务</h4><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl daemon-reload</span></span><br><span class="line"><span class="meta"># systemctl restart neutron-server.service</span></span><br><span class="line"><span class="meta"># systemctl restart openstack-nova-scheduler.service</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="计算节点配置"><a href="#计算节点配置" class="headerlink" title="计算节点配置"></a>计算节点配置</h3><h4 id="1-配置-PCI-设备白名单"><a href="#1-配置-PCI-设备白名单" class="headerlink" title="1. 配置 PCI 设备白名单"></a>1. 配置 PCI 设备白名单</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/nova/nova.conf</span></span><br><span class="line"></span><br><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="attr">pci_passthrough_whitelist</span> = [&#123;<span class="string">&quot;devname&quot;</span>:<span class="string">&quot;ens1f0&quot;</span>,<span class="string">&quot;physical_network&quot;</span>:<span class="string">&quot;sriov1&quot;</span>&#125;,&#123;<span class="string">&quot;devname&quot;</span>:<span class="string">&quot;ens1f1&quot;</span>,<span class="string">&quot;physical_network&quot;</span>:<span class="string">&quot;sriov2&quot;</span>&#125;]</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-配置-SR-IOV-neutron-agent"><a href="#2-配置-SR-IOV-neutron-agent" class="headerlink" title="2. 配置 SR-IOV neutron agent"></a>2. 配置 SR-IOV neutron agent</h4><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># vim <span class="regexp">/etc/</span>neutron<span class="regexp">/plugins/m</span>l2/sriov_agent.ini</span><br><span class="line"></span><br><span class="line">[securitygroup]</span><br><span class="line">firewall_driver = neutron.agent.firewall.NoopFirewallDriver</span><br><span class="line"></span><br><span class="line">[sriov_nic]</span><br><span class="line">physical_device_mappings = sriov1:ens1f0,sriov2:ens1f1</span><br><span class="line">exclude_devices =</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-启动-重启服务"><a href="#3-启动-重启服务" class="headerlink" title="3. 启动/重启服务"></a>3. 启动/重启服务</h4><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl enable neutron-sriov-nic-agent.service</span></span><br><span class="line"><span class="meta"># systemctl start neutron-sriov-nic-agent.service</span></span><br><span class="line"><span class="meta"># systemctl restart openstack-nova-compute.service</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、测试"><a href="#五、测试" class="headerlink" title="五、测试"></a>五、测试</h2><h3 id="1-创建网络"><a href="#1-创建网络" class="headerlink" title="1. 创建网络"></a>1. 创建网络</h3><figure class="highlight brainfuck"><table><tr><td class="code"><pre><span class="line"><span class="comment">创建网络</span></span><br><span class="line"><span class="comment">#</span> <span class="comment">neutron</span> <span class="comment">net</span><span class="literal">-</span><span class="comment">create</span> --<span class="comment">provider:network_type</span> <span class="comment">vlan</span> --<span class="comment">provider:physical_network</span> <span class="comment">sriov1</span> --<span class="comment">provider:segmentation_id</span> <span class="comment">10</span> --<span class="comment">router:external</span> <span class="comment">net1</span></span><br><span class="line"><span class="comment">#</span> <span class="comment">neutron</span> <span class="comment">net</span><span class="literal">-</span><span class="comment">create</span> --<span class="comment">provider:network_type</span> <span class="comment">vlan</span> --<span class="comment">provider:physical_network</span> <span class="comment">sriov2</span> --<span class="comment">provider:segmentation_id</span> <span class="comment">20</span> --<span class="comment">router:external</span> <span class="comment">net2</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">创建子网(禁用DHCP)</span></span><br><span class="line"><span class="comment">#</span> <span class="comment">neutron</span> <span class="comment">subnet</span><span class="literal">-</span><span class="comment">create</span> --<span class="comment">name</span> <span class="comment">sriov1</span><span class="literal">-</span><span class="comment">net</span> --<span class="comment">disable</span><span class="literal">-</span><span class="comment">dhcp</span> --<span class="comment">ip</span><span class="literal">-</span><span class="comment">version</span> <span class="comment">4</span> <span class="comment">net1</span> <span class="comment">10</span><span class="string">.</span><span class="comment">0</span><span class="string">.</span><span class="comment">1</span><span class="string">.</span><span class="comment">0/24</span></span><br><span class="line"><span class="comment">#</span> <span class="comment">neutron</span> <span class="comment">subnet</span><span class="literal">-</span><span class="comment">create</span> --<span class="comment">name</span> <span class="comment">sriov2</span><span class="literal">-</span><span class="comment">net</span> --<span class="comment">disable</span><span class="literal">-</span><span class="comment">dhcp</span> --<span class="comment">ip</span><span class="literal">-</span><span class="comment">version</span> <span class="comment">4</span> <span class="comment">net2</span> <span class="comment">10</span><span class="string">.</span><span class="comment">0</span><span class="string">.</span><span class="comment">2</span><span class="string">.</span><span class="comment">0/24</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建-port"><a href="#2-创建-port" class="headerlink" title="2. 创建 port"></a>2. 创建 port</h3><figure class="highlight elm"><table><tr><td class="code"><pre><span class="line"># neutron <span class="keyword">port</span>-create net1 <span class="comment">--binding:vnic-type direct</span></span><br><span class="line"># neutron <span class="keyword">port</span>-create net2 <span class="comment">--binding:vnic-type direct</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-创建虚拟机"><a href="#3-创建虚拟机" class="headerlink" title="3. 创建虚拟机"></a>3. 创建虚拟机</h3><figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line"><span class="comment"># neutron port-list</span></span><br><span class="line">+<span class="params">--------------------------------------</span>+<span class="params">------</span>+<span class="params">-------------------</span>+<span class="params">---------------------------------------------------------------------------------</span>+</span><br><span class="line">| id                                   | name | mac_address       | fixed_ips                                                                       |</span><br><span class="line">+<span class="params">--------------------------------------</span>+<span class="params">------</span>+<span class="params">-------------------</span>+<span class="params">---------------------------------------------------------------------------------</span>+</span><br><span class="line">| ba446152-bd45-4a38-9947-1d539e538a68 |      | fa<span class="function">:16</span><span class="function">:3e</span><span class="function">:42</span><span class="function">:6b</span><span class="function">:fd</span> | &#123;<span class="string">&quot;subnet_id&quot;</span>: <span class="string">&quot;04ea17b5-08da-41cc-8114-e0781a1f8041&quot;</span>, <span class="string">&quot;ip_address&quot;</span>: <span class="string">&quot;10.0.1.3&quot;</span>&#125; |</span><br><span class="line">| bf8a7655-ac16-4dce-bb12-54efd2dd0967 |      | fa<span class="function">:16</span><span class="function">:3e</span><span class="function">:77</span><span class="function">:9f</span><span class="function">:8a</span> | &#123;<span class="string">&quot;subnet_id&quot;</span>: <span class="string">&quot;6612bf80-d682-474f-886e-93029a4a0964&quot;</span>, <span class="string">&quot;ip_address&quot;</span>: <span class="string">&quot;10.0.2.3&quot;</span>&#125; |</span><br><span class="line">+<span class="params">--------------------------------------</span>+<span class="params">------</span>+<span class="params">-------------------</span>+<span class="params">---------------------------------------------------------------------------------</span>+</span><br><span class="line"></span><br><span class="line"><span class="comment"># openstack server create --image rhel-server-7.5-x86_64-kvm --flavor 6 --nic port-id=ba446152-bd45-4a38-9947-1d539e538a68 --nic port-id=bf8a7655-ac16-4dce-bb12-54efd2dd0967 --config-drive True test</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-查看虚拟机网卡"><a href="#4-查看虚拟机网卡" class="headerlink" title="4. 查看虚拟机网卡"></a>4. 查看虚拟机网卡</h3><ul>
+<li>速率<br><img data-src="/images/uploads/2018/06/ethtool.png" alt="网络速率"></li>
+<li>型号<br><img data-src="/images/uploads/2018/06/ethernet.png" alt="网卡型号"></li>
+</ul>
+<h3 id="5-查看-VF"><a href="#5-查看-VF" class="headerlink" title="5. 查看 VF"></a>5. 查看 VF</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ip link show ens1f0</span></span><br><span class="line"><span class="attribute">6</span>: ens<span class="number">1</span>f<span class="number">0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="number">1500</span> qdisc mq state UP mode DEFAULT qlen <span class="number">1000</span></span><br><span class="line">    <span class="attribute">link</span>/ether <span class="number">14</span>:<span class="number">02</span>:ec:<span class="number">82</span>:<span class="number">96</span>:c<span class="number">0</span> brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">0</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">1</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">2</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">3</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">4</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">5</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">6</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">7</span> MAC fa:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">42</span>:<span class="number">6</span>b:fd, vlan <span class="number">10</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line"></span><br><span class="line"><span class="comment"># ip link show ens1f1</span></span><br><span class="line"><span class="attribute">7</span>: ens<span class="number">1</span>f<span class="number">1</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="number">1500</span> qdisc mq state UP mode DEFAULT qlen <span class="number">1000</span></span><br><span class="line">    <span class="attribute">link</span>/ether <span class="number">14</span>:<span class="number">02</span>:ec:<span class="number">82</span>:<span class="number">96</span>:c<span class="number">1</span> brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">0</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">1</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">2</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">3</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">4</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">5</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">6</span> MAC <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br><span class="line">    <span class="attribute">vf</span> <span class="number">7</span> MAC fa:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">77</span>:<span class="number">9</span>f:<span class="number">8</span>a, vlan <span class="number">20</span>, spoof checking <span class="literal">on</span>, link-state auto</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://wiki.openstack.org/wiki/SR-IOV-Passthrough-For-Networking">SR-IOV-Passthrough-For-Networking</a><br><a target="_blank" rel="noopener" href="https://docs.openstack.org/ocata/networking-guide/config-sriov.html">OpenStack Networking Guide</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/wanstack/p/8757379.html">OpenStack Mitaka Neutron SR-IOV配置</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>OpenStack SR-IOV研究</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/openstack/openstack-sriov.html" title="OpenStack SR-IOV研究">https://www.sunmite.com/openstack/openstack-sriov.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/openstack/" rel="tag"><i class="fa fa-tag"></i> openstack</a>
+              <a href="/tags/sr-iov/" rel="tag"><i class="fa fa-tag"></i> sr-iov</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/linux/update-ixgbe-on-centos.html" rel="prev" title="CentOS 编译安装 ixgbe-5.3.7">
+      <i class="fa fa-chevron-left"></i> CentOS 编译安装 ixgbe-5.3.7
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/openstack/openstack-connection-aborted.html" rel="next" title="openstack 无法连接 Connection aborted , BadStatusLine">
+      openstack 无法连接 Connection aborted , BadStatusLine <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">一、系统环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-text">二、服务器配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE"><span class="nav-text">三、操作系统配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%BC%96%E8%BE%91-etc-default-grub-%E6%96%87%E4%BB%B6-%E5%8A%A0%E5%85%A5%E4%BB%A5%E4%B8%8B%E5%86%85%E5%AE%B9"><span class="nav-text">1. 编辑 &#x2F;etc&#x2F;default&#x2F;grub 文件,加入以下内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%87%8D%E6%96%B0%E7%94%9F%E6%88%90-grub-%E6%96%87%E4%BB%B6"><span class="nav-text">2. 重新生成 grub 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AE-SR-IOV-%E7%9A%84%E7%BD%91%E5%8D%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-text">3. 配置 SR-IOV 的网卡开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA-VF-%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9"><span class="nav-text">4. 设置开机自动创建 VF(计算节点)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">5. 重启服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E9%AA%8C%E8%AF%81-VF-%E5%B7%B2%E7%BB%8F%E5%88%9B%E5%BB%BA%EF%BC%8C%E5%B9%B6%E4%B8%94%E6%98%AF-up-%E7%8A%B6%E6%80%81"><span class="nav-text">6. 验证 VF 已经创建，并且是 up 状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81OpenStack-%E9%85%8D%E7%BD%AE"><span class="nav-text">四、OpenStack 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-sr-iov-agent-%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9"><span class="nav-text">安装 sr-iov agent(计算节点)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-text">控制节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9-nova-%E8%B0%83%E5%BA%A6%EF%BC%8C%E5%90%AF%E7%94%A8-PciPassthrough-Filter"><span class="nav-text">1. 修改 nova 调度，启用 PciPassthrough Filter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%9C%A8-ML2-%E4%B8%AD%E5%8A%A0%E8%BD%BD-sriovnicswitch-mechanism-driver-%E5%B9%B6%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%BB%9C%E7%BB%91%E5%AE%9A"><span class="nav-text">2. 在 ML2 中加载 sriovnicswitch  mechanism driver,并设置网络绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%A2%9E%E5%8A%A0%E6%94%AF%E6%8C%81%E7%9A%84-PCI-%E5%8E%82%E5%AE%B6%E7%9A%84-VF-%E8%AE%BE%E5%A4%87"><span class="nav-text">3. 增加支持的 PCI 厂家的 VF 设备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E4%BF%AE%E6%94%B9-neutron-server-%E5%90%AF%E5%8A%A8%E6%96%87%E4%BB%B6-%E5%8A%A0%E8%BD%BD-ml2-conf-sriov-ini-%E6%96%87%E4%BB%B6"><span class="nav-text">4. 修改 neutron-server 启动文件,加载 ml2_conf_sriov.ini 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-text">5. 重启服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-text">计算节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE-PCI-%E8%AE%BE%E5%A4%87%E7%99%BD%E5%90%8D%E5%8D%95"><span class="nav-text">1. 配置 PCI 设备白名单</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AE-SR-IOV-neutron-agent"><span class="nav-text">2. 配置 SR-IOV neutron agent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%90%AF%E5%8A%A8-%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-text">3. 启动&#x2F;重启服务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%B5%8B%E8%AF%95"><span class="nav-text">五、测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E7%BD%91%E7%BB%9C"><span class="nav-text">1. 创建网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA-port"><span class="nav-text">2. 创建 port</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">3. 创建虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E5%8D%A1"><span class="nav-text">4. 查看虚拟机网卡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%9F%A5%E7%9C%8B-VF"><span class="nav-text">5. 查看 VF</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">参考文章</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanmx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/openstack/openstack-sriov.html',]
+      });
+      });
+  </script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
+      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
+      placeholder: "(发表评论)",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
