@@ -1,4 +1,420 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ"><meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css"><script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"www.sunmite.com",root:"/",scheme:"Muse",version:"7.8.0",exturl:!1,sidebar:{position:"left",display:"always",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!0,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="系统环境 至少需要三台虚拟机或者物理机，这里使用虚拟机 每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘  1. 部署流程博客使用的markdown解析器不支持流程图使用图片代替 2. 主机规划 安装 docker登录 https:&#x2F;&#x2F;cr.console.aliyun.com&#x2F;#&#x2F;accelerator 获取自己的阿里云 docker 加速地址 1. 安装升级 docker"><meta property="og:type" content="article"><meta property="og:title" content="使用 docker 快速部署 ceph"><meta property="og:url" content="https://www.sunmite.com/docker/use-docker-deploy-ceph.html"><meta property="og:site_name" content="谭明宵博客"><meta property="og:description" content="系统环境 至少需要三台虚拟机或者物理机，这里使用虚拟机 每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘  1. 部署流程博客使用的markdown解析器不支持流程图使用图片代替 2. 主机规划 安装 docker登录 https:&#x2F;&#x2F;cr.console.aliyun.com&#x2F;#&#x2F;accelerator 获取自己的阿里云 docker 加速地址 1. 安装升级 docker"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.sunmite.com/images/uploads/2017/06/89293182.png"><meta property="og:image" content="https://www.sunmite.com/images/uploads/2017/06/419662942.png"><meta property="article:published_time" content="2017-06-18T22:34:00.000Z"><meta property="article:modified_time" content="2021-01-25T02:17:02.346Z"><meta property="article:author" content="tanmx"><meta property="article:tag" content="docker"><meta property="article:tag" content="ceph"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2017/06/89293182.png"><link rel="canonical" href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>使用 docker 快速部署 ceph | 谭明宵博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript><link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml"></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">谭明宵博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">Every day is May day!</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i> 搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"> <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="tanmx"><meta itemprop="description" content="一个默默无闻的工程师的日常"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="谭明宵博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> 使用 docker 快速部署 ceph</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2017-06-19 06:34:00" itemprop="dateCreated datePublished" datetime="2017-06-19T06:34:00+08:00">2017-06-19</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a></span></span><span id="/docker/use-docker-deploy-ceph.html" class="post-meta-item leancloud_visitors" data-flag-title="使用 docker 快速部署 ceph" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">Valine：</span><a title="valine" href="/docker/use-docker-deploy-ceph.html#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/docker/use-docker-deploy-ceph.html" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><ul><li>至少需要三台虚拟机或者物理机，这里使用虚拟机</li><li>每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘</li></ul><h3 id="1-部署流程"><a href="#1-部署流程" class="headerlink" title="1. 部署流程"></a>1. 部署流程</h3><p>博客使用的markdown解析器不支持流程图使用图片代替<br><img data-src="/images/uploads/2017/06/89293182.png" alt="liuchengtu.png"></p><h3 id="2-主机规划"><a href="#2-主机规划" class="headerlink" title="2. 主机规划"></a>2. 主机规划</h3><p><img data-src="/images/uploads/2017/06/419662942.png" alt="biaoge.png"></p><h2 id="安装-docker"><a href="#安装-docker" class="headerlink" title="安装 docker"></a>安装 docker</h2><p>登录 <a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/#/accelerator">https://cr.console.aliyun.com/#/accelerator</a> 获取自己的阿里云 docker 加速地址</p><h3 id="1-安装升级-docker-客户端"><a href="#1-安装升级-docker-客户端" class="headerlink" title="1. 安装升级 docker 客户端"></a>1. 安装升级 docker 客户端</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh -</span></span><br></pre></td></tr></table></figure><h3 id="2-使用-docker-加速器"><a href="#2-使用-docker-加速器" class="headerlink" title="2. 使用 docker 加速器"></a>2. 使用 docker 加速器</h3><p>可以通过修改 daemon 配置文件 /etc/docker/daemon.json 来使用加速器，注意修改使用自己的加速地址</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mkdir -p /etc/docker</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> tee /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span></span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;https://******.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl daemon-reload</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl restart docker</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl <span class="built_in">enable</span> docker</span></span><br></pre></td></tr></table></figure><span id="more"></span><h2 id="启动-MON"><a href="#启动-MON" class="headerlink" title="启动 MON"></a>启动 MON</h2><h3 id="1-下载-ceph-daemon-镜像"><a href="#1-下载-ceph-daemon-镜像" class="headerlink" title="1. 下载 ceph daemon 镜像"></a>1. 下载 ceph daemon 镜像</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker pull ceph/daemon</span></span><br></pre></td></tr></table></figure><h3 id="2-启动第一个-mon"><a href="#2-启动第一个-mon" class="headerlink" title="2. 启动第一个 mon"></a>2. 启动第一个 mon</h3><p>在 node1 上启动第一个 mon,注意修改 MON_IP</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e MON_IP=192.168.3.123 \</span></span><br><span class="line"><span class="bash">        -e CEPH_PUBLIC_NETWORK=192.168.3.0/24 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mon</span></span><br></pre></td></tr></table></figure><p>查看容器</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker ps</span></span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                CREATED              STATUS              PORTS               NAMES</span><br><span class="line">b79a02c40296        ceph/daemon         &quot;/entrypoint.sh mon&quot;   About a minute ago   Up About a minute                       sad_shannon</span><br></pre></td></tr></table></figure><p>查看集群状态</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a02 ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_ERR</span><br><span class="line">            no osds</span><br><span class="line">     monmap e2: 1 mons at &#123;node01=192.168.3.123:6789/0&#125;</span><br><span class="line">            election epoch 4, quorum 0 node01</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e1: 0 osds: 0 up, 0 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v2: 64 pgs, 1 pools, 0 bytes data, 0 objects</span><br><span class="line">            0 kB used, 0 kB / 0 kB avail</span><br><span class="line">                  64 creating</span><br></pre></td></tr></table></figure><h3 id="2-复制配置文件"><a href="#2-复制配置文件" class="headerlink" title="2. 复制配置文件"></a>2. 复制配置文件</h3><p>将 node1 上的配置文件复制到 node02 和 node03,复制的路径包含/etc/ceph和/var/lib/ceph/bootstrap-*下的所有内容。</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ssh root@node2 mkdir -p /var/lib/ceph</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /etc/ceph root@node2:/etc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /var/lib/ceph/bootstrap* root@node2:/var/lib/ceph</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> ssh root@node3 mkdir -p /var/lib/ceph</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /etc/ceph root@node3:/etc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /var/lib/ceph/bootstrap* root@node3:/var/lib/ceph</span></span><br></pre></td></tr></table></figure><h3 id="3-启动第二个和第三个-mon"><a href="#3-启动第二个和第三个-mon" class="headerlink" title="3. 启动第二个和第三个 mon"></a>3. 启动第二个和第三个 mon</h3><p>在 node02 上执行以下命令启动 mon,注意修改 MON_IP</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e MON_IP=192.168.3.124 \</span></span><br><span class="line"><span class="bash">        -e CEPH_PUBLIC_NETWORK=192.168.3.0/24 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mon</span></span><br></pre></td></tr></table></figure><p>在 node03 上执行以下命令启动 mon,注意修改 MON_IP</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e MON_IP=192.168.3.125 \</span></span><br><span class="line"><span class="bash">        -e CEPH_PUBLIC_NETWORK=192.168.3.0/24 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mon</span></span><br></pre></td></tr></table></figure><p>查看在 node01 上集群状态</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a02 ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_ERR</span><br><span class="line">            64 pgs are stuck inactive for more than 300 seconds</span><br><span class="line">            64 pgs stuck inactive</span><br><span class="line">            64 pgs stuck unclean</span><br><span class="line">            no osds</span><br><span class="line">     monmap e4: 3 mons at &#123;node01=192.168.3.123:6789/0,node02=192.168.3.124:6789/0,node03=192.168.3.125:6789/0&#125;</span><br><span class="line">            election epoch 12, quorum 0,1,2 node01,node02,node03</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e1: 0 osds: 0 up, 0 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v2: 64 pgs, 1 pools, 0 bytes data, 0 objects</span><br><span class="line">            0 kB used, 0 kB / 0 kB avail</span><br><span class="line">                  64 creating</span><br></pre></td></tr></table></figure><p>可以看到三个 mon 已经正确启动</p><h2 id="启动-OSD"><a href="#启动-OSD" class="headerlink" title="启动 OSD"></a>启动 OSD</h2><p>每台虚拟机准备了两块磁盘作为 osd,分别加入到集群,注意修改磁盘</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -v /dev/:/dev/ \</span></span><br><span class="line"><span class="bash">        --privileged=<span class="literal">true</span> \</span></span><br><span class="line"><span class="bash">        -e OSD_FORCE_ZAP=1 \</span></span><br><span class="line"><span class="bash">        -e OSD_DEVICE=/dev/sdb \</span></span><br><span class="line"><span class="bash">        ceph/daemon osd_ceph_disk</span></span><br></pre></td></tr></table></figure><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -v /dev/:/dev/ \</span></span><br><span class="line"><span class="bash">        --privileged=<span class="literal">true</span> \</span></span><br><span class="line"><span class="bash">        -e OSD_FORCE_ZAP=1 \</span></span><br><span class="line"><span class="bash">        -e OSD_DEVICE=/dev/sdc \</span></span><br><span class="line"><span class="bash">        ceph/daemon osd_ceph_disk</span></span><br></pre></td></tr></table></figure><p>按照同样方法将 node02 和 node03 的 sdb、sdc 都加入集群</p><p>查看集群状态</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_OK</span><br><span class="line">     monmap e4: 3 mons at &#123;node01=192.168.3.123:6789/0,node02=192.168.3.124:6789/0,node03=192.168.3.125:6789/0&#125;</span><br><span class="line">            election epoch 12, quorum 0,1,2 node01,node02,node03</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e63: 6 osds: 6 up, 6 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v157: 64 pgs, 1 pools, 0 bytes data, 0 objects</span><br><span class="line">            212 MB used, 598 GB / 599 GB avail</span><br><span class="line">                  64 active+clean</span><br></pre></td></tr></table></figure><p>可以看到 mon 和 osd 都已经正确配置，切集群状态为 HEALTH_OK</p><h2 id="创建-MDS"><a href="#创建-MDS" class="headerlink" title="创建 MDS"></a>创建 MDS</h2><p>使用以下命令在 node01 上启动 mds</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e CEPHFS_CREATE=1 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mds</span></span><br></pre></td></tr></table></figure><h2 id="启动-RGW-并且映射-80-端口"><a href="#启动-RGW-并且映射-80-端口" class="headerlink" title="启动 RGW ,并且映射 80 端口"></a>启动 RGW ,并且映射 80 端口</h2><p>使用以下命令在 node01 上启动 rgw，并绑定 80 端口</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        -p 80:80 \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        ceph/daemon rgw</span></span><br></pre></td></tr></table></figure><h2 id="集群的最终状态"><a href="#集群的最终状态" class="headerlink" title="集群的最终状态"></a>集群的最终状态</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a02 ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_OK</span><br><span class="line">     monmap e4: 3 mons at &#123;node01=192.168.3.123:6789/0,node02=192.168.3.124:6789/0,node03=192.168.3.125:6789/0&#125;</span><br><span class="line">            election epoch 12, quorum 0,1,2 node01,node02,node03</span><br><span class="line">      fsmap e5: 1/1/1 up &#123;0=mds-node01=up:active&#125;</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e136: 6 osds: 6 up, 6 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v1460: 136 pgs, 10 pools, 3829 bytes data, 223 objects</span><br><span class="line">            254 MB used, 598 GB / 599 GB avail</span><br><span class="line">                 136 active+clean</span><br></pre></td></tr></table></figure><hr><p>参考文章：<br><a target="_blank" rel="noopener" href="http://xiaoquqi.github.io/blog/2016/06/13/bootstrap-your-ceph-cluster-in-docker/">使用Docker部署Ceph</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=FUSTjTBA8f8&feature=youtu.be">Demo: running Ceph in Docker containers</a></p></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div></div></div><div class="reward-container"><div>请我喝一杯冰阔落</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/wechatpay.png" alt="tanmx 微信支付"><p>微信支付</p></div></div></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>本文作者：</strong> tanmx</li><li class="post-copyright-title"> <strong>本文标题：</strong> 使用 docker 快速部署 ceph</li><li class="post-copyright-link"> <strong>本文链接：</strong> <a href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html" title="使用 docker 快速部署 ceph">https://www.sunmite.com/docker/use-docker-deploy-ceph.html</a></li><li class="post-copyright-license"> <strong>版权声明：</strong> 本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i> docker</a><a href="/tags/ceph/" rel="tag"><i class="fa fa-tag"></i> ceph</a></div><div class="post-nav"><div class="post-nav-item"><a href="/openstack/use-rally-to-openstack-tempest-test.html" rel="prev" title="通过 Rally 进行 OpenStack Tempest 测试"><i class="fa fa-chevron-left"></i> 通过 Rally 进行 OpenStack Tempest 测试</a></div><div class="post-nav-item"> <a href="/openstack/devstack-turn-on-openstack-profiler.html" rel="next" title="devstack dashboard 开启开发者选项 和 OpenStack Profiler">devstack dashboard 开启开发者选项 和 OpenStack Profiler<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="系统环境 至少需要三台虚拟机或者物理机，这里使用虚拟机 每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘  1. 部署流程博客使用的markdown解析器不支持流程图使用图片代替 2. 主机规划 安装 docker登录 https:&#x2F;&#x2F;cr.console.aliyun.com&#x2F;#&#x2F;accelerator 获取自己的阿里云 docker 加速地址 1. 安装升级 docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 docker 快速部署 ceph">
+<meta property="og:url" content="https://www.sunmite.com/docker/use-docker-deploy-ceph.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="系统环境 至少需要三台虚拟机或者物理机，这里使用虚拟机 每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘  1. 部署流程博客使用的markdown解析器不支持流程图使用图片代替 2. 主机规划 安装 docker登录 https:&#x2F;&#x2F;cr.console.aliyun.com&#x2F;#&#x2F;accelerator 获取自己的阿里云 docker 加速地址 1. 安装升级 docker">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2017/06/89293182.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2017/06/419662942.png">
+<meta property="article:published_time" content="2017-06-18T22:34:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.346Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="ceph">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2017/06/89293182.png">
+
+<link rel="canonical" href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用 docker 快速部署 ceph | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 docker 快速部署 ceph
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-19 06:34:00" itemprop="dateCreated datePublished" datetime="2017-06-19T06:34:00+08:00">2017-06-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/docker/use-docker-deploy-ceph.html" class="post-meta-item leancloud_visitors" data-flag-title="使用 docker 快速部署 ceph" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker/use-docker-deploy-ceph.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker/use-docker-deploy-ceph.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><ul>
+<li>至少需要三台虚拟机或者物理机，这里使用虚拟机</li>
+<li>每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘</li>
+</ul>
+<h3 id="1-部署流程"><a href="#1-部署流程" class="headerlink" title="1. 部署流程"></a>1. 部署流程</h3><p>博客使用的markdown解析器不支持流程图使用图片代替<br><img data-src="/images/uploads/2017/06/89293182.png" alt="liuchengtu.png"></p>
+<h3 id="2-主机规划"><a href="#2-主机规划" class="headerlink" title="2. 主机规划"></a>2. 主机规划</h3><p><img data-src="/images/uploads/2017/06/419662942.png" alt="biaoge.png"></p>
+<h2 id="安装-docker"><a href="#安装-docker" class="headerlink" title="安装 docker"></a>安装 docker</h2><p>登录 <a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/#/accelerator">https://cr.console.aliyun.com/#/accelerator</a> 获取自己的阿里云 docker 加速地址</p>
+<h3 id="1-安装升级-docker-客户端"><a href="#1-安装升级-docker-客户端" class="headerlink" title="1. 安装升级 docker 客户端"></a>1. 安装升级 docker 客户端</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh -</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-使用-docker-加速器"><a href="#2-使用-docker-加速器" class="headerlink" title="2. 使用 docker 加速器"></a>2. 使用 docker 加速器</h3><p>可以通过修改 daemon 配置文件 /etc/docker/daemon.json 来使用加速器，注意修改使用自己的加速地址</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mkdir -p /etc/docker</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> tee /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span></span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;https://******.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl daemon-reload</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl restart docker</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl <span class="built_in">enable</span> docker</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id="启动-MON"><a href="#启动-MON" class="headerlink" title="启动 MON"></a>启动 MON</h2><h3 id="1-下载-ceph-daemon-镜像"><a href="#1-下载-ceph-daemon-镜像" class="headerlink" title="1. 下载 ceph daemon 镜像"></a>1. 下载 ceph daemon 镜像</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker pull ceph/daemon</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-启动第一个-mon"><a href="#2-启动第一个-mon" class="headerlink" title="2. 启动第一个 mon"></a>2. 启动第一个 mon</h3><p>在 node1 上启动第一个 mon,注意修改 MON_IP</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e MON_IP=192.168.3.123 \</span></span><br><span class="line"><span class="bash">        -e CEPH_PUBLIC_NETWORK=192.168.3.0/24 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mon</span></span><br></pre></td></tr></table></figure>
+
+<p>查看容器</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker ps</span></span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                CREATED              STATUS              PORTS               NAMES</span><br><span class="line">b79a02c40296        ceph/daemon         &quot;/entrypoint.sh mon&quot;   About a minute ago   Up About a minute                       sad_shannon</span><br></pre></td></tr></table></figure>
+
+<p>查看集群状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a02 ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_ERR</span><br><span class="line">            no osds</span><br><span class="line">     monmap e2: 1 mons at &#123;node01=192.168.3.123:6789/0&#125;</span><br><span class="line">            election epoch 4, quorum 0 node01</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e1: 0 osds: 0 up, 0 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v2: 64 pgs, 1 pools, 0 bytes data, 0 objects</span><br><span class="line">            0 kB used, 0 kB / 0 kB avail</span><br><span class="line">                  64 creating</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-复制配置文件"><a href="#2-复制配置文件" class="headerlink" title="2. 复制配置文件"></a>2. 复制配置文件</h3><p>将 node1 上的配置文件复制到 node02 和 node03,复制的路径包含/etc/ceph和/var/lib/ceph/bootstrap-*下的所有内容。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ssh root@node2 mkdir -p /var/lib/ceph</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /etc/ceph root@node2:/etc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /var/lib/ceph/bootstrap* root@node2:/var/lib/ceph</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> ssh root@node3 mkdir -p /var/lib/ceph</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /etc/ceph root@node3:/etc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> scp -r /var/lib/ceph/bootstrap* root@node3:/var/lib/ceph</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-启动第二个和第三个-mon"><a href="#3-启动第二个和第三个-mon" class="headerlink" title="3. 启动第二个和第三个 mon"></a>3. 启动第二个和第三个 mon</h3><p>在 node02 上执行以下命令启动 mon,注意修改 MON_IP</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e MON_IP=192.168.3.124 \</span></span><br><span class="line"><span class="bash">        -e CEPH_PUBLIC_NETWORK=192.168.3.0/24 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mon</span></span><br></pre></td></tr></table></figure>
+
+<p>在 node03 上执行以下命令启动 mon,注意修改 MON_IP</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e MON_IP=192.168.3.125 \</span></span><br><span class="line"><span class="bash">        -e CEPH_PUBLIC_NETWORK=192.168.3.0/24 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mon</span></span><br></pre></td></tr></table></figure>
+
+<p>查看在 node01 上集群状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a02 ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_ERR</span><br><span class="line">            64 pgs are stuck inactive for more than 300 seconds</span><br><span class="line">            64 pgs stuck inactive</span><br><span class="line">            64 pgs stuck unclean</span><br><span class="line">            no osds</span><br><span class="line">     monmap e4: 3 mons at &#123;node01=192.168.3.123:6789/0,node02=192.168.3.124:6789/0,node03=192.168.3.125:6789/0&#125;</span><br><span class="line">            election epoch 12, quorum 0,1,2 node01,node02,node03</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e1: 0 osds: 0 up, 0 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v2: 64 pgs, 1 pools, 0 bytes data, 0 objects</span><br><span class="line">            0 kB used, 0 kB / 0 kB avail</span><br><span class="line">                  64 creating</span><br></pre></td></tr></table></figure>
+<p>可以看到三个 mon 已经正确启动</p>
+<h2 id="启动-OSD"><a href="#启动-OSD" class="headerlink" title="启动 OSD"></a>启动 OSD</h2><p>每台虚拟机准备了两块磁盘作为 osd,分别加入到集群,注意修改磁盘</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -v /dev/:/dev/ \</span></span><br><span class="line"><span class="bash">        --privileged=<span class="literal">true</span> \</span></span><br><span class="line"><span class="bash">        -e OSD_FORCE_ZAP=1 \</span></span><br><span class="line"><span class="bash">        -e OSD_DEVICE=/dev/sdb \</span></span><br><span class="line"><span class="bash">        ceph/daemon osd_ceph_disk</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -v /dev/:/dev/ \</span></span><br><span class="line"><span class="bash">        --privileged=<span class="literal">true</span> \</span></span><br><span class="line"><span class="bash">        -e OSD_FORCE_ZAP=1 \</span></span><br><span class="line"><span class="bash">        -e OSD_DEVICE=/dev/sdc \</span></span><br><span class="line"><span class="bash">        ceph/daemon osd_ceph_disk</span></span><br></pre></td></tr></table></figure>
+
+<p>按照同样方法将 node02 和 node03 的 sdb、sdc 都加入集群</p>
+<p>查看集群状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_OK</span><br><span class="line">     monmap e4: 3 mons at &#123;node01=192.168.3.123:6789/0,node02=192.168.3.124:6789/0,node03=192.168.3.125:6789/0&#125;</span><br><span class="line">            election epoch 12, quorum 0,1,2 node01,node02,node03</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e63: 6 osds: 6 up, 6 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v157: 64 pgs, 1 pools, 0 bytes data, 0 objects</span><br><span class="line">            212 MB used, 598 GB / 599 GB avail</span><br><span class="line">                  64 active+clean</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 mon 和 osd 都已经正确配置，切集群状态为 HEALTH_OK</p>
+<h2 id="创建-MDS"><a href="#创建-MDS" class="headerlink" title="创建 MDS"></a>创建 MDS</h2><p>使用以下命令在 node01 上启动 mds</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        --net=host \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        -e CEPHFS_CREATE=1 \</span></span><br><span class="line"><span class="bash">        ceph/daemon mds</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="启动-RGW-并且映射-80-端口"><a href="#启动-RGW-并且映射-80-端口" class="headerlink" title="启动 RGW ,并且映射 80 端口"></a>启动 RGW ,并且映射 80 端口</h2><p>使用以下命令在 node01 上启动 rgw，并绑定 80 端口</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run -d \</span></span><br><span class="line"><span class="bash">        -p 80:80 \</span></span><br><span class="line"><span class="bash">        -v /etc/ceph:/etc/ceph \</span></span><br><span class="line"><span class="bash">        -v /var/lib/ceph/:/var/lib/ceph/ \</span></span><br><span class="line"><span class="bash">        ceph/daemon rgw</span></span><br></pre></td></tr></table></figure>
+<h2 id="集群的最终状态"><a href="#集群的最终状态" class="headerlink" title="集群的最终状态"></a>集群的最终状态</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> b79a02 ceph -s</span></span><br><span class="line">    cluster 96ae62d2-2249-4173-9dee-3a7215cba51c</span><br><span class="line">     health HEALTH_OK</span><br><span class="line">     monmap e4: 3 mons at &#123;node01=192.168.3.123:6789/0,node02=192.168.3.124:6789/0,node03=192.168.3.125:6789/0&#125;</span><br><span class="line">            election epoch 12, quorum 0,1,2 node01,node02,node03</span><br><span class="line">      fsmap e5: 1/1/1 up &#123;0=mds-node01=up:active&#125;</span><br><span class="line">        mgr no daemons active </span><br><span class="line">     osdmap e136: 6 osds: 6 up, 6 in</span><br><span class="line">            flags sortbitwise,require_jewel_osds,require_kraken_osds</span><br><span class="line">      pgmap v1460: 136 pgs, 10 pools, 3829 bytes data, 223 objects</span><br><span class="line">            254 MB used, 598 GB / 599 GB avail</span><br><span class="line">                 136 active+clean</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="http://xiaoquqi.github.io/blog/2016/06/13/bootstrap-your-ceph-cluster-in-docker/">使用Docker部署Ceph</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=FUSTjTBA8f8&feature=youtu.be">Demo: running Ceph in Docker containers </a></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>使用 docker 快速部署 ceph</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html" title="使用 docker 快速部署 ceph">https://www.sunmite.com/docker/use-docker-deploy-ceph.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i> docker</a>
+              <a href="/tags/ceph/" rel="tag"><i class="fa fa-tag"></i> ceph</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/openstack/use-rally-to-openstack-tempest-test.html" rel="prev" title="通过 Rally 进行 OpenStack Tempest 测试">
+      <i class="fa fa-chevron-left"></i> 通过 Rally 进行 OpenStack Tempest 测试
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/openstack/devstack-turn-on-openstack-profiler.html" rel="next" title="devstack dashboard 开启开发者选项 和 OpenStack Profiler">
+      devstack dashboard 开启开发者选项 和 OpenStack Profiler <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
   window.addEventListener('tabs:register', () => {
     let { activeClass } = CONFIG.comments;
     if (CONFIG.comments.storage) {
@@ -18,41 +434,109 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">系统环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B"><span class="nav-text">1. 部署流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%BB%E6%9C%BA%E8%A7%84%E5%88%92"><span class="nav-text">2. 主机规划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-docker"><span class="nav-text">安装 docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85%E5%8D%87%E7%BA%A7-docker-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">1. 安装升级 docker 客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8-docker-%E5%8A%A0%E9%80%9F%E5%99%A8"><span class="nav-text">2. 使用 docker 加速器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-MON"><span class="nav-text">启动 MON</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD-ceph-daemon-%E9%95%9C%E5%83%8F"><span class="nav-text">1. 下载 ceph daemon 镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%AF%E5%8A%A8%E7%AC%AC%E4%B8%80%E4%B8%AA-mon"><span class="nav-text">2. 启动第一个 mon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%A4%8D%E5%88%B6%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2. 复制配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%90%AF%E5%8A%A8%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%92%8C%E7%AC%AC%E4%B8%89%E4%B8%AA-mon"><span class="nav-text">3. 启动第二个和第三个 mon</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-OSD"><span class="nav-text">启动 OSD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-MDS"><span class="nav-text">创建 MDS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-RGW-%E5%B9%B6%E4%B8%94%E6%98%A0%E5%B0%84-80-%E7%AB%AF%E5%8F%A3"><span class="nav-text">启动 RGW ,并且映射 80 端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%9A%84%E6%9C%80%E7%BB%88%E7%8A%B6%E6%80%81"><span class="nav-text">集群的最终状态</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="tanmx" src="/images/avatar.gif"><p class="site-author-name" itemprop="name">tanmx</p><div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">62</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">76</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i> Weibo</a></span><span class="links-of-author-item"><a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i> Zhihu</a></span><span class="links-of-author-item"><a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i> Twitter</a></span></div><div class="cc-license motion-element" itemprop="license"> <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2014 – <span itemprop="copyrightYear">2021</span><span class="with-love"><i class="fa fa-heart"></i></span> <span class="author" itemprop="copyrightHolder">tanmx</span></div><div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动</div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/local-search.js"></script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>
-      window.addEventListener('load', () => {
-      quicklink({
-        timeout : 3000,
-        priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/docker/use-docker-deploy-ceph.html',]
-      });
-      });
-  </script><script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
-      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
-      placeholder: "(发表评论)",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : true,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : true,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script></body></html>="with-love">
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">系统环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B"><span class="nav-text">1. 部署流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%BB%E6%9C%BA%E8%A7%84%E5%88%92"><span class="nav-text">2. 主机规划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-docker"><span class="nav-text">安装 docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85%E5%8D%87%E7%BA%A7-docker-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">1. 安装升级 docker 客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8-docker-%E5%8A%A0%E9%80%9F%E5%99%A8"><span class="nav-text">2. 使用 docker 加速器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-MON"><span class="nav-text">启动 MON</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD-ceph-daemon-%E9%95%9C%E5%83%8F"><span class="nav-text">1. 下载 ceph daemon 镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%AF%E5%8A%A8%E7%AC%AC%E4%B8%80%E4%B8%AA-mon"><span class="nav-text">2. 启动第一个 mon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%A4%8D%E5%88%B6%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2. 复制配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%90%AF%E5%8A%A8%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%92%8C%E7%AC%AC%E4%B8%89%E4%B8%AA-mon"><span class="nav-text">3. 启动第二个和第三个 mon</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-OSD"><span class="nav-text">启动 OSD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-MDS"><span class="nav-text">创建 MDS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-RGW-%E5%B9%B6%E4%B8%94%E6%98%A0%E5%B0%84-80-%E7%AB%AF%E5%8F%A3"><span class="nav-text">启动 RGW ,并且映射 80 端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%9A%84%E6%9C%80%E7%BB%88%E7%8A%B6%E6%80%81"><span class="nav-text">集群的最终状态</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">tanmx</span>

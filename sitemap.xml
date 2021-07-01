@@ -23,14 +23,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/MacOS/hackintosh.html</loc>
+    <loc>https://www.sunmite.com/zm/iloveyou.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/zm/iloveyou.html</loc>
+    <loc>https://www.sunmite.com/MacOS/hackintosh.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -93,14 +93,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/linux/deploy-hexo-to-vps.html</loc>
+    <loc>https://www.sunmite.com/docker/container-system.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/container-system.html</loc>
+    <loc>https://www.sunmite.com/linux/deploy-hexo-to-vps.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -508,13 +508,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/zun/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunmite.com/tags/Authenticate/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
@@ -523,6 +516,13 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/token/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/zun/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -655,14 +655,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/kube-ui/</loc>
+    <loc>https://www.sunmite.com/tags/k8s/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/k8s/</loc>
+    <loc>https://www.sunmite.com/tags/kube-ui/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

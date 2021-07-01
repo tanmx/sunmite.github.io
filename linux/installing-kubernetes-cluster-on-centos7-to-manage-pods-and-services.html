@@ -1,4 +1,460 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ"><meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css"><script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"www.sunmite.com",root:"/",scheme:"Muse",version:"7.8.0",exturl:!1,sidebar:{position:"left",display:"always",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!0,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="安装前准备操作系统详情需要三台主机，都最小化安装 centos7.1,并update到最新，详情见如下表格    角色 主机名 IP    Master master 192.168.0.79   Minion1 minion-1 192.168.0.80   Minion2 minion-2 192.168.0.81   在每台主机上关闭firewalld改用iptables输入以下命令，关闭f"><meta property="og:type" content="article"><meta property="og:title" content="在centos7上安装和配置Kubernetes集群管理pods和services"><meta property="og:url" content="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html"><meta property="og:site_name" content="谭明宵博客"><meta property="og:description" content="安装前准备操作系统详情需要三台主机，都最小化安装 centos7.1,并update到最新，详情见如下表格    角色 主机名 IP    Master master 192.168.0.79   Minion1 minion-1 192.168.0.80   Minion2 minion-2 192.168.0.81   在每台主机上关闭firewalld改用iptables输入以下命令，关闭f"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2015-10-26T19:22:00.000Z"><meta property="article:modified_time" content="2021-01-25T02:17:02.355Z"><meta property="article:author" content="tanmx"><meta property="article:tag" content="kubernetes"><meta property="article:tag" content="linux"><meta property="article:tag" content="pod"><meta property="article:tag" content="service"><meta name="twitter:card" content="summary"><link rel="canonical" href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>在centos7上安装和配置Kubernetes集群管理pods和services | 谭明宵博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript><link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml"></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">谭明宵博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">Every day is May day!</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i> 搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"> <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="tanmx"><meta itemprop="description" content="一个默默无闻的工程师的日常"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="谭明宵博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> 在centos7上安装和配置Kubernetes集群管理pods和services</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2015-10-27 03:22:00" itemprop="dateCreated datePublished" datetime="2015-10-27T03:22:00+08:00">2015-10-27</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span></span><span id="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" class="post-meta-item leancloud_visitors" data-flag-title="在centos7上安装和配置Kubernetes集群管理pods和services" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">Valine：</span><a title="valine" href="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><h1 id="安装前准备"><a href="#安装前准备" class="headerlink" title="安装前准备"></a>安装前准备</h1><h2 id="操作系统详情"><a href="#操作系统详情" class="headerlink" title="操作系统详情"></a>操作系统详情</h2><p>需要三台主机，都最小化安装 centos7.1,并update到最新，详情见如下表格</p><table><thead><tr><th>角色</th><th>主机名</th><th>IP</th></tr></thead><tbody><tr><td>Master</td><td>master</td><td>192.168.0.79</td></tr><tr><td>Minion1</td><td>minion-1</td><td>192.168.0.80</td></tr><tr><td>Minion2</td><td>minion-2</td><td>192.168.0.81</td></tr></tbody></table><h2 id="在每台主机上关闭firewalld改用iptables"><a href="#在每台主机上关闭firewalld改用iptables" class="headerlink" title="在每台主机上关闭firewalld改用iptables"></a>在每台主机上关闭firewalld改用iptables</h2><p>输入以下命令，关闭firewalld</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># systemctl stop firewalld.service    #停止firewall</span></span><br><span class="line"><span class="comment"># systemctl disable firewalld.service #禁止firewall开机启动</span></span><br></pre></td></tr></table></figure><p>然后安装iptables并启用</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># yum install -y iptables-services     #安装</span></span><br><span class="line"><span class="comment"># systemctl start iptables.service  #最后重启防火墙使配置生效</span></span><br><span class="line"><span class="comment"># systemctl enable iptables.service #设置防火墙开机启动</span></span><br></pre></td></tr></table></figure><span id="more"></span><h2 id="安装ntp服务"><a href="#安装ntp服务" class="headerlink" title="安装ntp服务"></a>安装ntp服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># yum install -y ntp</span></span><br><span class="line"><span class="comment"># systemctl start ntpd</span></span><br><span class="line"><span class="comment"># systemctl enable ntpd</span></span><br></pre></td></tr></table></figure><h1 id="安装配置"><a href="#安装配置" class="headerlink" title="安装配置"></a>安装配置</h1><p><em>注：kubernetes，etcd等已经进入centos epel源，可以直接yum安装（需要安装epel-release）</em></p><h2 id="安装-Kubernetes-Master"><a href="#安装-Kubernetes-Master" class="headerlink" title="安装 Kubernetes Master"></a>安装 Kubernetes Master</h2><h3 id="1-使用以下命令安装kubernetes-和-etcd"><a href="#1-使用以下命令安装kubernetes-和-etcd" class="headerlink" title="1. 使用以下命令安装kubernetes 和 etcd"></a>1. 使用以下命令安装kubernetes 和 etcd</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y kubernetes etcd</span></span><br></pre></td></tr></table></figure><h3 id="2-编辑-etc-etcd-etcd-conf-使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值"><a href="#2-编辑-etc-etcd-etcd-conf-使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值" class="headerlink" title="2. 编辑/etc/etcd/etcd.conf 使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值"></a>2. 编辑/etc/etcd/etcd.conf 使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值</h3><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/etcd/etcd.conf</span></span><br><span class="line"><span class="comment"># [member]</span></span><br><span class="line"><span class="attr">ETCD_NAME</span>=default</span><br><span class="line"><span class="attr">ETCD_DATA_DIR</span>=<span class="string">&quot;/var/lib/etcd/default.etcd&quot;</span></span><br><span class="line"><span class="attr">ETCD_LISTEN_CLIENT_URLS</span>=<span class="string">&quot;&lt;span style=&quot;</span>color: <span class="comment">#ff0000;&quot;&gt;http://0.0.0.0:2379&lt;/span&gt;&quot;</span></span><br><span class="line"><span class="comment">#[cluster]</span></span><br><span class="line"><span class="attr">ETCD_ADVERTISE_CLIENT_URLS</span>=<span class="string">&quot;http://localhost:2379&quot;</span></span><br></pre></td></tr></table></figure><h3 id="3-编辑Kubernetes-API-server的配置文件"><a href="#3-编辑Kubernetes-API-server的配置文件" class="headerlink" title="3. 编辑Kubernetes API server的配置文件"></a>3. 编辑Kubernetes API server的配置文件</h3><p>确保下列行没有被注释，并为下列的值</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/apiserver</span></span><br><span class="line"><span class="comment">###</span></span><br><span class="line"><span class="comment"># kubernetes system config</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The following values are used to configure the kube-apiserver</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The address on the local server to listen to.</span></span><br><span class="line"><span class="attr">KUBE_API_ADDRESS</span>=<span class="string">&quot;--address=0.0.0.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The port on the local server to listen on.</span></span><br><span class="line"><span class="attr">KUBE_API_PORT</span>=<span class="string">&quot;--port=8080&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Port minions listen on</span></span><br><span class="line"><span class="attr">KUBELET_PORT</span>=<span class="string">&quot;--kubelet_port=10250&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Comma separated list of nodes in the etcd cluster</span></span><br><span class="line"><span class="attr">KUBE_ETCD_SERVERS</span>=<span class="string">&quot;--etcd_servers=http://127.0.0.1:2379&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Address range to use for services</span></span><br><span class="line"><span class="attr">KUBE_SERVICE_ADDRESSES</span>=<span class="string">&quot;--service-cluster-ip-range=10.254.0.0/16&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># default admission control policies</span></span><br><span class="line"><span class="attr">KUBE_ADMISSION_CONTROL</span>=<span class="string">&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line"><span class="attr">KUBE_API_ARGS</span>=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure><h3 id="4-启动etcd-kube-apiserver-kube-controller-manager-和-kube-scheduler服务，并设置开机自启"><a href="#4-启动etcd-kube-apiserver-kube-controller-manager-和-kube-scheduler服务，并设置开机自启" class="headerlink" title="4. 启动etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler服务，并设置开机自启"></a>4. 启动etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler服务，并设置开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># for SERVICES in etcd kube-apiserver kube-controller-manager kube-scheduler; do </span></span><br><span class="line">    systemctl restart <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl <span class="built_in">enable</span> <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl status <span class="variable">$SERVICES</span> </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure><h3 id="5-在etcd中定义flannel-network的配置，这些配置会被flannel-service下发到minions"><a href="#5-在etcd中定义flannel-network的配置，这些配置会被flannel-service下发到minions" class="headerlink" title="5. 在etcd中定义flannel network的配置，这些配置会被flannel service下发到minions:"></a>5. 在etcd中定义flannel network的配置，这些配置会被flannel service下发到minions:</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># etcdctl mk <span class="regexp">/coreos.com/</span>network<span class="regexp">/config &#x27;&#123;&quot;Network&quot;:&quot;172.17.0.0/</span><span class="number">16</span><span class="string">&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure><h3 id="6-添加iptables规则，允许相应的端口"><a href="#6-添加iptables规则，允许相应的端口" class="headerlink" title="6. 添加iptables规则，允许相应的端口"></a>6. 添加iptables规则，允许相应的端口</h3><figure class="highlight css"><table><tr><td class="code"><pre><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">2379</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">10250</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">8080</span> -j ACCEPT</span><br><span class="line">iptables-save</span><br></pre></td></tr></table></figure><h3 id="7-查看节点信息（我们还没有配置节点信息，所以这里应该为空）"><a href="#7-查看节点信息（我们还没有配置节点信息，所以这里应该为空）" class="headerlink" title="7. 查看节点信息（我们还没有配置节点信息，所以这里应该为空）"></a>7. 查看节点信息（我们还没有配置节点信息，所以这里应该为空）</h3><figure class="highlight fortran"><table><tr><td class="code"><pre><span class="line"># kubectl get nodes</span><br><span class="line"><span class="keyword">NAME</span>             LABELS              <span class="keyword">STATUS</span></span><br></pre></td></tr></table></figure><h2 id="安装Kubernetes-Minions-Nodes"><a href="#安装Kubernetes-Minions-Nodes" class="headerlink" title="安装Kubernetes Minions (Nodes)"></a>安装<strong>Kubernetes Minions (Nodes)</strong></h2><p><em>注：下面这些步骤应该在minion1和minions2上执行（也可以添加更多的minions）</em></p><h3 id="1-使用yum安装kubernetes-和-flannel"><a href="#1-使用yum安装kubernetes-和-flannel" class="headerlink" title="1. 使用yum安装kubernetes 和 flannel"></a>1. 使用yum安装kubernetes 和 flannel</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y flannel kubernetes</span></span><br></pre></td></tr></table></figure><h3 id="2-为flannel-service配置etcd服务器"><a href="#2-为flannel-service配置etcd服务器" class="headerlink" title="2. 为flannel service配置etcd服务器"></a>2. 为flannel service配置etcd服务器</h3><p>编辑/etc/sysconfig/flanneld文件中的下列行以连接到master</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/sysconfig/flanneld</span></span><br><span class="line"></span><br><span class="line"><span class="attr">FLANNEL_ETCD</span>=<span class="string">&quot;http://192.168.0.79:2379&quot;</span>        <span class="comment">#改为etcd服务器的ip</span></span><br></pre></td></tr></table></figure><h3 id="3-编辑-kubernetes-配置文件"><a href="#3-编辑-kubernetes-配置文件" class="headerlink" title="3. 编辑 kubernetes 配置文件"></a>3. 编辑 kubernetes 配置文件</h3><p>编辑/etc/kubernetes/config中kubernetes的默认配置，确保KUBE_MASTER的值是连接到Kubernetes master API server：</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/config</span></span><br><span class="line"><span class="attr">KUBE_MASTER</span>=<span class="string">&quot;--master=http://192.168.0.79:8080&quot;</span></span><br></pre></td></tr></table></figure><h3 id="4-编辑-etc-kubernetes-kubelet-如下行："><a href="#4-编辑-etc-kubernetes-kubelet-如下行：" class="headerlink" title="4. 编辑/etc/kubernetes/kubelet 如下行："></a>4. 编辑/etc/kubernetes/kubelet 如下行：</h3><p>minion1:</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/kubelet</span></span><br><span class="line"></span><br><span class="line"><span class="attr">KUBELET_ADDRESS</span>=<span class="string">&quot;--address=0.0.0.0&quot;</span></span><br><span class="line"><span class="attr">KUBELET_PORT</span>=<span class="string">&quot;--port=10250&quot;</span></span><br><span class="line"><span class="attr">KUBELET_HOSTNAME</span>=<span class="string">&quot;--hostname_override=192.168.0.80&quot;</span></span><br><span class="line"><span class="attr">KUBELET_API_SERVER</span>=<span class="string">&quot;--api_servers=http://192.168.0.79:8080&quot;</span></span><br><span class="line"><span class="attr">KUBELET_ARGS</span>=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure><p>minion2:</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/kubelet</span></span><br><span class="line"></span><br><span class="line"><span class="attr">KUBELET_ADDRESS</span>=<span class="string">&quot;--address=0.0.0.0&quot;</span></span><br><span class="line"><span class="attr">KUBELET_PORT</span>=<span class="string">&quot;--port=10250&quot;</span></span><br><span class="line"><span class="attr">KUBELET_HOSTNAME</span>=<span class="string">&quot;--hostname_override=192.168.0.81&quot;</span></span><br><span class="line"><span class="attr">KUBELET_API_SERVER</span>=<span class="string">&quot;--api_servers=http://192.168.0.79:8080&quot;</span></span><br><span class="line"><span class="attr">KUBELET_ARGS</span>=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure><h3 id="5-启动kube-proxy-kubelet-docker-和-flanneld-services服务，并设置开机自启"><a href="#5-启动kube-proxy-kubelet-docker-和-flanneld-services服务，并设置开机自启" class="headerlink" title="5. 启动kube-proxy, kubelet, docker 和 flanneld services服务，并设置开机自启"></a>5. 启动kube-proxy, kubelet, docker 和 flanneld services服务，并设置开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># for SERVICES in kube-proxy kubelet docker flanneld; do </span></span><br><span class="line">    systemctl restart <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl <span class="built_in">enable</span> <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl status <span class="variable">$SERVICES</span> </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure><h3 id="6-在每个minion节点，你应当注意到你有两块新的网卡docker0-和-flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样："><a href="#6-在每个minion节点，你应当注意到你有两块新的网卡docker0-和-flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样：" class="headerlink" title="6. 在每个minion节点，你应当注意到你有两块新的网卡docker0 和 flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样："></a>6. 在每个minion节点，你应当注意到你有两块新的网卡docker0 和 flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样：</h3><p>minion1:</p><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ip a | grep flannel | grep inet</span></span><br><span class="line">    <span class="attribute">inet</span> <span class="number">172.17.29.0</span>/<span class="number">16</span> scope global flannel<span class="number">0</span></span><br></pre></td></tr></table></figure><p>minion2:</p><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ip a | grep flannel | grep inet</span></span><br><span class="line">    <span class="attribute">inet</span> <span class="number">172.17.37.0</span>/<span class="number">16</span> scope global flannel<span class="number">0</span></span><br></pre></td></tr></table></figure><h3 id="7-添加iptables规则："><a href="#7-添加iptables规则：" class="headerlink" title="7. 添加iptables规则："></a>7. 添加iptables规则：</h3><figure class="highlight css"><table><tr><td class="code"><pre><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">2379</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">10250</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">8080</span> -j ACCEPT</span><br></pre></td></tr></table></figure><h3 id="8-现在登陆kubernetes-master节点验证minions的节点状态："><a href="#8-现在登陆kubernetes-master节点验证minions的节点状态：" class="headerlink" title="8. 现在登陆kubernetes master节点验证minions的节点状态："></a>8. 现在登陆kubernetes master节点验证minions的节点状态：</h3><figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"># kubectl get nodes</span><br><span class="line">NAME           LABELS                                STATUS</span><br><span class="line"><span class="number">192.168.0.80</span>   kubernetes.io/hostname=<span class="number">192</span>.<span class="number">168</span>.<span class="number">0</span>.<span class="number">80</span>   Ready</span><br><span class="line"><span class="number">192.168.0.81</span>   kubernetes.io/hostname=<span class="number">192</span>.<span class="number">168</span>.<span class="number">0</span>.<span class="number">81</span>   Ready</span><br></pre></td></tr></table></figure><p>至此，kubernetes集群已经配置并运行了，我们可以继续下面的步骤。</p><h2 id="创建-Pods-Containers"><a href="#创建-Pods-Containers" class="headerlink" title="创建 Pods (Containers)"></a>创建 Pods (Containers)</h2><p>为了创建一个pod，我们需要在kubernetes master上面定义一个yaml 或者 json配置文件。然后使用kubectl命令创建pod</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># mkdir -p k8s/pods</span></span><br><span class="line"><span class="meta"># cd k8s/pods/</span></span><br><span class="line"><span class="meta"># vim nginx.yaml</span></span><br></pre></td></tr></table></figure><p>在nginx.yaml里面增加如下内容：</p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure><p>创建pod:</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f nginx.yaml</span></span><br></pre></td></tr></table></figure><p>此时有如下报错：</p><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">Error <span class="keyword">from</span> <span class="keyword">server</span>: error <span class="keyword">when</span> creating &quot;nginx.yaml&quot;: Pod &quot;nginx&quot; <span class="keyword">is</span> forbidden: <span class="keyword">no</span> API token <span class="built_in">found</span> <span class="keyword">for</span> service account <span class="keyword">default</span>/<span class="keyword">default</span>, retry <span class="keyword">after</span> the token <span class="keyword">is</span> automatically created <span class="keyword">and</span> added <span class="keyword">to</span> the service account </span><br></pre></td></tr></table></figure><p>解决办法是编辑/etc/kubernetes/apiserver 去除 KUBE_ADMISSION_CONTROL 中的 SecurityContextDeny,ServiceAccount ，并重启kube-apiserver.service服务：</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/apiserver</span></span><br><span class="line"><span class="attr">KUBE_ADMISSION_CONTROL</span>=<span class="string">&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># systemctl restart kube-apiserver.service</span></span><br></pre></td></tr></table></figure><p>之后重新创建pod:</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f nginx.yaml</span></span><br><span class="line">pods/nginx</span><br></pre></td></tr></table></figure><p>查看pod:</p><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get pod nginx</span></span><br><span class="line"><span class="attribute">NAME</span>      READY     STATUS                                            RESTARTS   AGE</span><br><span class="line"><span class="attribute">nginx</span>     <span class="number">0</span>/<span class="number">1</span>       Image: nginx is not ready <span class="literal">on</span> the node   <span class="number">0</span>          <span class="number">34</span>s</span><br></pre></td></tr></table></figure><p>这里STATUS一直是这个，创建不成功，下面排错。通过查看pod的描述发现如下错误：</p><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl describe pod nginx </span></span><br><span class="line"><span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">1</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;  implicitly required container POD       pulled          Successfully pulled Pod container image <span class="string">&quot;gcr.io/google_containers/pause:0.8.0&quot;</span></span><br><span class="line">  <span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">1</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;  implicitly required container POD       failed          Failed to create docker container with error: no such image</span><br><span class="line">  <span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">1</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;                                          failedSync      Error syncing pod, skipping: no such image</span><br><span class="line">  <span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">27</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">29</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">2</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;  implicitly required container POD       failed          Failed to pull image <span class="string">&quot;gcr.io/google_containers/pause:0.8.0&quot;</span>: image pull failed for gcr.io/google_containers/pause:<span class="number">0</span>.<span class="number">8</span>.<span class="number">0</span>, this may be because there are no credentials <span class="literal">on</span> this request.  details: (API error (<span class="number">500</span>): invalid registry endpoint <span class="string">&quot;http://gcr.io/v0/&quot;</span>. HTTPS attempt: unable to ping registry endpoint https://gcr.io/v<span class="number">0</span>/</span><br><span class="line"><span class="attribute">v2</span> ping attempt failed with error: Get https://gcr.io/v<span class="number">2</span>/: dial tcp <span class="number">173.194.72.82:443</span>: i/o timeout</span><br></pre></td></tr></table></figure><p>手动ping了一下gcr.io发现无法ping通（可能是被墙了）,从网上找到 pause:0.8.0 的镜像，然后再每个minion上导入镜像:</p><figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"># docker <span class="built_in">load</span> <span class="comment">--input pause-0.8.0.tar</span></span><br></pre></td></tr></table></figure><p>附下载：<a href="/attachment/uploads/2015/10/pause-0.8.0.tar">pause-0.8.0.tar</a><br>在执行以下命令即可成功创建pod</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f nginx.yaml</span></span><br><span class="line">pods/nginx</span><br></pre></td></tr></table></figure><p>查看pod</p><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get pod nginx</span></span><br><span class="line"><span class="attribute">NAME</span>      READY     STATUS                                            RESTARTS   AGE</span><br><span class="line"><span class="attribute">nginx</span>      <span class="number">1</span>/<span class="number">1</span>             Running                                            <span class="number">0</span>               <span class="number">2</span>min</span><br></pre></td></tr></table></figure></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div></div></div><div class="reward-container"><div>请我喝一杯冰阔落</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/wechatpay.png" alt="tanmx 微信支付"><p>微信支付</p></div></div></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>本文作者：</strong> tanmx</li><li class="post-copyright-title"> <strong>本文标题：</strong> 在centos7上安装和配置Kubernetes集群管理pods和services</li><li class="post-copyright-link"> <strong>本文链接：</strong> <a href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" title="在centos7上安装和配置Kubernetes集群管理pods和services">https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html</a></li><li class="post-copyright-license"> <strong>版权声明：</strong> 本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a><a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a><a href="/tags/pod/" rel="tag"><i class="fa fa-tag"></i> pod</a><a href="/tags/service/" rel="tag"><i class="fa fa-tag"></i> service</a></div><div class="post-nav"><div class="post-nav-item"><a href="/docker/k8s-errors.html" rel="prev" title="kubernetes 安装遇到的一些问题"><i class="fa fa-chevron-left"></i> kubernetes 安装遇到的一些问题</a></div><div class="post-nav-item"> <a href="/linux/ofbiz-use-mysql.html" rel="next" title="ofbiz 使用mysql作为存储数据库">ofbiz 使用mysql作为存储数据库<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="安装前准备操作系统详情需要三台主机，都最小化安装 centos7.1,并update到最新，详情见如下表格    角色 主机名 IP    Master master 192.168.0.79   Minion1 minion-1 192.168.0.80   Minion2 minion-2 192.168.0.81   在每台主机上关闭firewalld改用iptables输入以下命令，关闭f">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在centos7上安装和配置Kubernetes集群管理pods和services">
+<meta property="og:url" content="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="安装前准备操作系统详情需要三台主机，都最小化安装 centos7.1,并update到最新，详情见如下表格    角色 主机名 IP    Master master 192.168.0.79   Minion1 minion-1 192.168.0.80   Minion2 minion-2 192.168.0.81   在每台主机上关闭firewalld改用iptables输入以下命令，关闭f">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-26T19:22:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.355Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="pod">
+<meta property="article:tag" content="service">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>在centos7上安装和配置Kubernetes集群管理pods和services | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在centos7上安装和配置Kubernetes集群管理pods和services
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2015-10-27 03:22:00" itemprop="dateCreated datePublished" datetime="2015-10-27T03:22:00+08:00">2015-10-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" class="post-meta-item leancloud_visitors" data-flag-title="在centos7上安装和配置Kubernetes集群管理pods和services" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="安装前准备"><a href="#安装前准备" class="headerlink" title="安装前准备"></a>安装前准备</h1><h2 id="操作系统详情"><a href="#操作系统详情" class="headerlink" title="操作系统详情"></a>操作系统详情</h2><p>需要三台主机，都最小化安装 centos7.1,并update到最新，详情见如下表格</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>主机名</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Master</td>
+<td>master</td>
+<td>192.168.0.79</td>
+</tr>
+<tr>
+<td>Minion1</td>
+<td>minion-1</td>
+<td>192.168.0.80</td>
+</tr>
+<tr>
+<td>Minion2</td>
+<td>minion-2</td>
+<td>192.168.0.81</td>
+</tr>
+</tbody></table>
+<h2 id="在每台主机上关闭firewalld改用iptables"><a href="#在每台主机上关闭firewalld改用iptables" class="headerlink" title="在每台主机上关闭firewalld改用iptables"></a>在每台主机上关闭firewalld改用iptables</h2><p>输入以下命令，关闭firewalld</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># systemctl stop firewalld.service    #停止firewall</span></span><br><span class="line"><span class="comment"># systemctl disable firewalld.service #禁止firewall开机启动</span></span><br></pre></td></tr></table></figure>
+<p>然后安装iptables并启用  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># yum install -y iptables-services     #安装</span></span><br><span class="line"><span class="comment"># systemctl start iptables.service  #最后重启防火墙使配置生效</span></span><br><span class="line"><span class="comment"># systemctl enable iptables.service #设置防火墙开机启动</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id="安装ntp服务"><a href="#安装ntp服务" class="headerlink" title="安装ntp服务"></a>安装ntp服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># yum install -y ntp</span></span><br><span class="line"><span class="comment"># systemctl start ntpd</span></span><br><span class="line"><span class="comment"># systemctl enable ntpd</span></span><br></pre></td></tr></table></figure>
+<!-- more -->
+<h1 id="安装配置"><a href="#安装配置" class="headerlink" title="安装配置"></a>安装配置</h1><p><em>注：kubernetes，etcd等已经进入centos epel源，可以直接yum安装（需要安装epel-release）</em></p>
+<h2 id="安装-Kubernetes-Master"><a href="#安装-Kubernetes-Master" class="headerlink" title="安装 Kubernetes Master"></a>安装 Kubernetes Master</h2><h3 id="1-使用以下命令安装kubernetes-和-etcd"><a href="#1-使用以下命令安装kubernetes-和-etcd" class="headerlink" title="1. 使用以下命令安装kubernetes 和 etcd"></a>1. 使用以下命令安装kubernetes 和 etcd</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y kubernetes etcd</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-编辑-etc-etcd-etcd-conf-使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值"><a href="#2-编辑-etc-etcd-etcd-conf-使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值" class="headerlink" title="2. 编辑/etc/etcd/etcd.conf 使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值"></a>2. 编辑/etc/etcd/etcd.conf 使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值</h3><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/etcd/etcd.conf</span></span><br><span class="line"><span class="comment"># [member]</span></span><br><span class="line"><span class="attr">ETCD_NAME</span>=default</span><br><span class="line"><span class="attr">ETCD_DATA_DIR</span>=<span class="string">&quot;/var/lib/etcd/default.etcd&quot;</span></span><br><span class="line"><span class="attr">ETCD_LISTEN_CLIENT_URLS</span>=<span class="string">&quot;&lt;span style=&quot;</span>color: <span class="comment">#ff0000;&quot;&gt;http://0.0.0.0:2379&lt;/span&gt;&quot;</span></span><br><span class="line"><span class="comment">#[cluster]</span></span><br><span class="line"><span class="attr">ETCD_ADVERTISE_CLIENT_URLS</span>=<span class="string">&quot;http://localhost:2379&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-编辑Kubernetes-API-server的配置文件"><a href="#3-编辑Kubernetes-API-server的配置文件" class="headerlink" title="3. 编辑Kubernetes API server的配置文件"></a>3. 编辑Kubernetes API server的配置文件</h3><p>确保下列行没有被注释，并为下列的值</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/apiserver</span></span><br><span class="line"><span class="comment">###</span></span><br><span class="line"><span class="comment"># kubernetes system config</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The following values are used to configure the kube-apiserver</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The address on the local server to listen to.</span></span><br><span class="line"><span class="attr">KUBE_API_ADDRESS</span>=<span class="string">&quot;--address=0.0.0.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The port on the local server to listen on.</span></span><br><span class="line"><span class="attr">KUBE_API_PORT</span>=<span class="string">&quot;--port=8080&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Port minions listen on</span></span><br><span class="line"><span class="attr">KUBELET_PORT</span>=<span class="string">&quot;--kubelet_port=10250&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Comma separated list of nodes in the etcd cluster</span></span><br><span class="line"><span class="attr">KUBE_ETCD_SERVERS</span>=<span class="string">&quot;--etcd_servers=http://127.0.0.1:2379&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Address range to use for services</span></span><br><span class="line"><span class="attr">KUBE_SERVICE_ADDRESSES</span>=<span class="string">&quot;--service-cluster-ip-range=10.254.0.0/16&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># default admission control policies</span></span><br><span class="line"><span class="attr">KUBE_ADMISSION_CONTROL</span>=<span class="string">&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line"><span class="attr">KUBE_API_ARGS</span>=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-启动etcd-kube-apiserver-kube-controller-manager-和-kube-scheduler服务，并设置开机自启"><a href="#4-启动etcd-kube-apiserver-kube-controller-manager-和-kube-scheduler服务，并设置开机自启" class="headerlink" title="4. 启动etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler服务，并设置开机自启"></a>4. 启动etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler服务，并设置开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># for SERVICES in etcd kube-apiserver kube-controller-manager kube-scheduler; do </span></span><br><span class="line">    systemctl restart <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl <span class="built_in">enable</span> <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl status <span class="variable">$SERVICES</span> </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-在etcd中定义flannel-network的配置，这些配置会被flannel-service下发到minions"><a href="#5-在etcd中定义flannel-network的配置，这些配置会被flannel-service下发到minions" class="headerlink" title="5. 在etcd中定义flannel network的配置，这些配置会被flannel service下发到minions:"></a>5. 在etcd中定义flannel network的配置，这些配置会被flannel service下发到minions:</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># etcdctl mk <span class="regexp">/coreos.com/</span>network<span class="regexp">/config &#x27;&#123;&quot;Network&quot;:&quot;172.17.0.0/</span><span class="number">16</span><span class="string">&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-添加iptables规则，允许相应的端口"><a href="#6-添加iptables规则，允许相应的端口" class="headerlink" title="6. 添加iptables规则，允许相应的端口"></a>6. 添加iptables规则，允许相应的端口</h3><figure class="highlight css"><table><tr><td class="code"><pre><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">2379</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">10250</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">8080</span> -j ACCEPT</span><br><span class="line">iptables-save</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-查看节点信息（我们还没有配置节点信息，所以这里应该为空）"><a href="#7-查看节点信息（我们还没有配置节点信息，所以这里应该为空）" class="headerlink" title="7. 查看节点信息（我们还没有配置节点信息，所以这里应该为空）"></a>7. 查看节点信息（我们还没有配置节点信息，所以这里应该为空）</h3><figure class="highlight fortran"><table><tr><td class="code"><pre><span class="line"># kubectl get nodes</span><br><span class="line"><span class="keyword">NAME</span>             LABELS              <span class="keyword">STATUS</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装Kubernetes-Minions-Nodes"><a href="#安装Kubernetes-Minions-Nodes" class="headerlink" title="安装Kubernetes Minions (Nodes)"></a>安装<strong>Kubernetes Minions (Nodes)</strong></h2></h2><p><em>注：下面这些步骤应该在minion1和minions2上执行（也可以添加更多的minions）</em></p>
+<h3 id="1-使用yum安装kubernetes-和-flannel"><a href="#1-使用yum安装kubernetes-和-flannel" class="headerlink" title="1. 使用yum安装kubernetes 和 flannel"></a>1. 使用yum安装kubernetes 和 flannel</h3><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y flannel kubernetes</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-为flannel-service配置etcd服务器"><a href="#2-为flannel-service配置etcd服务器" class="headerlink" title="2. 为flannel service配置etcd服务器"></a>2. 为flannel service配置etcd服务器</h3><p>编辑/etc/sysconfig/flanneld文件中的下列行以连接到master</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/sysconfig/flanneld</span></span><br><span class="line"></span><br><span class="line"><span class="attr">FLANNEL_ETCD</span>=<span class="string">&quot;http://192.168.0.79:2379&quot;</span>        <span class="comment">#改为etcd服务器的ip</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-编辑-kubernetes-配置文件"><a href="#3-编辑-kubernetes-配置文件" class="headerlink" title="3. 编辑 kubernetes 配置文件"></a>3. 编辑 kubernetes 配置文件</h3><p>编辑/etc/kubernetes/config中kubernetes的默认配置，确保KUBE_MASTER的值是连接到Kubernetes master API server：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/config</span></span><br><span class="line"><span class="attr">KUBE_MASTER</span>=<span class="string">&quot;--master=http://192.168.0.79:8080&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-编辑-etc-kubernetes-kubelet-如下行："><a href="#4-编辑-etc-kubernetes-kubelet-如下行：" class="headerlink" title="4. 编辑/etc/kubernetes/kubelet 如下行："></a>4. 编辑/etc/kubernetes/kubelet 如下行：</h3><p>minion1:</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/kubelet</span></span><br><span class="line"></span><br><span class="line"><span class="attr">KUBELET_ADDRESS</span>=<span class="string">&quot;--address=0.0.0.0&quot;</span></span><br><span class="line"><span class="attr">KUBELET_PORT</span>=<span class="string">&quot;--port=10250&quot;</span></span><br><span class="line"><span class="attr">KUBELET_HOSTNAME</span>=<span class="string">&quot;--hostname_override=192.168.0.80&quot;</span></span><br><span class="line"><span class="attr">KUBELET_API_SERVER</span>=<span class="string">&quot;--api_servers=http://192.168.0.79:8080&quot;</span></span><br><span class="line"><span class="attr">KUBELET_ARGS</span>=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>minion2:</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/kubelet</span></span><br><span class="line"></span><br><span class="line"><span class="attr">KUBELET_ADDRESS</span>=<span class="string">&quot;--address=0.0.0.0&quot;</span></span><br><span class="line"><span class="attr">KUBELET_PORT</span>=<span class="string">&quot;--port=10250&quot;</span></span><br><span class="line"><span class="attr">KUBELET_HOSTNAME</span>=<span class="string">&quot;--hostname_override=192.168.0.81&quot;</span></span><br><span class="line"><span class="attr">KUBELET_API_SERVER</span>=<span class="string">&quot;--api_servers=http://192.168.0.79:8080&quot;</span></span><br><span class="line"><span class="attr">KUBELET_ARGS</span>=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-启动kube-proxy-kubelet-docker-和-flanneld-services服务，并设置开机自启"><a href="#5-启动kube-proxy-kubelet-docker-和-flanneld-services服务，并设置开机自启" class="headerlink" title="5. 启动kube-proxy, kubelet, docker 和 flanneld services服务，并设置开机自启"></a>5. 启动kube-proxy, kubelet, docker 和 flanneld services服务，并设置开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># for SERVICES in kube-proxy kubelet docker flanneld; do </span></span><br><span class="line">    systemctl restart <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl <span class="built_in">enable</span> <span class="variable">$SERVICES</span></span><br><span class="line">    systemctl status <span class="variable">$SERVICES</span> </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-在每个minion节点，你应当注意到你有两块新的网卡docker0-和-flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样："><a href="#6-在每个minion节点，你应当注意到你有两块新的网卡docker0-和-flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样：" class="headerlink" title="6. 在每个minion节点，你应当注意到你有两块新的网卡docker0 和 flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样："></a>6. 在每个minion节点，你应当注意到你有两块新的网卡docker0 和 flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样：</h3><p>minion1:</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ip a | grep flannel | grep inet</span></span><br><span class="line">    <span class="attribute">inet</span> <span class="number">172.17.29.0</span>/<span class="number">16</span> scope global flannel<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>minion2:</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ip a | grep flannel | grep inet</span></span><br><span class="line">    <span class="attribute">inet</span> <span class="number">172.17.37.0</span>/<span class="number">16</span> scope global flannel<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-添加iptables规则："><a href="#7-添加iptables规则：" class="headerlink" title="7. 添加iptables规则："></a>7. 添加iptables规则：</h3><figure class="highlight css"><table><tr><td class="code"><pre><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">2379</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">10250</span> -j ACCEPT</span><br><span class="line">iptables -<span class="selector-tag">I</span> <span class="selector-tag">INPUT</span> -<span class="selector-tag">p</span> tcp --dport <span class="number">8080</span> -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-现在登陆kubernetes-master节点验证minions的节点状态："><a href="#8-现在登陆kubernetes-master节点验证minions的节点状态：" class="headerlink" title="8. 现在登陆kubernetes master节点验证minions的节点状态："></a>8. 现在登陆kubernetes master节点验证minions的节点状态：</h3><figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"># kubectl get nodes</span><br><span class="line">NAME           LABELS                                STATUS</span><br><span class="line"><span class="number">192.168.0.80</span>   kubernetes.io/hostname=<span class="number">192</span>.<span class="number">168</span>.<span class="number">0</span>.<span class="number">80</span>   Ready</span><br><span class="line"><span class="number">192.168.0.81</span>   kubernetes.io/hostname=<span class="number">192</span>.<span class="number">168</span>.<span class="number">0</span>.<span class="number">81</span>   Ready</span><br></pre></td></tr></table></figure>
+<p>至此，kubernetes集群已经配置并运行了，我们可以继续下面的步骤。</p>
+<h2 id="创建-Pods-Containers"><a href="#创建-Pods-Containers" class="headerlink" title="创建 Pods (Containers)"></a>创建 Pods (Containers)</h2><p>为了创建一个pod，我们需要在kubernetes master上面定义一个yaml 或者 json配置文件。然后使用kubectl命令创建pod</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># mkdir -p k8s/pods</span></span><br><span class="line"><span class="meta"># cd k8s/pods/</span></span><br><span class="line"><span class="meta"># vim nginx.yaml</span></span><br></pre></td></tr></table></figure>
+<p>在nginx.yaml里面增加如下内容：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>创建pod:</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f nginx.yaml</span></span><br></pre></td></tr></table></figure>
+<p>此时有如下报错：</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">Error <span class="keyword">from</span> <span class="keyword">server</span>: error <span class="keyword">when</span> creating &quot;nginx.yaml&quot;: Pod &quot;nginx&quot; <span class="keyword">is</span> forbidden: <span class="keyword">no</span> API token <span class="built_in">found</span> <span class="keyword">for</span> service account <span class="keyword">default</span>/<span class="keyword">default</span>, retry <span class="keyword">after</span> the token <span class="keyword">is</span> automatically created <span class="keyword">and</span> added <span class="keyword">to</span> the service account </span><br></pre></td></tr></table></figure>
+<p>解决办法是编辑/etc/kubernetes/apiserver 去除 KUBE_ADMISSION_CONTROL 中的 SecurityContextDeny,ServiceAccount ，并重启kube-apiserver.service服务：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/kubernetes/apiserver</span></span><br><span class="line"><span class="attr">KUBE_ADMISSION_CONTROL</span>=<span class="string">&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># systemctl restart kube-apiserver.service</span></span><br></pre></td></tr></table></figure>
+<p>之后重新创建pod:</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f nginx.yaml</span></span><br><span class="line">pods/nginx</span><br></pre></td></tr></table></figure>
+<p>查看pod:</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get pod nginx</span></span><br><span class="line"><span class="attribute">NAME</span>      READY     STATUS                                            RESTARTS   AGE</span><br><span class="line"><span class="attribute">nginx</span>     <span class="number">0</span>/<span class="number">1</span>       Image: nginx is not ready <span class="literal">on</span> the node   <span class="number">0</span>          <span class="number">34</span>s</span><br></pre></td></tr></table></figure>
+<p>这里STATUS一直是这个，创建不成功，下面排错。通过查看pod的描述发现如下错误：</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl describe pod nginx </span></span><br><span class="line"><span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">1</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;  implicitly required container POD       pulled          Successfully pulled Pod container image <span class="string">&quot;gcr.io/google_containers/pause:0.8.0&quot;</span></span><br><span class="line">  <span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">1</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;  implicitly required container POD       failed          Failed to create docker container with error: no such image</span><br><span class="line">  <span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">25</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">1</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;                                          failedSync      Error syncing pod, skipping: no such image</span><br><span class="line">  <span class="attribute">Wed</span>, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">27</span>:<span class="number">30</span> +<span class="number">0800</span>       Wed, <span class="number">28</span> Oct <span class="number">2015</span> <span class="number">10</span>:<span class="number">29</span>:<span class="number">30</span> +<span class="number">0800</span> <span class="number">2</span>       &#123;kubelet <span class="number">192.168.0.81</span>&#125;  implicitly required container POD       failed          Failed to pull image <span class="string">&quot;gcr.io/google_containers/pause:0.8.0&quot;</span>: image pull failed for gcr.io/google_containers/pause:<span class="number">0</span>.<span class="number">8</span>.<span class="number">0</span>, this may be because there are no credentials <span class="literal">on</span> this request.  details: (API error (<span class="number">500</span>): invalid registry endpoint <span class="string">&quot;http://gcr.io/v0/&quot;</span>. HTTPS attempt: unable to ping registry endpoint https://gcr.io/v<span class="number">0</span>/</span><br><span class="line"><span class="attribute">v2</span> ping attempt failed with error: Get https://gcr.io/v<span class="number">2</span>/: dial tcp <span class="number">173.194.72.82:443</span>: i/o timeout</span><br></pre></td></tr></table></figure>
+<p>手动ping了一下gcr.io发现无法ping通（可能是被墙了）,从网上找到 pause:0.8.0 的镜像，然后再每个minion上导入镜像:</p>
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"># docker <span class="built_in">load</span> <span class="comment">--input pause-0.8.0.tar</span></span><br></pre></td></tr></table></figure>
+<p>附下载：<a href="/attachment/uploads/2015/10/pause-0.8.0.tar">pause-0.8.0.tar</a><br>在执行以下命令即可成功创建pod</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f nginx.yaml</span></span><br><span class="line">pods/nginx</span><br></pre></td></tr></table></figure>
+<p>查看pod</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get pod nginx</span></span><br><span class="line"><span class="attribute">NAME</span>      READY     STATUS                                            RESTARTS   AGE</span><br><span class="line"><span class="attribute">nginx</span>      <span class="number">1</span>/<span class="number">1</span>             Running                                            <span class="number">0</span>               <span class="number">2</span>min</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>在centos7上安装和配置Kubernetes集群管理pods和services</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" title="在centos7上安装和配置Kubernetes集群管理pods和services">https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a>
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+              <a href="/tags/pod/" rel="tag"><i class="fa fa-tag"></i> pod</a>
+              <a href="/tags/service/" rel="tag"><i class="fa fa-tag"></i> service</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/docker/k8s-errors.html" rel="prev" title="kubernetes 安装遇到的一些问题">
+      <i class="fa fa-chevron-left"></i> kubernetes 安装遇到的一些问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/linux/ofbiz-use-mysql.html" rel="next" title="ofbiz 使用mysql作为存储数据库">
+      ofbiz 使用mysql作为存储数据库 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
   window.addEventListener('tabs:register', () => {
     let { activeClass } = CONFIG.comments;
     if (CONFIG.comments.storage) {
@@ -18,41 +474,108 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87"><span class="nav-text">安装前准备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%A6%E6%83%85"><span class="nav-text">操作系统详情</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E6%AF%8F%E5%8F%B0%E4%B8%BB%E6%9C%BA%E4%B8%8A%E5%85%B3%E9%97%ADfirewalld%E6%94%B9%E7%94%A8iptables"><span class="nav-text">在每台主机上关闭firewalld改用iptables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85ntp%E6%9C%8D%E5%8A%A1"><span class="nav-text">安装ntp服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE"><span class="nav-text">安装配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Kubernetes-Master"><span class="nav-text">安装 Kubernetes Master</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8%E4%BB%A5%E4%B8%8B%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85kubernetes-%E5%92%8C-etcd"><span class="nav-text">1. 使用以下命令安装kubernetes 和 etcd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%BC%96%E8%BE%91-etc-etcd-etcd-conf-%E4%BD%BFetcd%E7%9B%91%E5%90%AC%E6%89%80%E6%9C%89%E7%9A%84ip%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%A1%AE%E4%BF%9D%E4%B8%8B%E5%88%97%E8%A1%8C%E6%B2%A1%E6%9C%89%E6%B3%A8%E9%87%8A%EF%BC%8C%E5%B9%B6%E4%BF%AE%E6%94%B9%E4%B8%BA%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%80%BC"><span class="nav-text">2. 编辑&#x2F;etc&#x2F;etcd&#x2F;etcd.conf 使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BC%96%E8%BE%91Kubernetes-API-server%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">3. 编辑Kubernetes API server的配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%90%AF%E5%8A%A8etcd-kube-apiserver-kube-controller-manager-%E5%92%8C-kube-scheduler%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%B9%B6%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-text">4. 启动etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler服务，并设置开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%9C%A8etcd%E4%B8%AD%E5%AE%9A%E4%B9%89flannel-network%E7%9A%84%E9%85%8D%E7%BD%AE%EF%BC%8C%E8%BF%99%E4%BA%9B%E9%85%8D%E7%BD%AE%E4%BC%9A%E8%A2%ABflannel-service%E4%B8%8B%E5%8F%91%E5%88%B0minions"><span class="nav-text">5. 在etcd中定义flannel network的配置，这些配置会被flannel service下发到minions:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%B7%BB%E5%8A%A0iptables%E8%A7%84%E5%88%99%EF%BC%8C%E5%85%81%E8%AE%B8%E7%9B%B8%E5%BA%94%E7%9A%84%E7%AB%AF%E5%8F%A3"><span class="nav-text">6. 添加iptables规则，允许相应的端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF%EF%BC%88%E6%88%91%E4%BB%AC%E8%BF%98%E6%B2%A1%E6%9C%89%E9%85%8D%E7%BD%AE%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF%EF%BC%8C%E6%89%80%E4%BB%A5%E8%BF%99%E9%87%8C%E5%BA%94%E8%AF%A5%E4%B8%BA%E7%A9%BA%EF%BC%89"><span class="nav-text">7. 查看节点信息（我们还没有配置节点信息，所以这里应该为空）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Kubernetes-Minions-Nodes"><span class="nav-text">安装Kubernetes Minions (Nodes)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8yum%E5%AE%89%E8%A3%85kubernetes-%E5%92%8C-flannel"><span class="nav-text">1. 使用yum安装kubernetes 和 flannel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%BAflannel-service%E9%85%8D%E7%BD%AEetcd%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">2. 为flannel service配置etcd服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BC%96%E8%BE%91-kubernetes-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">3. 编辑 kubernetes 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%BC%96%E8%BE%91-etc-kubernetes-kubelet-%E5%A6%82%E4%B8%8B%E8%A1%8C%EF%BC%9A"><span class="nav-text">4. 编辑&#x2F;etc&#x2F;kubernetes&#x2F;kubelet 如下行：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%90%AF%E5%8A%A8kube-proxy-kubelet-docker-%E5%92%8C-flanneld-services%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%B9%B6%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-text">5. 启动kube-proxy, kubelet, docker 和 flanneld services服务，并设置开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%9C%A8%E6%AF%8F%E4%B8%AAminion%E8%8A%82%E7%82%B9%EF%BC%8C%E4%BD%A0%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E5%88%B0%E4%BD%A0%E6%9C%89%E4%B8%A4%E5%9D%97%E6%96%B0%E7%9A%84%E7%BD%91%E5%8D%A1docker0-%E5%92%8C-flannel0%E3%80%82%E4%BD%A0%E5%BA%94%E8%AF%A5%E5%BE%97%E5%88%B0%E4%B8%8D%E5%90%8C%E7%9A%84ip%E5%9C%B0%E5%9D%80%E8%8C%83%E5%9B%B4%E5%9C%A8flannel0%E4%B8%8A%EF%BC%8C%E5%B0%B1%E5%83%8F%E4%B8%8B%E9%9D%A2%E8%BF%99%E6%A0%B7%EF%BC%9A"><span class="nav-text">6. 在每个minion节点，你应当注意到你有两块新的网卡docker0 和 flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%B7%BB%E5%8A%A0iptables%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-text">7. 添加iptables规则：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E7%8E%B0%E5%9C%A8%E7%99%BB%E9%99%86kubernetes-master%E8%8A%82%E7%82%B9%E9%AA%8C%E8%AF%81minions%E7%9A%84%E8%8A%82%E7%82%B9%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="nav-text">8. 现在登陆kubernetes master节点验证minions的节点状态：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-Pods-Containers"><span class="nav-text">创建 Pods (Containers)</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="tanmx" src="/images/avatar.gif"><p class="site-author-name" itemprop="name">tanmx</p><div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">62</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">76</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i> Weibo</a></span><span class="links-of-author-item"><a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i> Zhihu</a></span><span class="links-of-author-item"><a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i> Twitter</a></span></div><div class="cc-license motion-element" itemprop="license"> <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2014 – <span itemprop="copyrightYear">2021</span><span class="with-love"><i class="fa fa-heart"></i></span> <span class="author" itemprop="copyrightHolder">tanmx</span></div><div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动</div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/local-search.js"></script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>
-      window.addEventListener('load', () => {
-      quicklink({
-        timeout : 3000,
-        priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html',]
-      });
-      });
-  </script><script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
-      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
-      placeholder: "(发表评论)",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : true,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : true,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script></body></html>="copyrightYear">2021</span>
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87"><span class="nav-text">安装前准备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%A6%E6%83%85"><span class="nav-text">操作系统详情</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E6%AF%8F%E5%8F%B0%E4%B8%BB%E6%9C%BA%E4%B8%8A%E5%85%B3%E9%97%ADfirewalld%E6%94%B9%E7%94%A8iptables"><span class="nav-text">在每台主机上关闭firewalld改用iptables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85ntp%E6%9C%8D%E5%8A%A1"><span class="nav-text">安装ntp服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE"><span class="nav-text">安装配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Kubernetes-Master"><span class="nav-text">安装 Kubernetes Master</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8%E4%BB%A5%E4%B8%8B%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85kubernetes-%E5%92%8C-etcd"><span class="nav-text">1. 使用以下命令安装kubernetes 和 etcd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%BC%96%E8%BE%91-etc-etcd-etcd-conf-%E4%BD%BFetcd%E7%9B%91%E5%90%AC%E6%89%80%E6%9C%89%E7%9A%84ip%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%A1%AE%E4%BF%9D%E4%B8%8B%E5%88%97%E8%A1%8C%E6%B2%A1%E6%9C%89%E6%B3%A8%E9%87%8A%EF%BC%8C%E5%B9%B6%E4%BF%AE%E6%94%B9%E4%B8%BA%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%80%BC"><span class="nav-text">2. 编辑&#x2F;etc&#x2F;etcd&#x2F;etcd.conf 使etcd监听所有的ip地址，确保下列行没有注释，并修改为下面的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BC%96%E8%BE%91Kubernetes-API-server%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">3. 编辑Kubernetes API server的配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%90%AF%E5%8A%A8etcd-kube-apiserver-kube-controller-manager-%E5%92%8C-kube-scheduler%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%B9%B6%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-text">4. 启动etcd, kube-apiserver, kube-controller-manager 和 kube-scheduler服务，并设置开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%9C%A8etcd%E4%B8%AD%E5%AE%9A%E4%B9%89flannel-network%E7%9A%84%E9%85%8D%E7%BD%AE%EF%BC%8C%E8%BF%99%E4%BA%9B%E9%85%8D%E7%BD%AE%E4%BC%9A%E8%A2%ABflannel-service%E4%B8%8B%E5%8F%91%E5%88%B0minions"><span class="nav-text">5. 在etcd中定义flannel network的配置，这些配置会被flannel service下发到minions:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%B7%BB%E5%8A%A0iptables%E8%A7%84%E5%88%99%EF%BC%8C%E5%85%81%E8%AE%B8%E7%9B%B8%E5%BA%94%E7%9A%84%E7%AB%AF%E5%8F%A3"><span class="nav-text">6. 添加iptables规则，允许相应的端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF%EF%BC%88%E6%88%91%E4%BB%AC%E8%BF%98%E6%B2%A1%E6%9C%89%E9%85%8D%E7%BD%AE%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF%EF%BC%8C%E6%89%80%E4%BB%A5%E8%BF%99%E9%87%8C%E5%BA%94%E8%AF%A5%E4%B8%BA%E7%A9%BA%EF%BC%89"><span class="nav-text">7. 查看节点信息（我们还没有配置节点信息，所以这里应该为空）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Kubernetes-Minions-Nodes"><span class="nav-text">安装Kubernetes Minions (Nodes)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8yum%E5%AE%89%E8%A3%85kubernetes-%E5%92%8C-flannel"><span class="nav-text">1. 使用yum安装kubernetes 和 flannel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%BAflannel-service%E9%85%8D%E7%BD%AEetcd%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">2. 为flannel service配置etcd服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BC%96%E8%BE%91-kubernetes-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">3. 编辑 kubernetes 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%BC%96%E8%BE%91-etc-kubernetes-kubelet-%E5%A6%82%E4%B8%8B%E8%A1%8C%EF%BC%9A"><span class="nav-text">4. 编辑&#x2F;etc&#x2F;kubernetes&#x2F;kubelet 如下行：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%90%AF%E5%8A%A8kube-proxy-kubelet-docker-%E5%92%8C-flanneld-services%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%B9%B6%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-text">5. 启动kube-proxy, kubelet, docker 和 flanneld services服务，并设置开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%9C%A8%E6%AF%8F%E4%B8%AAminion%E8%8A%82%E7%82%B9%EF%BC%8C%E4%BD%A0%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E5%88%B0%E4%BD%A0%E6%9C%89%E4%B8%A4%E5%9D%97%E6%96%B0%E7%9A%84%E7%BD%91%E5%8D%A1docker0-%E5%92%8C-flannel0%E3%80%82%E4%BD%A0%E5%BA%94%E8%AF%A5%E5%BE%97%E5%88%B0%E4%B8%8D%E5%90%8C%E7%9A%84ip%E5%9C%B0%E5%9D%80%E8%8C%83%E5%9B%B4%E5%9C%A8flannel0%E4%B8%8A%EF%BC%8C%E5%B0%B1%E5%83%8F%E4%B8%8B%E9%9D%A2%E8%BF%99%E6%A0%B7%EF%BC%9A"><span class="nav-text">6. 在每个minion节点，你应当注意到你有两块新的网卡docker0 和 flannel0。你应该得到不同的ip地址范围在flannel0上，就像下面这样：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%B7%BB%E5%8A%A0iptables%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-text">7. 添加iptables规则：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E7%8E%B0%E5%9C%A8%E7%99%BB%E9%99%86kubernetes-master%E8%8A%82%E7%82%B9%E9%AA%8C%E8%AF%81minions%E7%9A%84%E8%8A%82%E7%82%B9%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="nav-text">8. 现在登陆kubernetes master节点验证minions的节点状态：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-Pods-Containers"><span class="nav-text">创建 Pods (Containers)</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
