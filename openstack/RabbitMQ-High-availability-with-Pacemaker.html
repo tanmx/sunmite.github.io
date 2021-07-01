@@ -280,8 +280,7 @@
 <li><p>防止网络分区</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/rabbitmq/rabbitmq.config</span></span><br><span class="line">修改：</span><br><span class="line">%%  &#123;cluster_partition_handling, ignore&#125;,</span><br><span class="line">为：</span><br><span class="line">  &#123;cluster_partition_handling, pause_minority&#125;</span><br></pre></td></tr></table></figure></li>
 <li><p>修改监听地址</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&quot;NODE_IP_ADDRESS=<span class="variable">$&#123;管理ip&#125;</span>&quot;</span> &gt; /etc/rabbitmq/rabbitmq-env.conf</span></span><br></pre></td></tr></table></figure>
-</li>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&quot;NODE_IP_ADDRESS=<span class="variable">$&#123;管理ip&#125;</span>&quot;</span> &gt; /etc/rabbitmq/rabbitmq-env.conf</span></span><br></pre></td></tr></table></figure></li>
 <li><p>rabbitmq集群配置</p>
 </li>
 </ol>

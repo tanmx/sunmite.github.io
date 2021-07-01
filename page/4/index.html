@@ -696,7 +696,6 @@
           <p>kolla项目是为了容器化openstack，目标是做到100个节点的开箱即用，所有的组件的HA都具备。kolla是一个革命性的项目，我们以前积累的安装部署经验，全部都报废。使用kolla可以快速部署可扩展，可靠的生产就绪的openstack环境。</p>
 <h2 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a>基本环境</h2><p>操作系统：CentOS Linux release 7.2.1511 (Core)<br>内核版本：3.10.0-327.28.3.el7.x86_64<br>docker版本：Docker version 1.12.1, build 23cf638</p>
 <h2 id="部署kolla"><a href="#部署kolla" class="headerlink" title="部署kolla"></a>部署kolla</h2><h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install epel-release python-pip</span><br><span class="line">yum install -y python-devel libffi-devel openssl-devel gcc</span><br><span class="line">pip install -U pip</span><br></pre></td></tr></table></figure>
-
 <h3 id="2-修改docker启动文件"><a href="#2-修改docker启动文件" class="headerlink" title="2. 修改docker启动文件"></a>2. 修改docker启动文件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Create the drop-in unit directory <span class="keyword">for</span> docker.service</span></span><br><span class="line">mkdir -p /etc/systemd/system/docker.service.d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Create the drop-in unit file</span></span><br><span class="line">tee /etc/systemd/system/docker.service.d/kolla.conf &lt;&lt;-&#x27;EOF&#x27;</span><br><span class="line">[Service]</span><br><span class="line">MountFlags=shared</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
@@ -1065,8 +1064,7 @@
           <p>生产环境中至少运行3个rabbitmq服务器，测试环境中我们可以只运行两个，我们配置了两个节点，分别为controller1和controller2。</p>
 <h1 id="为HA队列配置RabbitMQ"><a href="#为HA队列配置RabbitMQ" class="headerlink" title="为HA队列配置RabbitMQ"></a>为HA队列配置RabbitMQ</h1><ol>
 <li><p>在controller1上启动使用以下命令启动rabbitmq</p>
-<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl start rabbitmq</span></span><br></pre></td></tr></table></figure>
-</li>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># systemctl start rabbitmq</span></span><br></pre></td></tr></table></figure></li>
 <li><p>从controller1上复制cookie到其他的节点</p>
 <figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># scp root@NODE:<span class="regexp">/var/</span>lib<span class="regexp">/rabbitmq/</span>.erlang.cookie <span class="regexp">/var/</span>lib<span class="regexp">/rabbitmq/</span>.erlang.cookie</span><br></pre></td></tr></table></figure>
 <p>需要修改NODE为controller1或者对应</p>

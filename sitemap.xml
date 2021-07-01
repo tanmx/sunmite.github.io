@@ -58,14 +58,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/linux/e450c-install-rtl8723be-driver.html</loc>
+    <loc>https://www.sunmite.com/python/douban-file-top250.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/python/douban-file-top250.html</loc>
+    <loc>https://www.sunmite.com/linux/e450c-install-rtl8723be-driver.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -191,14 +191,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html</loc>
+    <loc>https://www.sunmite.com/vmware/vmware-resize-disk.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/vmware/vmware-resize-disk.html</loc>
+    <loc>https://www.sunmite.com/docker/use-prometheus-operator-monitor-kubernetes.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -261,14 +261,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/can-not-access-to-console-in-HA.html</loc>
+    <loc>https://www.sunmite.com/openstack/openstack-icehouse-load-balance.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/openstack-icehouse-load-balance.html</loc>
+    <loc>https://www.sunmite.com/openstack/can-not-access-to-console-in-HA.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -310,6 +310,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunmite.com/openstack/fuel-something.html</loc>
+    
+    <lastmod>2021-01-25</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.sunmite.com/linux/centos-make-local-mirrors.html</loc>
     
     <lastmod>2021-01-25</lastmod>
@@ -324,7 +331,7 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/fuel-something.html</loc>
+    <loc>https://www.sunmite.com/openstack/rabbitmq-network-partition.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -345,7 +352,7 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/rabbitmq-network-partition.html</loc>
+    <loc>https://www.sunmite.com/openstack/openstack-sriov.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -366,7 +373,7 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/openstack-sriov.html</loc>
+    <loc>https://www.sunmite.com/openstack/openstack-projext-zun.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -374,13 +381,6 @@
   
   <url>
     <loc>https://www.sunmite.com/openstack/cinder-multi-attch.html</loc>
-    
-    <lastmod>2021-01-25</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/openstack/openstack-projext-zun.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -415,14 +415,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html</loc>
+    <loc>https://www.sunmite.com/kubernetes/basic-concepts-and-terms-of-kubernetes.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/kubernetes/basic-concepts-and-terms-of-kubernetes.html</loc>
+    <loc>https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -452,7 +452,7 @@
 
   <url>
     <loc>https://www.sunmite.com/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -460,532 +460,532 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/sriov/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ixgbe/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/helm/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/kubernetes/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/docker/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/helm/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/MacOS/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/openstack/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/Authenticate/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/token/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/cinder/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/Multi-Attach/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/zun/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/cinder/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/Multi-Attach/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/heat/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/qt/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/RDO/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/swift/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/mongoDB/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/sr-iov/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/trystack/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <loc>https://www.sunmite.com/tags/qt/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/devstack/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <loc>https://www.sunmite.com/tags/RDO/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/liberty/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <loc>https://www.sunmite.com/tags/swift/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/mongoDB/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/rabbitmq/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/partition/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/aliyun/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <loc>https://www.sunmite.com/tags/trystack/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/centos/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <loc>https://www.sunmite.com/tags/devstack/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/profiler/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/k8s/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <loc>https://www.sunmite.com/tags/liberty/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/fuel/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/bootstrap/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/aliyun/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/centos/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/profiler/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/k8s/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/kube-ui/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/HA/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/console/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/dashboard/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/nova/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/network/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/loadbalance/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ofbiz/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/mysql/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/loadbalance/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/HA/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/console/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/dashboard/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/hypervisors/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ceph/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/availability-zone/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/haproxy/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/python/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ip/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ssh/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/prometheus/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/vmware/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/resize/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/prometheus/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/remote/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/Windows-Azure/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/pacemaker/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ubuntu/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/linux/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/sunflower/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/openlogic/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/desktop/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/pod/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/service/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/hexo/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/hostinger/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/wwwnet/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/hexo/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/virus/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/driver/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/douban/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/database/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/driver/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/repository/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/macos/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/ceilometer/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/gnocchi/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/aodh/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/panko/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/kubeadmin/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/kolla/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/typecho/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/rally/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/tags/tempest/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -994,84 +994,84 @@
   
   <url>
     <loc>https://www.sunmite.com/categories/zm/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/linux/</loc>
-    <lastmod>2021-02-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/categories/docker/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/kubernetes/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/categories/docker/</loc>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/MacOS/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/openstack/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/qt/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/python/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/vmware/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/windows/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/ceph/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://www.sunmite.com/categories/life/</loc>
-    <lastmod>2021-02-25</lastmod>
+    <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
