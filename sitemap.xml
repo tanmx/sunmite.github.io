@@ -23,14 +23,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/zm/iloveyou.html</loc>
+    <loc>https://www.sunmite.com/MacOS/hackintosh.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/MacOS/hackintosh.html</loc>
+    <loc>https://www.sunmite.com/zm/iloveyou.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -93,14 +93,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/container-system.html</loc>
+    <loc>https://www.sunmite.com/linux/deploy-hexo-to-vps.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/linux/deploy-hexo-to-vps.html</loc>
+    <loc>https://www.sunmite.com/docker/container-system.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -261,6 +261,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunmite.com/openstack/can-not-access-to-console-in-HA.html</loc>
+    
+    <lastmod>2021-01-25</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.sunmite.com/openstack/openstack-icehouse-load-balance.html</loc>
     
     <lastmod>2021-01-25</lastmod>
@@ -269,13 +276,6 @@
   
   <url>
     <loc>https://www.sunmite.com/openstack/use-local-storage-for-different-hypervisors.html</loc>
-    
-    <lastmod>2021-01-25</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/openstack/can-not-access-to-console-in-HA.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -408,14 +408,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/kubernetes/basic-concepts-and-terms-of-kubernetes.html</loc>
+    <loc>https://www.sunmite.com/linux/update-ixgbe-on-centos.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/linux/update-ixgbe-on-centos.html</loc>
+    <loc>https://www.sunmite.com/kubernetes/basic-concepts-and-terms-of-kubernetes.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -459,20 +459,6 @@
 
   
   <url>
-    <loc>https://www.sunmite.com/tags/kubernetes/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/docker/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunmite.com/tags/sriov/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
@@ -481,6 +467,20 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/ixgbe/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/kubernetes/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/docker/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -508,6 +508,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunmite.com/tags/zun/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunmite.com/tags/Authenticate/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
@@ -516,13 +523,6 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/token/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/zun/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -697,27 +697,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/loadbalance/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/hypervisors/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/ceph/</loc>
-    <lastmod>2021-07-01</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunmite.com/tags/HA/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
@@ -733,6 +712,27 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/dashboard/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/loadbalance/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/hypervisors/</loc>
+    <lastmod>2021-07-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/ceph/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1000,14 +1000,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/categories/kubernetes/</loc>
+    <loc>https://www.sunmite.com/categories/linux/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/categories/linux/</loc>
+    <loc>https://www.sunmite.com/categories/kubernetes/</loc>
     <lastmod>2021-07-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

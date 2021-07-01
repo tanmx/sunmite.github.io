@@ -1,4 +1,391 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ"><meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css"><script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"www.sunmite.com",root:"/",scheme:"Muse",version:"7.8.0",exturl:!1,sidebar:{position:"left",display:"always",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!0,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="1. Error from server: namespaces “kube-system” not foundError from server: namespaces &quot;kube-system&quot; not found 解决方法： # vim kube-system.json&amp;#123;  &quot;apiVersion&quot;: &quot;v1&quot;,  &amp;qu"><meta property="og:type" content="article"><meta property="og:title" content="kubernetes 安装遇到的一些问题"><meta property="og:url" content="https://www.sunmite.com/docker/k8s-errors.html"><meta property="og:site_name" content="谭明宵博客"><meta property="og:description" content="1. Error from server: namespaces “kube-system” not foundError from server: namespaces &quot;kube-system&quot; not found 解决方法： # vim kube-system.json&amp;#123;  &quot;apiVersion&quot;: &quot;v1&quot;,  &amp;qu"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2015-10-29T20:29:00.000Z"><meta property="article:modified_time" content="2021-01-25T02:17:02.339Z"><meta property="article:author" content="tanmx"><meta property="article:tag" content="kubernetes"><meta property="article:tag" content="docker"><meta property="article:tag" content="k8s"><meta name="twitter:card" content="summary"><link rel="canonical" href="https://www.sunmite.com/docker/k8s-errors.html"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>kubernetes 安装遇到的一些问题 | 谭明宵博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript><link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml"></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">谭明宵博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">Every day is May day!</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i> 搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"> <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/k8s-errors.html"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="tanmx"><meta itemprop="description" content="一个默默无闻的工程师的日常"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="谭明宵博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> kubernetes 安装遇到的一些问题</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2015-10-30 04:29:00" itemprop="dateCreated datePublished" datetime="2015-10-30T04:29:00+08:00">2015-10-30</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a></span></span><span id="/docker/k8s-errors.html" class="post-meta-item leancloud_visitors" data-flag-title="kubernetes 安装遇到的一些问题" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">Valine：</span><a title="valine" href="/docker/k8s-errors.html#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/docker/k8s-errors.html" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><h3 id="1-Error-from-server-namespaces-“kube-system”-not-found"><a href="#1-Error-from-server-namespaces-“kube-system”-not-found" class="headerlink" title="1. Error from server: namespaces “kube-system” not found"></a>1. Error from server: namespaces “kube-system” not found</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Error </span>from server: namespaces &quot;kube-system&quot; not found</span><br></pre></td></tr></table></figure><p>解决方法：</p><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># vim kube-<span class="keyword">system</span>.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;apiVersion&quot;: &quot;v1&quot;,</span><br><span class="line">  &quot;kind&quot;: &quot;Namespace&quot;,</span><br><span class="line">  &quot;metadata&quot;: &#123;</span><br><span class="line">    &quot;name&quot;: &quot;kube-system&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"># kubectl <span class="keyword">create</span> -f kube-<span class="keyword">system</span>.json</span><br></pre></td></tr></table></figure><span id="more"></span><h3 id="2-Unable-to-generate-self-signed-cert-mkdir-var-run-kubernetes-permission-denied"><a href="#2-Unable-to-generate-self-signed-cert-mkdir-var-run-kubernetes-permission-denied" class="headerlink" title="2. Unable to generate self signed cert: mkdir /var/run/kubernetes: permission denied"></a>2. Unable to generate self signed cert: mkdir /var/run/kubernetes: permission denied</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master kube-apiserver[<span class="number">5336</span>]: E<span class="number">0812</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span>.<span class="number">063837</span>    <span class="number">5336</span> genericapiserver.go:<span class="number">702</span>] Unable to generate self signed cert: mkdir /var/run/kubernetes: permission denied</span><br><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master kube-apiserver[<span class="number">5336</span>]: I<span class="number">0812</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span>.<span class="number">063915</span>    <span class="number">5336</span> genericapiserver.go:<span class="number">734</span>] Serving insecurely <span class="literal">on</span> <span class="number">0.0.0.0:8080</span></span><br><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master systemd[<span class="number">1</span>]: Started Kubernetes API Server.</span><br><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master kube-apiserver[<span class="number">5336</span>]: E<span class="number">0812</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span>.<span class="number">064151</span>    <span class="number">5336</span> genericapiserver.go:<span class="number">716</span>] Unable to listen for secure (open /var/run/kubernetes/apiserver.crt: no such file or directory); will try again.</span><br></pre></td></tr></table></figure><p>解决办法:</p><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># mkdir -p <span class="regexp">/var/</span>run<span class="regexp">/kubernetes/</span></span><br><span class="line"># chown -R kube.kube <span class="regexp">/var/</span>run<span class="regexp">/kubernetes/</span></span><br><span class="line"># <span class="keyword">for</span> SERVICES in etcd kube-apiserver kube-controller-manager kube-scheduler; <span class="keyword">do</span> </span><br><span class="line">    systemctl restart $SERVICES</span><br><span class="line">    systemctl enable $SERVICES</span><br><span class="line">    systemctl status $SERVICES </span><br><span class="line">done</span><br></pre></td></tr></table></figure><h3 id="3-下载google-container镜像-minion上下载"><a href="#3-下载google-container镜像-minion上下载" class="headerlink" title="3. 下载google-container镜像(minion上下载)"></a>3. 下载google-container镜像(minion上下载)</h3><p>在hosts文件中加入以下内容</p><figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"># vim /etc/hosts</span><br><span class="line"><span class="number">220.255.2.153</span> www.gcr.io</span><br><span class="line"><span class="number">220.255.2.153</span> gcr.io</span><br><span class="line"># docker pull gcr.io/google_containers/kubernetes-dashboard-amd64:v1.<span class="number">1</span>.<span class="number">1</span></span><br></pre></td></tr></table></figure><h3 id="4-no-API-token-found-for-service-account-kube-system-default"><a href="#4-no-API-token-found-for-service-account-kube-system-default" class="headerlink" title="4. no API token found for service account kube-system/default"></a>4. no API token found for service account kube-system/default</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Error </span>creating: pods &quot;kubernetes-dashboard<span class="string">-1881024876</span>-&quot; is forbidden: no API token found for service account kube-system/default,</span><br></pre></td></tr></table></figure><p>解决方法：etc/kubernetes/apiserver 去除 KUBE_ADMISSION_CONTROL中的SecurityContextDeny,ServiceAccount，并重启kube-apiserver.service服务</p><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim /etc/kubernetes/apiserver</span></span><br><span class="line"><span class="attr">KUBE_ADMISSION_CONTROL</span>=<span class="string">&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota&quot;</span></span><br><span class="line"><span class="comment">#systemctl restart kube-apiserver.service</span></span><br></pre></td></tr></table></figure><h3 id="5-Get-http-localhost-8080-version-dial-tcp-202-102-110-203-8080-getsockopt-connection-refused"><a href="#5-Get-http-localhost-8080-version-dial-tcp-202-102-110-203-8080-getsockopt-connection-refused" class="headerlink" title="5. Get http://localhost:8080/version: dial tcp 202.102.110.203:8080: getsockopt: connection refused"></a>5. Get <a target="_blank" rel="noopener" href="http://localhost:8080/version">http://localhost:8080/version</a>: dial tcp 202.102.110.203:8080: getsockopt: connection refused</h3><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># docker logs b7cff1accc06</span><br><span class="line">Starting HTTP <span class="keyword">server</span> <span class="keyword">on</span> port <span class="number">9090</span></span><br><span class="line">Creating API <span class="keyword">server</span> client <span class="keyword">for</span> http://localhost:<span class="number">8080</span></span><br><span class="line">Error <span class="keyword">while</span> initializing <span class="keyword">connection</span> <span class="keyword">to</span> Kubernetes apiserver. This most likely means that the <span class="keyword">cluster</span> <span class="keyword">is</span> misconfigured (e.g., it has invalid apiserver certificates <span class="keyword">or</span> service accounts <span class="keyword">configuration</span>) <span class="keyword">or</span> the <span class="comment">--apiserver-host param points to a server that does not exist. Reason: Get http://localhost:8080/version: dial tcp 202.102.110.203:8080: getsockopt: connection refused</span></span><br></pre></td></tr></table></figure><p>删除原有失败的kubernetes-dashboard</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl delete -f kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure><p>修改 kubernetes-dashboard.yaml 文件加入以下行</p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim kubernetes-dashboard.yaml</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">9090</span></span><br><span class="line">          <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">        <span class="attr">args:</span></span><br><span class="line">          <span class="comment"># Uncomment the following line to manually specify Kubernetes API server Host</span></span><br><span class="line">          <span class="comment"># If not specified, Dashboard will attempt to auto discover the API server and connect</span></span><br><span class="line">          <span class="comment"># to it. Uncomment only if the default does not work.</span></span><br><span class="line">          <span class="comment"># - --apiserver-host=http://my-address:port</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">--apiserver-host=http://192.168.2.247:8080</span>    <span class="comment">##加入此行 指定apiserver地址</span></span><br></pre></td></tr></table></figure><p>重新创建kubernetes-dashboard</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure><h3 id="6-不能浏览器访问kubernetes-dashboard"><a href="#6-不能浏览器访问kubernetes-dashboard" class="headerlink" title="6. 不能浏览器访问kubernetes-dashboard"></a>6. 不能浏览器访问kubernetes-dashboard</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Error: </span>&#x27;dial tcp 172.17.97.3:9090: i/o timeout&#x27;</span><br><span class="line">Trying to reach: &#x27;http://172.17.97.3:9090/&#x27;</span><br></pre></td></tr></table></figure><p>master上安装flannel</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y flannel</span></span><br></pre></td></tr></table></figure><p>编辑flannel配置文件并启动</p><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># vim /etc/sysconfig/flanneld</span><br><span class="line"></span><br><span class="line"># Flanneld <span class="keyword">configuration</span> <span class="keyword">options</span>  </span><br><span class="line"></span><br><span class="line"># etcd url <span class="keyword">location</span>.  <span class="type">Point</span> this <span class="keyword">to</span> the <span class="keyword">server</span> <span class="keyword">where</span> etcd runs</span><br><span class="line">FLANNEL_ETCD=&quot;http://192.168.2.247:2379&quot;</span><br><span class="line"></span><br><span class="line"># etcd config key.  This <span class="keyword">is</span> the <span class="keyword">configuration</span> key that flannel queries</span><br><span class="line"># <span class="keyword">For</span> address range assignment</span><br><span class="line">FLANNEL_ETCD_KEY=&quot;/coreos.com/network&quot;                                                                                                                                                                                       </span><br><span class="line"></span><br><span class="line"># <span class="keyword">Any</span> additional <span class="keyword">options</span> that you want <span class="keyword">to</span> pass</span><br><span class="line"><span class="meta">#FLANNEL_OPTIONS=&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"># systemctl <span class="keyword">enable</span> flanneld.service ; systemctl <span class="keyword">start</span> flanneld.service</span><br></pre></td></tr></table></figure></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div></div></div><div class="reward-container"><div>请我喝一杯冰阔落</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/wechatpay.png" alt="tanmx 微信支付"><p>微信支付</p></div></div></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>本文作者：</strong> tanmx</li><li class="post-copyright-title"> <strong>本文标题：</strong> kubernetes 安装遇到的一些问题</li><li class="post-copyright-link"> <strong>本文链接：</strong> <a href="https://www.sunmite.com/docker/k8s-errors.html" title="kubernetes 安装遇到的一些问题">https://www.sunmite.com/docker/k8s-errors.html</a></li><li class="post-copyright-license"> <strong>版权声明：</strong> 本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a><a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i> docker</a><a href="/tags/k8s/" rel="tag"><i class="fa fa-tag"></i> k8s</a></div><div class="post-nav"><div class="post-nav-item"><a href="/docker/kube-ui.html" rel="prev" title="kubernetes 安装配置 kube-ui"><i class="fa fa-chevron-left"></i> kubernetes 安装配置 kube-ui</a></div><div class="post-nav-item"> <a href="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" rel="next" title="在centos7上安装和配置Kubernetes集群管理pods和services">在centos7上安装和配置Kubernetes集群管理pods和services<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1. Error from server: namespaces “kube-system” not foundError from server: namespaces &quot;kube-system&quot; not found 解决方法： # vim kube-system.json&amp;#123;  &quot;apiVersion&quot;: &quot;v1&quot;,  &amp;qu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes 安装遇到的一些问题">
+<meta property="og:url" content="https://www.sunmite.com/docker/k8s-errors.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="1. Error from server: namespaces “kube-system” not foundError from server: namespaces &quot;kube-system&quot; not found 解决方法： # vim kube-system.json&amp;#123;  &quot;apiVersion&quot;: &quot;v1&quot;,  &amp;qu">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-29T20:29:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.339Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunmite.com/docker/k8s-errors.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kubernetes 安装遇到的一些问题 | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/k8s-errors.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes 安装遇到的一些问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2015-10-30 04:29:00" itemprop="dateCreated datePublished" datetime="2015-10-30T04:29:00+08:00">2015-10-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/docker/k8s-errors.html" class="post-meta-item leancloud_visitors" data-flag-title="kubernetes 安装遇到的一些问题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker/k8s-errors.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker/k8s-errors.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-Error-from-server-namespaces-“kube-system”-not-found"><a href="#1-Error-from-server-namespaces-“kube-system”-not-found" class="headerlink" title="1. Error from server: namespaces “kube-system” not found"></a>1. Error from server: namespaces “kube-system” not found</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Error </span>from server: namespaces &quot;kube-system&quot; not found</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># vim kube-<span class="keyword">system</span>.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;apiVersion&quot;: &quot;v1&quot;,</span><br><span class="line">  &quot;kind&quot;: &quot;Namespace&quot;,</span><br><span class="line">  &quot;metadata&quot;: &#123;</span><br><span class="line">    &quot;name&quot;: &quot;kube-system&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"># kubectl <span class="keyword">create</span> -f kube-<span class="keyword">system</span>.json</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="2-Unable-to-generate-self-signed-cert-mkdir-var-run-kubernetes-permission-denied"><a href="#2-Unable-to-generate-self-signed-cert-mkdir-var-run-kubernetes-permission-denied" class="headerlink" title="2. Unable to generate self signed cert: mkdir /var/run/kubernetes: permission denied"></a>2. Unable to generate self signed cert: mkdir /var/run/kubernetes: permission denied</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master kube-apiserver[<span class="number">5336</span>]: E<span class="number">0812</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span>.<span class="number">063837</span>    <span class="number">5336</span> genericapiserver.go:<span class="number">702</span>] Unable to generate self signed cert: mkdir /var/run/kubernetes: permission denied</span><br><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master kube-apiserver[<span class="number">5336</span>]: I<span class="number">0812</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span>.<span class="number">063915</span>    <span class="number">5336</span> genericapiserver.go:<span class="number">734</span>] Serving insecurely <span class="literal">on</span> <span class="number">0.0.0.0:8080</span></span><br><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master systemd[<span class="number">1</span>]: Started Kubernetes API Server.</span><br><span class="line"><span class="attribute">Aug</span> <span class="number">12</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span> master kube-apiserver[<span class="number">5336</span>]: E<span class="number">0812</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">05</span>.<span class="number">064151</span>    <span class="number">5336</span> genericapiserver.go:<span class="number">716</span>] Unable to listen for secure (open /var/run/kubernetes/apiserver.crt: no such file or directory); will try again.</span><br></pre></td></tr></table></figure>
+<p>解决办法:  </p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># mkdir -p <span class="regexp">/var/</span>run<span class="regexp">/kubernetes/</span></span><br><span class="line"># chown -R kube.kube <span class="regexp">/var/</span>run<span class="regexp">/kubernetes/</span></span><br><span class="line"># <span class="keyword">for</span> SERVICES in etcd kube-apiserver kube-controller-manager kube-scheduler; <span class="keyword">do</span> </span><br><span class="line">    systemctl restart $SERVICES</span><br><span class="line">    systemctl enable $SERVICES</span><br><span class="line">    systemctl status $SERVICES </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-下载google-container镜像-minion上下载"><a href="#3-下载google-container镜像-minion上下载" class="headerlink" title="3. 下载google-container镜像(minion上下载)"></a>3. 下载google-container镜像(minion上下载)</h3><p>在hosts文件中加入以下内容</p>
+<figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"># vim /etc/hosts</span><br><span class="line"><span class="number">220.255.2.153</span> www.gcr.io</span><br><span class="line"><span class="number">220.255.2.153</span> gcr.io</span><br><span class="line"># docker pull gcr.io/google_containers/kubernetes-dashboard-amd64:v1.<span class="number">1</span>.<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-no-API-token-found-for-service-account-kube-system-default"><a href="#4-no-API-token-found-for-service-account-kube-system-default" class="headerlink" title="4. no API token found for service account kube-system/default"></a>4. no API token found for service account kube-system/default</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Error </span>creating: pods &quot;kubernetes-dashboard<span class="string">-1881024876</span>-&quot; is forbidden: no API token found for service account kube-system/default,</span><br></pre></td></tr></table></figure>
+<p>解决方法：etc/kubernetes/apiserver 去除 KUBE_ADMISSION_CONTROL中的SecurityContextDeny,ServiceAccount，并重启kube-apiserver.service服务</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim /etc/kubernetes/apiserver</span></span><br><span class="line"><span class="attr">KUBE_ADMISSION_CONTROL</span>=<span class="string">&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota&quot;</span></span><br><span class="line"><span class="comment">#systemctl restart kube-apiserver.service</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-Get-http-localhost-8080-version-dial-tcp-202-102-110-203-8080-getsockopt-connection-refused"><a href="#5-Get-http-localhost-8080-version-dial-tcp-202-102-110-203-8080-getsockopt-connection-refused" class="headerlink" title="5. Get http://localhost:8080/version: dial tcp 202.102.110.203:8080: getsockopt: connection refused"></a>5. Get <a target="_blank" rel="noopener" href="http://localhost:8080/version">http://localhost:8080/version</a>: dial tcp 202.102.110.203:8080: getsockopt: connection refused</h3><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># docker logs b7cff1accc06</span><br><span class="line">Starting HTTP <span class="keyword">server</span> <span class="keyword">on</span> port <span class="number">9090</span></span><br><span class="line">Creating API <span class="keyword">server</span> client <span class="keyword">for</span> http://localhost:<span class="number">8080</span></span><br><span class="line">Error <span class="keyword">while</span> initializing <span class="keyword">connection</span> <span class="keyword">to</span> Kubernetes apiserver. This most likely means that the <span class="keyword">cluster</span> <span class="keyword">is</span> misconfigured (e.g., it has invalid apiserver certificates <span class="keyword">or</span> service accounts <span class="keyword">configuration</span>) <span class="keyword">or</span> the <span class="comment">--apiserver-host param points to a server that does not exist. Reason: Get http://localhost:8080/version: dial tcp 202.102.110.203:8080: getsockopt: connection refused</span></span><br></pre></td></tr></table></figure>
+<p>删除原有失败的kubernetes-dashboard</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl delete -f kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure>
+<p>修改 kubernetes-dashboard.yaml 文件加入以下行</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim kubernetes-dashboard.yaml</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">9090</span></span><br><span class="line">          <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">        <span class="attr">args:</span></span><br><span class="line">          <span class="comment"># Uncomment the following line to manually specify Kubernetes API server Host</span></span><br><span class="line">          <span class="comment"># If not specified, Dashboard will attempt to auto discover the API server and connect</span></span><br><span class="line">          <span class="comment"># to it. Uncomment only if the default does not work.</span></span><br><span class="line">          <span class="comment"># - --apiserver-host=http://my-address:port</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">--apiserver-host=http://192.168.2.247:8080</span>    <span class="comment">##加入此行 指定apiserver地址</span></span><br></pre></td></tr></table></figure>
+<p>重新创建kubernetes-dashboard</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl create -f kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-不能浏览器访问kubernetes-dashboard"><a href="#6-不能浏览器访问kubernetes-dashboard" class="headerlink" title="6. 不能浏览器访问kubernetes-dashboard"></a>6. 不能浏览器访问kubernetes-dashboard</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Error: </span>&#x27;dial tcp 172.17.97.3:9090: i/o timeout&#x27;</span><br><span class="line">Trying to reach: &#x27;http://172.17.97.3:9090/&#x27;</span><br></pre></td></tr></table></figure>
+<p>master上安装flannel</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># yum install -y flannel</span></span><br></pre></td></tr></table></figure>
+<p>编辑flannel配置文件并启动</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># vim /etc/sysconfig/flanneld</span><br><span class="line"></span><br><span class="line"># Flanneld <span class="keyword">configuration</span> <span class="keyword">options</span>  </span><br><span class="line"></span><br><span class="line"># etcd url <span class="keyword">location</span>.  <span class="type">Point</span> this <span class="keyword">to</span> the <span class="keyword">server</span> <span class="keyword">where</span> etcd runs</span><br><span class="line">FLANNEL_ETCD=&quot;http://192.168.2.247:2379&quot;</span><br><span class="line"></span><br><span class="line"># etcd config key.  This <span class="keyword">is</span> the <span class="keyword">configuration</span> key that flannel queries</span><br><span class="line"># <span class="keyword">For</span> address range assignment</span><br><span class="line">FLANNEL_ETCD_KEY=&quot;/coreos.com/network&quot;                                                                                                                                                                                       </span><br><span class="line"></span><br><span class="line"># <span class="keyword">Any</span> additional <span class="keyword">options</span> that you want <span class="keyword">to</span> pass</span><br><span class="line"><span class="meta">#FLANNEL_OPTIONS=&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"># systemctl <span class="keyword">enable</span> flanneld.service ; systemctl <span class="keyword">start</span> flanneld.service</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>kubernetes 安装遇到的一些问题</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/docker/k8s-errors.html" title="kubernetes 安装遇到的一些问题">https://www.sunmite.com/docker/k8s-errors.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a>
+              <a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i> docker</a>
+              <a href="/tags/k8s/" rel="tag"><i class="fa fa-tag"></i> k8s</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/docker/kube-ui.html" rel="prev" title="kubernetes 安装配置 kube-ui">
+      <i class="fa fa-chevron-left"></i> kubernetes 安装配置 kube-ui
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/linux/installing-kubernetes-cluster-on-centos7-to-manage-pods-and-services.html" rel="next" title="在centos7上安装和配置Kubernetes集群管理pods和services">
+      在centos7上安装和配置Kubernetes集群管理pods和services <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
   window.addEventListener('tabs:register', () => {
     let { activeClass } = CONFIG.comments;
     if (CONFIG.comments.storage) {
@@ -18,41 +405,109 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Error-from-server-namespaces-%E2%80%9Ckube-system%E2%80%9D-not-found"><span class="nav-text">1. Error from server: namespaces “kube-system” not found</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Unable-to-generate-self-signed-cert-mkdir-var-run-kubernetes-permission-denied"><span class="nav-text">2. Unable to generate self signed cert: mkdir &#x2F;var&#x2F;run&#x2F;kubernetes: permission denied</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%8B%E8%BD%BDgoogle-container%E9%95%9C%E5%83%8F-minion%E4%B8%8A%E4%B8%8B%E8%BD%BD"><span class="nav-text">3. 下载google-container镜像(minion上下载)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-no-API-token-found-for-service-account-kube-system-default"><span class="nav-text">4. no API token found for service account kube-system&#x2F;default</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Get-http-localhost-8080-version-dial-tcp-202-102-110-203-8080-getsockopt-connection-refused"><span class="nav-text">5. Get http:&#x2F;&#x2F;localhost:8080&#x2F;version: dial tcp 202.102.110.203:8080: getsockopt: connection refused</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E4%B8%8D%E8%83%BD%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AEkubernetes-dashboard"><span class="nav-text">6. 不能浏览器访问kubernetes-dashboard</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="tanmx" src="/images/avatar.gif"><p class="site-author-name" itemprop="name">tanmx</p><div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">62</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">76</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i> Weibo</a></span><span class="links-of-author-item"><a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i> Zhihu</a></span><span class="links-of-author-item"><a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i> Twitter</a></span></div><div class="cc-license motion-element" itemprop="license"> <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2014 – <span itemprop="copyrightYear">2021</span><span class="with-love"><i class="fa fa-heart"></i></span> <span class="author" itemprop="copyrightHolder">tanmx</span></div><div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动</div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/local-search.js"></script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>
-      window.addEventListener('load', () => {
-      quicklink({
-        timeout : 3000,
-        priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/docker/k8s-errors.html',]
-      });
-      });
-  </script><script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
-      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
-      placeholder: "(发表评论)",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : true,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : true,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script></body></html>with-love">
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Error-from-server-namespaces-%E2%80%9Ckube-system%E2%80%9D-not-found"><span class="nav-text">1. Error from server: namespaces “kube-system” not found</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Unable-to-generate-self-signed-cert-mkdir-var-run-kubernetes-permission-denied"><span class="nav-text">2. Unable to generate self signed cert: mkdir &#x2F;var&#x2F;run&#x2F;kubernetes: permission denied</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%8B%E8%BD%BDgoogle-container%E9%95%9C%E5%83%8F-minion%E4%B8%8A%E4%B8%8B%E8%BD%BD"><span class="nav-text">3. 下载google-container镜像(minion上下载)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-no-API-token-found-for-service-account-kube-system-default"><span class="nav-text">4. no API token found for service account kube-system&#x2F;default</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Get-http-localhost-8080-version-dial-tcp-202-102-110-203-8080-getsockopt-connection-refused"><span class="nav-text">5. Get http:&#x2F;&#x2F;localhost:8080&#x2F;version: dial tcp 202.102.110.203:8080: getsockopt: connection refused</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E4%B8%8D%E8%83%BD%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AEkubernetes-dashboard"><span class="nav-text">6. 不能浏览器访问kubernetes-dashboard</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">tanmx</span>
