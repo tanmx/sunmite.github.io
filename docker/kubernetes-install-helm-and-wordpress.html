@@ -1,4 +1,419 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ"><meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css"><script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"www.sunmite.com",root:"/",scheme:"Muse",version:"7.8.0",exturl:!1,sidebar:{position:"left",display:"always",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!0,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="Helm 简介Helm 有两个重要的概念：chart 和 release。 chart 是创建一个应用的信息集合，包括各种 Kubernetes 对象的配置模板、参数定义、依赖关系、文档说明等。chart 是应用部署的自包含逻辑单元。可以将 chart 想象成 apt、yum 中的软件安装包。 release 是 chart 的运行实例，代表了一个正在运行的应用。当 chart 被安装到 Kube"><meta property="og:type" content="article"><meta property="og:title" content="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress"><meta property="og:url" content="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html"><meta property="og:site_name" content="谭明宵博客"><meta property="og:description" content="Helm 简介Helm 有两个重要的概念：chart 和 release。 chart 是创建一个应用的信息集合，包括各种 Kubernetes 对象的配置模板、参数定义、依赖关系、文档说明等。chart 是应用部署的自包含逻辑单元。可以将 chart 想象成 apt、yum 中的软件安装包。 release 是 chart 的运行实例，代表了一个正在运行的应用。当 chart 被安装到 Kube"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/helm.png"><meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/bash.png"><meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/wordpress.png"><meta property="article:published_time" content="2019-01-04T07:31:00.000Z"><meta property="article:modified_time" content="2021-01-25T02:17:02.332Z"><meta property="article:author" content="tanmx"><meta property="article:tag" content="kubernetes"><meta property="article:tag" content="helm"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2019/01/helm.png"><link rel="canonical" href="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Kubernetes 安装 Helm 并使用 Helm 安装 wordpress | 谭明宵博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript><link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml"></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">谭明宵博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">Every day is May day!</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i> 搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"> <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="tanmx"><meta itemprop="description" content="一个默默无闻的工程师的日常"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="谭明宵博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> Kubernetes 安装 Helm 并使用 Helm 安装 wordpress</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-01-04 15:31:00" itemprop="dateCreated datePublished" datetime="2019-01-04T15:31:00+08:00">2019-01-04</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a></span></span><span id="/docker/kubernetes-install-helm-and-wordpress.html" class="post-meta-item leancloud_visitors" data-flag-title="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">Valine：</span><a title="valine" href="/docker/kubernetes-install-helm-and-wordpress.html#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/docker/kubernetes-install-helm-and-wordpress.html" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><h1 id="Helm-简介"><a href="#Helm-简介" class="headerlink" title="Helm 简介"></a>Helm 简介</h1><p>Helm 有两个重要的概念：chart 和 release。</p><p>chart 是创建一个应用的信息集合，包括各种 Kubernetes 对象的配置模板、参数定义、依赖关系、文档说明等。chart 是应用部署的自包含逻辑单元。可以将 chart 想象成 apt、yum 中的软件安装包。</p><p>release 是 chart 的运行实例，代表了一个正在运行的应用。当 chart 被安装到 Kubernetes 集群，就生成一个 release。chart 能够多次安装到同一个集群，每次安装都是一个 release。</p><p>Kubernetes Helm 是一个管理预先配置 Kubernetes 资源包的工具，这里的资源在 Helm 中也被称作 Kubernetes charts。使用 Helm可以：</p><ul><li>查找并使用已经打包为 Kubernetes charts 的流行软件</li><li>分享您自己的应用作为 Kubernetes charts</li><li>为 Kubernetes 应用创建可重复执行的构建</li><li>为您的 Kubernetes 清单文件提供更智能化的管理</li><li>管理 Helm 软件包的发布</li></ul><p>Helm 包含两个组件：Helm 客户端和 Tiller 服务器，如下图所示。<br><img data-src="/images/uploads/2019/01/helm.png" alt="helm"></p><p>Helm 客户端负责 chart 和 release 的创建和管理以及和 Tiller 的交互。Tiller 服务器运行在 Kubernetes 集群中，它会处理 Helm 客户端的请求，与 Kubernetes API Server 交互。</p><span id="more"></span><h1 id="安装和部署-Helm"><a href="#安装和部署-Helm" class="headerlink" title="安装和部署 Helm"></a>安装和部署 Helm</h1><h2 id="安装-Helm-客户端"><a href="#安装-Helm-客户端" class="headerlink" title="安装 Helm 客户端"></a>安装 Helm 客户端</h2><p>所有运行 kubectl 的节点均需要安装</p><h3 id="1-下载安装"><a href="#1-下载安装" class="headerlink" title="1. 下载安装"></a>1. 下载安装</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># curl https:<span class="comment">//raw.githubusercontent.com/helm/helm/master/scripts/get | bash</span></span><br><span class="line"></span><br><span class="line">Downloading https:<span class="comment">//kubernetes-helm.storage.googleapis.com/helm-v2.12.1-linux-amd64.tar.gz</span></span><br><span class="line">Preparing to install helm and tiller <span class="keyword">into</span> <span class="regexp">/usr/</span>local/bin</span><br><span class="line">helm installed <span class="keyword">into</span> <span class="regexp">/usr/</span>local<span class="regexp">/bin/</span>helm</span><br><span class="line">tiller installed <span class="keyword">into</span> <span class="regexp">/usr/</span>local<span class="regexp">/bin/</span>tiller</span><br><span class="line">Run <span class="string">&#x27;helm init&#x27;</span> to configure helm.</span><br></pre></td></tr></table></figure><h3 id="2-验证安装"><a href="#2-验证安装" class="headerlink" title="2. 验证安装"></a>2. 验证安装</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"># helm version</span><br><span class="line"></span><br><span class="line">Client: &amp;version.Version&#123;SemVer:&quot;v2.12.1&quot;, GitCommit:&quot;02a47c7249b1fc6d8fd3b94e6b4babf9d818144e&quot;, GitTreeState:&quot;clean&quot;&#125;</span><br><span class="line"><span class="keyword">Error: </span>could not find tiller</span><br></pre></td></tr></table></figure><p>安装安装的版本为 2.12.1，tiller 服务器还没有安装所以有一个报错</p><h3 id="3-安装-helm-的-bash-命令补全脚本"><a href="#3-安装-helm-的-bash-命令补全脚本" class="headerlink" title="3. 安装 helm 的 bash 命令补全脚本"></a>3. 安装 helm 的 bash 命令补全脚本</h3><p>helm 有很多子命令和参数，为了提高使用命令行的效率，通常建议安装 helm 的 bash 命令补全脚本。</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> helm completion bash &gt; .helmrc &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;source .helmrc&quot;</span> &gt;&gt; .bashrc</span></span><br></pre></td></tr></table></figure><p>重新登陆后，就能通过 TAB 自动补全 helm 命令的子命令和参数了。<br><img data-src="/images/uploads/2019/01/bash.png" alt="bash"></p><h2 id="安装-Tiller-服务器"><a href="#安装-Tiller-服务器" class="headerlink" title="安装 Tiller 服务器"></a>安装 Tiller 服务器</h2><h3 id="1-导入-tiller-镜像"><a href="#1-导入-tiller-镜像" class="headerlink" title="1. 导入 tiller 镜像"></a>1. 导入 tiller 镜像</h3><p>所有节点上面导入 tiller.tar，下载地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1dKNbg7b9IBtPBnadLUADlg">tiller.tar</a></p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># docker load -i tiller.tar</span></span><br></pre></td></tr></table></figure><h3 id="2-创建-helm-服务账号"><a href="#2-创建-helm-服务账号" class="headerlink" title="2. 创建 helm 服务账号"></a>2. 创建 helm 服务账号</h3><p>创建 tiller-rbac-config.yaml 文件，加入以下内容</p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim tiller-rbac-config.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cluster-admin</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure><p>运行以下命令创建 tiller 服务账号</p><figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl apply -f tiller-rbac-config.yaml</span></span><br></pre></td></tr></table></figure><h3 id="3-部署-tiller"><a href="#3-部署-tiller" class="headerlink" title="3. 部署 tiller"></a>3. 部署 tiller</h3><p>Tiller 服务器安装非常简单，只需要执行 helm init，这里我们指定使用上一步创建的服务账号。</p><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm init --service-account tiller</span></span><br><span class="line"></span><br><span class="line">Creating <span class="regexp">/root/</span>.helm </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm/repository </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/repository/</span>cache </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/repository/</span>local </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm/plugins </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm/starters </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/cache/</span>archive </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/repository/</span>repositories.yaml </span><br><span class="line">Adding stable repo with URL: https:<span class="regexp">//</span>kubernetes-charts.storage.googleapis.com </span><br><span class="line">Adding local repo with URL: http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8879</span>/charts </span><br><span class="line"><span class="variable">$HELM_HOME</span> has been configured at <span class="regexp">/root/</span>.helm.</span><br><span class="line"></span><br><span class="line">Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.</span><br><span class="line"></span><br><span class="line">Please note: by default, Tiller is deployed with an insecure <span class="string">&#x27;allow unauthenticated users&#x27;</span> policy.</span><br><span class="line">To prevent this, run `helm init` with the --tiller-tls-verify flag.</span><br><span class="line">For more information on securing your installation see: https:<span class="regexp">//</span>docs.helm.sh<span class="regexp">/using_helm/</span><span class="comment">#securing-your-helm-installation</span></span><br><span class="line">Happy Helming!</span><br></pre></td></tr></table></figure><h2 id="验证操作"><a href="#验证操作" class="headerlink" title="验证操作"></a>验证操作</h2><h3 id="1-查看-tiller-状态"><a href="#1-查看-tiller-状态" class="headerlink" title="1. 查看 tiller 状态"></a>1. 查看 tiller 状态</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get pods --namespace kube-system </span></span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line"><span class="attribute">coredns</span>-<span class="number">86</span>c<span class="number">58</span>d<span class="number">9</span>df<span class="number">4</span>-<span class="number">8</span>zhr<span class="number">5</span>               <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">coredns</span>-<span class="number">86</span>c<span class="number">58</span>d<span class="number">9</span>df<span class="number">4</span>-jqn<span class="number">7</span>r               <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">etcd</span>-k<span class="number">8</span>s-master                        <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-apiserver-k<span class="number">8</span>s-master              <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-controller-manager-k<span class="number">8</span>s-master     <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-flannel-ds-amd<span class="number">64</span>-krf<span class="number">6</span>t            <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-flannel-ds-amd<span class="number">64</span>-tkftg            <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-flannel-ds-amd<span class="number">64</span>-zxzld            <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-proxy-<span class="number">5</span>znt<span class="number">7</span>                       <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-proxy-gl<span class="number">9</span>sl                       <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-proxy-q<span class="number">7</span>j<span class="number">7</span>m                       <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-scheduler-k<span class="number">8</span>s-master              <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kubernetes</span>-dashboard-<span class="number">57</span>df<span class="number">4</span>db<span class="number">6</span>b-<span class="number">8</span>b<span class="number">2</span>l<span class="number">4</span>   <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">16</span>h</span><br><span class="line"><span class="attribute">metrics</span>-server-<span class="number">879</span>f<span class="number">5</span>ff<span class="number">6</span>d-tpszf         <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">16</span>h</span><br><span class="line"><span class="attribute">tiller</span>-deploy-<span class="number">6</span>f<span class="number">8</span>d<span class="number">4</span>f<span class="number">6</span>c<span class="number">9</span>c-<span class="number">4</span>h<span class="number">95</span>z         <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">2</span>m<span class="number">39</span>s</span><br></pre></td></tr></table></figure><p>可以看到 tiller 已经是运行状态。</p><h3 id="2-查看-helm-信息"><a href="#2-查看-helm-信息" class="headerlink" title="2. 查看 helm 信息"></a>2. 查看 helm 信息</h3><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># helm <span class="keyword">version</span></span><br><span class="line"></span><br><span class="line">Client: &amp;<span class="keyword">version</span>.<span class="keyword">Version</span>&#123;SemVer:&quot;v2.12.1&quot;, GitCommit:&quot;02a47c7249b1fc6d8fd3b94e6b4babf9d818144e&quot;, GitTreeState:&quot;clean&quot;&#125;</span><br><span class="line"><span class="keyword">Server</span>: &amp;<span class="keyword">version</span>.<span class="keyword">Version</span>&#123;SemVer:&quot;v2.12.1&quot;, GitCommit:&quot;02a47c7249b1fc6d8fd3b94e6b4babf9d818144e&quot;, GitTreeState:&quot;clean&quot;&#125;</span><br></pre></td></tr></table></figure><h1 id="使用-Helm-安装-wordpress"><a href="#使用-Helm-安装-wordpress" class="headerlink" title="使用 Helm 安装 wordpress"></a>使用 Helm 安装 wordpress</h1><h2 id="1-搜索-chart"><a href="#1-搜索-chart" class="headerlink" title="1. 搜索 chart"></a>1. 搜索 chart</h2><p>搜索 wordpress 的 charts</p><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm search wordpress</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>            	CHART VERSION	APP VERSION	DESCRIPTION                                             </span><br><span class="line"><span class="attribute">stable</span>/wordpress	<span class="number">5</span>.<span class="number">0</span>.<span class="number">3</span>        	<span class="number">5</span>.<span class="number">0</span>.<span class="number">2</span>      	Web publishing platform for building blogs and websites.</span><br></pre></td></tr></table></figure><h2 id="2-查看-chart-的存储信息"><a href="#2-查看-chart-的存储信息" class="headerlink" title="2. 查看 chart 的存储信息"></a>2. 查看 chart 的存储信息</h2><p>创建 wordpress 的时候需要申请  PersistentVolumeClaim，由于我们的环境不支持动态申请所以需要手动创建</p><figure class="highlight clean"><table><tr><td class="code"><pre><span class="line"># helm inspect value stable/wordpress</span><br><span class="line"></span><br><span class="line">……</span><br><span class="line">  ## MariaDB admin password</span><br><span class="line">  ## ref: https:<span class="comment">//github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#setting-the-root-password-on-first-run</span></span><br><span class="line">  ##</span><br><span class="line">  # rootUser:</span><br><span class="line">  #   password:</span><br><span class="line"></span><br><span class="line">  ## Enable persistence using Persistent Volume Claims</span><br><span class="line">  ## ref: http:<span class="comment">//kubernetes.io/docs/user-guide/persistent-volumes/</span></span><br><span class="line">  ##</span><br><span class="line">  master:</span><br><span class="line">    persistence:</span><br><span class="line">      enabled: true</span><br><span class="line">      ## mariadb data Persistent Volume Storage Class</span><br><span class="line">      ## If defined, storageClassName: &lt;storageClass&gt;</span><br><span class="line">      ## If set to <span class="string">&quot;-&quot;</span>, storageClassName: <span class="string">&quot;&quot;</span>, which disables dynamic provisioning</span><br><span class="line">      ## If undefined (the default) or set to null, no storageClassName spec is</span><br><span class="line">      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on</span><br><span class="line">      ##   GKE, AWS &amp; OpenStack)</span><br><span class="line">      ##</span><br><span class="line">      # storageClass: <span class="string">&quot;-&quot;</span></span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: <span class="number">8</span>Gi</span><br><span class="line">      </span><br><span class="line">……</span><br><span class="line"></span><br><span class="line">persistence:</span><br><span class="line">  enabled: true</span><br><span class="line">  ## wordpress data Persistent Volume Storage Class</span><br><span class="line">  ## If defined, storageClassName: &lt;storageClass&gt;</span><br><span class="line">  ## If set to <span class="string">&quot;-&quot;</span>, storageClassName: <span class="string">&quot;&quot;</span>, which disables dynamic provisioning</span><br><span class="line">  ## If undefined (the default) or set to null, no storageClassName spec is</span><br><span class="line">  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on</span><br><span class="line">  ##   GKE, AWS &amp; OpenStack)</span><br><span class="line">  ##</span><br><span class="line">  # storageClass: <span class="string">&quot;-&quot;</span></span><br><span class="line">  ##</span><br><span class="line">  ## If you want to reuse an existing claim, you can pass the name <span class="keyword">of</span> the PVC using</span><br><span class="line">  ## the existingClaim variable</span><br><span class="line">  # existingClaim: your-claim</span><br><span class="line">  accessMode: ReadWriteOnce</span><br><span class="line">  size: <span class="number">10</span>Gi</span><br></pre></td></tr></table></figure><p>可以看到 wordpress 的 chart 需要两个 pv，分别用于 mariadb(8G) 和 wordpress(10G) 的数据存储。</p><h2 id="3-手动创建-chart-所需的-pv"><a href="#3-手动创建-chart-所需的-pv" class="headerlink" title="3. 手动创建 chart 所需的 pv"></a>3. 手动创建 chart 所需的 pv</h2><p>创建 create-pv.yml 文件，输入以下内容</p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim create-pv.yml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mariadb-pv</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">8Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="comment">#storageClassName: nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfsdata/mariadb-pv</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">172.20</span><span class="number">.6</span><span class="number">.116</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">wordpress-pv</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="comment">#storageClassName: nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfsdata/wordpress-pv</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">172.20</span><span class="number">.6</span><span class="number">.116</span></span><br></pre></td></tr></table></figure><p>创建 pv</p><figure class="highlight maxima"><table><tr><td class="code"><pre><span class="line"># kubectl <span class="built_in">apply</span> -f create-<span class="built_in">pv</span>.yml </span><br><span class="line"></span><br><span class="line">persistentvolume/mariadb-<span class="built_in">pv</span> created</span><br><span class="line">persistentvolume/wordpress-<span class="built_in">pv</span> created</span><br></pre></td></tr></table></figure><h2 id="4-安装-chart"><a href="#4-安装-chart" class="headerlink" title="4. 安装 chart"></a>4. 安装 chart</h2><figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line"># helm install --name wordpress stable/wordpress</span><br><span class="line"></span><br><span class="line">NAME:   wordpress                                  ---------①---------</span><br><span class="line">LAST DEPLOYED: Fri Jan  <span class="number">4</span> <span class="number">10</span>:<span class="number">32</span>:<span class="number">57</span> <span class="number">2019</span></span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: DEPLOYED</span><br><span class="line"></span><br><span class="line">RESOURCES:                                         ---------②---------</span><br><span class="line">==&gt; v1beta1/Deployment</span><br><span class="line">NAME                 DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE</span><br><span class="line">wordpress-wordpress  <span class="number">1</span>        <span class="number">1</span>        <span class="number">1</span>           <span class="number">0</span>          <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1beta1/StatefulSet</span><br><span class="line">NAME               DESIRED  CURRENT  AGE</span><br><span class="line">wordpress-mariadb  <span class="number">1</span>        <span class="number">1</span>        <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/<span class="constructor">Pod(<span class="params">related</span>)</span></span><br><span class="line">NAME                                  READY  STATUS   RESTARTS  AGE</span><br><span class="line">wordpress-wordpress-<span class="number">56794</span>ff7b9-rf98x  <span class="number">0</span>/<span class="number">1</span>    Pending  <span class="number">0</span>         <span class="number">0</span>s</span><br><span class="line">wordpress-mariadb-<span class="number">0</span>                   <span class="number">0</span>/<span class="number">1</span>    Pending  <span class="number">0</span>         <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Secret</span><br><span class="line">NAME                 TYPE    DATA  AGE</span><br><span class="line">wordpress-mariadb    Opaque  <span class="number">2</span>     <span class="number">0</span>s</span><br><span class="line">wordpress-wordpress  Opaque  <span class="number">1</span>     <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/ConfigMap</span><br><span class="line">NAME                     DATA  AGE</span><br><span class="line">wordpress-mariadb        <span class="number">1</span>     <span class="number">0</span>s</span><br><span class="line">wordpress-mariadb-tests  <span class="number">1</span>     <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/PersistentVolumeClaim</span><br><span class="line">NAME                 STATUS   VOLUME  CAPACITY  ACCESS MODES  STORAGECLASS  AGE</span><br><span class="line">wordpress-wordpress  Pending  <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">RESOURCES:</span><br><span class="line">==&gt; v1/Service</span><br><span class="line">NAME                 TYPE          CLUSTER-IP      EXTERNAL-IP  <span class="constructor">PORT(S)</span>                     AGE</span><br><span class="line">wordpress-mariadb    ClusterIP     <span class="number">10.100</span>.<span class="number">218.132</span>  &lt;none&gt;       <span class="number">3306</span>/TCP                    <span class="number">0</span>s</span><br><span class="line">wordpress-wordpress  LoadBalancer  <span class="number">10.100</span>.<span class="number">36.64</span>    &lt;pending&gt;    <span class="number">80</span>:<span class="number">31051</span>/TCP,<span class="number">443</span>:<span class="number">30169</span>/TCP  <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NOTES:                                             ---------③---------</span><br><span class="line"><span class="number">1.</span> Get the WordPress URL:</span><br><span class="line"></span><br><span class="line">  NOTE: It may take a few minutes <span class="keyword">for</span> the LoadBalancer IP <span class="keyword">to</span> be available.</span><br><span class="line">        Watch the status <span class="keyword">with</span>: &#x27;kubectl get svc --namespace default -w wordpress-wordpress&#x27;</span><br><span class="line">  export SERVICE_IP=<span class="constructor">$(<span class="params">kubectl</span> <span class="params">get</span> <span class="params">svc</span> --<span class="params">namespace</span> <span class="params">default</span> <span class="params">wordpress</span>-<span class="params">wordpress</span> --<span class="params">template</span> <span class="string">&quot;&#123;&#123; range (index .status.loadBalancer.ingress 0) &#125;&#125;&#123;&#123;.&#125;&#125;&#123;&#123; end &#125;&#125;&quot;</span>)</span></span><br><span class="line">  echo <span class="string">&quot;WordPress URL: http://$SERVICE_IP/&quot;</span></span><br><span class="line">  echo <span class="string">&quot;WordPress Admin URL: http://$SERVICE_IP/admin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span> Login <span class="keyword">with</span> the following credentials <span class="keyword">to</span> see your blog</span><br><span class="line"></span><br><span class="line">  echo Username: user</span><br><span class="line">  echo Password: <span class="constructor">$(<span class="params">kubectl</span> <span class="params">get</span> <span class="params">secret</span> --<span class="params">namespace</span> <span class="params">default</span> <span class="params">wordpress</span>-<span class="params">wordpress</span> -<span class="params">o</span> <span class="params">jsonpath</span>=<span class="string">&quot;&#123;.data.wordpress-password&#125;&quot;</span> | <span class="params">base64</span> --<span class="params">decode</span>)</span></span><br></pre></td></tr></table></figure><p>输出分为 3 部分（上文输出结果中的①②③）：</p><ul><li>① 本次部署 chart 的描述信息。包括 release 的名字（没有指定，则默认生成）。release 部署的 namespace，默认是 default。release的状态 DEPLOYED 表示已经将 chart 部署到集群。</li><li>② release 包含的资源： Service、 Deployment、 Secret 等</li><li>③ release 的使用方法</li></ul><h2 id="5-访问-wordpress"><a href="#5-访问-wordpress" class="headerlink" title="5. 访问  wordpress"></a>5. 访问 wordpress</h2><p>使用 <a target="_blank" rel="noopener" href="http://nodeip+service_port/">http://nodeip+service_port</a> 访问wordpress，访问地址为：<a target="_blank" rel="noopener" href="http://172.20.6.116:31051/">http://172.20.6.116:31051/</a><br><img data-src="/images/uploads/2019/01/wordpress.png" alt="wordpress"><br>其他信息，包括后台地址，管理员账号等信息可以参考release 的 NOTES 部分。</p><h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>Helm 的使用有点类似 ubuntu 的 apt 或者 RHEL 的 yum，极大的简化了部署一个应用的流程。对于使用者而言，使用 Helm 后不用需要了解 Kubernetes 的 yaml 语法并编写应用部署文件，也无需考虑应用的各种依赖，可以直接通过 Helm 下载并在 kubernetes 上安装需要的应用。<br>除此以外，Helm 还提供了 kubernetes 上的软件部署，删除，升级，回滚应用的强大功能。</p><hr><h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/CloudMan6/article/details/80140789">Helm 架构 - 每天5分钟玩转 Docker 容器技术（161）</a><br><a target="_blank" rel="noopener" href="https://docs.helm.sh/using_helm/#installing-helm">Helm Quickstart</a></p></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div></div></div><div class="reward-container"><div>请我喝一杯冰阔落</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/wechatpay.png" alt="tanmx 微信支付"><p>微信支付</p></div></div></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>本文作者：</strong> tanmx</li><li class="post-copyright-title"> <strong>本文标题：</strong> Kubernetes 安装 Helm 并使用 Helm 安装 wordpress</li><li class="post-copyright-link"> <strong>本文链接：</strong> <a href="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html" title="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress">https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html</a></li><li class="post-copyright-license"> <strong>版权声明：</strong> 本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a><a href="/tags/helm/" rel="tag"><i class="fa fa-tag"></i> helm</a></div><div class="post-nav"><div class="post-nav-item"><a href="/docker/use-prometheus-operator-monitor-kubernetes.html" rel="prev" title="使用 Prometheus Operator 监控 Kubernetes"><i class="fa fa-chevron-left"></i> 使用 Prometheus Operator 监控 Kubernetes</a></div><div class="post-nav-item"> <a href="/docker/use-kubeadmin-deploy-kubernetes.html" rel="next" title="使用 kubeadm 部署 kubernetes 1.13.1">使用 kubeadm 部署 kubernetes 1.13.1<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
+  <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Helm 简介Helm 有两个重要的概念：chart 和 release。 chart 是创建一个应用的信息集合，包括各种 Kubernetes 对象的配置模板、参数定义、依赖关系、文档说明等。chart 是应用部署的自包含逻辑单元。可以将 chart 想象成 apt、yum 中的软件安装包。 release 是 chart 的运行实例，代表了一个正在运行的应用。当 chart 被安装到 Kube">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress">
+<meta property="og:url" content="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html">
+<meta property="og:site_name" content="谭明宵博客">
+<meta property="og:description" content="Helm 简介Helm 有两个重要的概念：chart 和 release。 chart 是创建一个应用的信息集合，包括各种 Kubernetes 对象的配置模板、参数定义、依赖关系、文档说明等。chart 是应用部署的自包含逻辑单元。可以将 chart 想象成 apt、yum 中的软件安装包。 release 是 chart 的运行实例，代表了一个正在运行的应用。当 chart 被安装到 Kube">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/helm.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/bash.png">
+<meta property="og:image" content="https://www.sunmite.com/images/uploads/2019/01/wordpress.png">
+<meta property="article:published_time" content="2019-01-04T07:31:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T02:17:02.332Z">
+<meta property="article:author" content="tanmx">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="helm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunmite.com/images/uploads/2019/01/helm.png">
+
+<link rel="canonical" href="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Kubernetes 安装 Helm 并使用 Helm 安装 wordpress | 谭明宵博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">谭明宵博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Every day is May day!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tanmx">
+      <meta itemprop="description" content="一个默默无闻的工程师的日常">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谭明宵博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes 安装 Helm 并使用 Helm 安装 wordpress
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-04 15:31:00" itemprop="dateCreated datePublished" datetime="2019-01-04T15:31:00+08:00">2019-01-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/docker/kubernetes-install-helm-and-wordpress.html" class="post-meta-item leancloud_visitors" data-flag-title="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/docker/kubernetes-install-helm-and-wordpress.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/docker/kubernetes-install-helm-and-wordpress.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Helm-简介"><a href="#Helm-简介" class="headerlink" title="Helm 简介"></a>Helm 简介</h1><p>Helm 有两个重要的概念：chart 和 release。</p>
+<p>chart 是创建一个应用的信息集合，包括各种 Kubernetes 对象的配置模板、参数定义、依赖关系、文档说明等。chart 是应用部署的自包含逻辑单元。可以将 chart 想象成 apt、yum 中的软件安装包。</p>
+<p>release 是 chart 的运行实例，代表了一个正在运行的应用。当 chart 被安装到 Kubernetes 集群，就生成一个 release。chart 能够多次安装到同一个集群，每次安装都是一个 release。</p>
+<p>Kubernetes Helm 是一个管理预先配置 Kubernetes 资源包的工具，这里的资源在 Helm 中也被称作 Kubernetes charts。使用 Helm可以：</p>
+<ul>
+<li>查找并使用已经打包为 Kubernetes charts 的流行软件</li>
+<li>分享您自己的应用作为 Kubernetes charts</li>
+<li>为 Kubernetes 应用创建可重复执行的构建</li>
+<li>为您的 Kubernetes 清单文件提供更智能化的管理</li>
+<li>管理 Helm 软件包的发布</li>
+</ul>
+<p>Helm 包含两个组件：Helm 客户端和 Tiller 服务器，如下图所示。<br><img data-src="/images/uploads/2019/01/helm.png" alt="helm"></p>
+<p>Helm 客户端负责 chart 和 release 的创建和管理以及和 Tiller 的交互。Tiller 服务器运行在 Kubernetes 集群中，它会处理 Helm 客户端的请求，与 Kubernetes API Server 交互。</p>
+<span id="more"></span>
+
+<h1 id="安装和部署-Helm"><a href="#安装和部署-Helm" class="headerlink" title="安装和部署 Helm"></a>安装和部署 Helm</h1><h2 id="安装-Helm-客户端"><a href="#安装-Helm-客户端" class="headerlink" title="安装 Helm 客户端"></a>安装 Helm 客户端</h2><p>所有运行 kubectl 的节点均需要安装</p>
+<h3 id="1-下载安装"><a href="#1-下载安装" class="headerlink" title="1. 下载安装"></a>1. 下载安装</h3><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"># curl https:<span class="comment">//raw.githubusercontent.com/helm/helm/master/scripts/get | bash</span></span><br><span class="line"></span><br><span class="line">Downloading https:<span class="comment">//kubernetes-helm.storage.googleapis.com/helm-v2.12.1-linux-amd64.tar.gz</span></span><br><span class="line">Preparing to install helm and tiller <span class="keyword">into</span> <span class="regexp">/usr/</span>local/bin</span><br><span class="line">helm installed <span class="keyword">into</span> <span class="regexp">/usr/</span>local<span class="regexp">/bin/</span>helm</span><br><span class="line">tiller installed <span class="keyword">into</span> <span class="regexp">/usr/</span>local<span class="regexp">/bin/</span>tiller</span><br><span class="line">Run <span class="string">&#x27;helm init&#x27;</span> to configure helm.</span><br></pre></td></tr></table></figure>
+<h3 id="2-验证安装"><a href="#2-验证安装" class="headerlink" title="2. 验证安装"></a>2. 验证安装</h3><figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line"># helm version</span><br><span class="line"></span><br><span class="line">Client: &amp;version.Version&#123;SemVer:&quot;v2.12.1&quot;, GitCommit:&quot;02a47c7249b1fc6d8fd3b94e6b4babf9d818144e&quot;, GitTreeState:&quot;clean&quot;&#125;</span><br><span class="line"><span class="keyword">Error: </span>could not find tiller</span><br></pre></td></tr></table></figure>
+<p>安装安装的版本为 2.12.1，tiller 服务器还没有安装所以有一个报错</p>
+<h3 id="3-安装-helm-的-bash-命令补全脚本"><a href="#3-安装-helm-的-bash-命令补全脚本" class="headerlink" title="3. 安装 helm 的 bash 命令补全脚本"></a>3. 安装 helm 的 bash 命令补全脚本</h3><p>helm 有很多子命令和参数，为了提高使用命令行的效率，通常建议安装 helm 的 bash 命令补全脚本。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> helm completion bash &gt; .helmrc &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;source .helmrc&quot;</span> &gt;&gt; .bashrc</span></span><br></pre></td></tr></table></figure>
+<p>重新登陆后，就能通过 TAB 自动补全  helm 命令的子命令和参数了。<br><img data-src="/images/uploads/2019/01/bash.png" alt="bash"></p>
+<h2 id="安装-Tiller-服务器"><a href="#安装-Tiller-服务器" class="headerlink" title="安装 Tiller 服务器"></a>安装 Tiller 服务器</h2><h3 id="1-导入-tiller-镜像"><a href="#1-导入-tiller-镜像" class="headerlink" title="1. 导入 tiller 镜像"></a>1. 导入 tiller 镜像</h3><p>所有节点上面导入 tiller.tar，下载地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1dKNbg7b9IBtPBnadLUADlg">tiller.tar</a></p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># docker load -i tiller.tar</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-创建-helm-服务账号"><a href="#2-创建-helm-服务账号" class="headerlink" title="2. 创建 helm 服务账号"></a>2. 创建 helm 服务账号</h3><p>创建 tiller-rbac-config.yaml 文件，加入以下内容</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim tiller-rbac-config.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cluster-admin</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure>
+<p>运行以下命令创建 tiller 服务账号</p>
+<figure class="highlight vala"><table><tr><td class="code"><pre><span class="line"><span class="meta"># kubectl apply -f tiller-rbac-config.yaml</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-部署-tiller"><a href="#3-部署-tiller" class="headerlink" title="3. 部署 tiller"></a>3. 部署 tiller</h3><p>Tiller 服务器安装非常简单，只需要执行 helm init，这里我们指定使用上一步创建的服务账号。</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm init --service-account tiller</span></span><br><span class="line"></span><br><span class="line">Creating <span class="regexp">/root/</span>.helm </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm/repository </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/repository/</span>cache </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/repository/</span>local </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm/plugins </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm/starters </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/cache/</span>archive </span><br><span class="line">Creating <span class="regexp">/root/</span>.helm<span class="regexp">/repository/</span>repositories.yaml </span><br><span class="line">Adding stable repo with URL: https:<span class="regexp">//</span>kubernetes-charts.storage.googleapis.com </span><br><span class="line">Adding local repo with URL: http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8879</span>/charts </span><br><span class="line"><span class="variable">$HELM_HOME</span> has been configured at <span class="regexp">/root/</span>.helm.</span><br><span class="line"></span><br><span class="line">Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.</span><br><span class="line"></span><br><span class="line">Please note: by default, Tiller is deployed with an insecure <span class="string">&#x27;allow unauthenticated users&#x27;</span> policy.</span><br><span class="line">To prevent this, run `helm init` with the --tiller-tls-verify flag.</span><br><span class="line">For more information on securing your installation see: https:<span class="regexp">//</span>docs.helm.sh<span class="regexp">/using_helm/</span><span class="comment">#securing-your-helm-installation</span></span><br><span class="line">Happy Helming!</span><br></pre></td></tr></table></figure>
+<h2 id="验证操作"><a href="#验证操作" class="headerlink" title="验证操作"></a>验证操作</h2><h3 id="1-查看-tiller-状态"><a href="#1-查看-tiller-状态" class="headerlink" title="1. 查看 tiller 状态"></a>1. 查看 tiller 状态</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl get pods --namespace kube-system </span></span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line"><span class="attribute">coredns</span>-<span class="number">86</span>c<span class="number">58</span>d<span class="number">9</span>df<span class="number">4</span>-<span class="number">8</span>zhr<span class="number">5</span>               <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">coredns</span>-<span class="number">86</span>c<span class="number">58</span>d<span class="number">9</span>df<span class="number">4</span>-jqn<span class="number">7</span>r               <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">etcd</span>-k<span class="number">8</span>s-master                        <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-apiserver-k<span class="number">8</span>s-master              <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-controller-manager-k<span class="number">8</span>s-master     <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-flannel-ds-amd<span class="number">64</span>-krf<span class="number">6</span>t            <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-flannel-ds-amd<span class="number">64</span>-tkftg            <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-flannel-ds-amd<span class="number">64</span>-zxzld            <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-proxy-<span class="number">5</span>znt<span class="number">7</span>                       <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-proxy-gl<span class="number">9</span>sl                       <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-proxy-q<span class="number">7</span>j<span class="number">7</span>m                       <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kube</span>-scheduler-k<span class="number">8</span>s-master              <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">1</span>          <span class="number">5</span>d<span class="number">16</span>h</span><br><span class="line"><span class="attribute">kubernetes</span>-dashboard-<span class="number">57</span>df<span class="number">4</span>db<span class="number">6</span>b-<span class="number">8</span>b<span class="number">2</span>l<span class="number">4</span>   <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">16</span>h</span><br><span class="line"><span class="attribute">metrics</span>-server-<span class="number">879</span>f<span class="number">5</span>ff<span class="number">6</span>d-tpszf         <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">16</span>h</span><br><span class="line"><span class="attribute">tiller</span>-deploy-<span class="number">6</span>f<span class="number">8</span>d<span class="number">4</span>f<span class="number">6</span>c<span class="number">9</span>c-<span class="number">4</span>h<span class="number">95</span>z         <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">2</span>m<span class="number">39</span>s</span><br></pre></td></tr></table></figure>
+<p>可以看到 tiller 已经是运行状态。</p>
+<h3 id="2-查看-helm-信息"><a href="#2-查看-helm-信息" class="headerlink" title="2. 查看 helm 信息"></a>2. 查看 helm 信息</h3><figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"># helm <span class="keyword">version</span></span><br><span class="line"></span><br><span class="line">Client: &amp;<span class="keyword">version</span>.<span class="keyword">Version</span>&#123;SemVer:&quot;v2.12.1&quot;, GitCommit:&quot;02a47c7249b1fc6d8fd3b94e6b4babf9d818144e&quot;, GitTreeState:&quot;clean&quot;&#125;</span><br><span class="line"><span class="keyword">Server</span>: &amp;<span class="keyword">version</span>.<span class="keyword">Version</span>&#123;SemVer:&quot;v2.12.1&quot;, GitCommit:&quot;02a47c7249b1fc6d8fd3b94e6b4babf9d818144e&quot;, GitTreeState:&quot;clean&quot;&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="使用-Helm-安装-wordpress"><a href="#使用-Helm-安装-wordpress" class="headerlink" title="使用 Helm 安装 wordpress"></a>使用 Helm 安装 wordpress</h1><h2 id="1-搜索-chart"><a href="#1-搜索-chart" class="headerlink" title="1. 搜索 chart"></a>1. 搜索 chart</h2><p>搜索 wordpress 的 charts</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm search wordpress</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">NAME</span>            	CHART VERSION	APP VERSION	DESCRIPTION                                             </span><br><span class="line"><span class="attribute">stable</span>/wordpress	<span class="number">5</span>.<span class="number">0</span>.<span class="number">3</span>        	<span class="number">5</span>.<span class="number">0</span>.<span class="number">2</span>      	Web publishing platform for building blogs and websites.</span><br></pre></td></tr></table></figure>
+<h2 id="2-查看-chart-的存储信息"><a href="#2-查看-chart-的存储信息" class="headerlink" title="2. 查看 chart 的存储信息"></a>2. 查看 chart 的存储信息</h2><p>创建 wordpress 的时候需要申请  PersistentVolumeClaim，由于我们的环境不支持动态申请所以需要手动创建</p>
+<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line"># helm inspect value stable/wordpress</span><br><span class="line"></span><br><span class="line">……</span><br><span class="line">  ## MariaDB admin password</span><br><span class="line">  ## ref: https:<span class="comment">//github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#setting-the-root-password-on-first-run</span></span><br><span class="line">  ##</span><br><span class="line">  # rootUser:</span><br><span class="line">  #   password:</span><br><span class="line"></span><br><span class="line">  ## Enable persistence using Persistent Volume Claims</span><br><span class="line">  ## ref: http:<span class="comment">//kubernetes.io/docs/user-guide/persistent-volumes/</span></span><br><span class="line">  ##</span><br><span class="line">  master:</span><br><span class="line">    persistence:</span><br><span class="line">      enabled: true</span><br><span class="line">      ## mariadb data Persistent Volume Storage Class</span><br><span class="line">      ## If defined, storageClassName: &lt;storageClass&gt;</span><br><span class="line">      ## If set to <span class="string">&quot;-&quot;</span>, storageClassName: <span class="string">&quot;&quot;</span>, which disables dynamic provisioning</span><br><span class="line">      ## If undefined (the default) or set to null, no storageClassName spec is</span><br><span class="line">      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on</span><br><span class="line">      ##   GKE, AWS &amp; OpenStack)</span><br><span class="line">      ##</span><br><span class="line">      # storageClass: <span class="string">&quot;-&quot;</span></span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: <span class="number">8</span>Gi</span><br><span class="line">      </span><br><span class="line">……</span><br><span class="line"></span><br><span class="line">persistence:</span><br><span class="line">  enabled: true</span><br><span class="line">  ## wordpress data Persistent Volume Storage Class</span><br><span class="line">  ## If defined, storageClassName: &lt;storageClass&gt;</span><br><span class="line">  ## If set to <span class="string">&quot;-&quot;</span>, storageClassName: <span class="string">&quot;&quot;</span>, which disables dynamic provisioning</span><br><span class="line">  ## If undefined (the default) or set to null, no storageClassName spec is</span><br><span class="line">  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on</span><br><span class="line">  ##   GKE, AWS &amp; OpenStack)</span><br><span class="line">  ##</span><br><span class="line">  # storageClass: <span class="string">&quot;-&quot;</span></span><br><span class="line">  ##</span><br><span class="line">  ## If you want to reuse an existing claim, you can pass the name <span class="keyword">of</span> the PVC using</span><br><span class="line">  ## the existingClaim variable</span><br><span class="line">  # existingClaim: your-claim</span><br><span class="line">  accessMode: ReadWriteOnce</span><br><span class="line">  size: <span class="number">10</span>Gi</span><br></pre></td></tr></table></figure>
+<p>可以看到 wordpress 的 chart 需要两个 pv，分别用于 mariadb(8G) 和 wordpress(10G) 的数据存储。</p>
+<h2 id="3-手动创建-chart-所需的-pv"><a href="#3-手动创建-chart-所需的-pv" class="headerlink" title="3. 手动创建 chart 所需的 pv"></a>3. 手动创建 chart 所需的 pv</h2><p>创建 create-pv.yml 文件，输入以下内容</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim create-pv.yml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mariadb-pv</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">8Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="comment">#storageClassName: nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfsdata/mariadb-pv</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">172.20</span><span class="number">.6</span><span class="number">.116</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">wordpress-pv</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="comment">#storageClassName: nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfsdata/wordpress-pv</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">172.20</span><span class="number">.6</span><span class="number">.116</span></span><br></pre></td></tr></table></figure>
+<p>创建 pv</p>
+<figure class="highlight maxima"><table><tr><td class="code"><pre><span class="line"># kubectl <span class="built_in">apply</span> -f create-<span class="built_in">pv</span>.yml </span><br><span class="line"></span><br><span class="line">persistentvolume/mariadb-<span class="built_in">pv</span> created</span><br><span class="line">persistentvolume/wordpress-<span class="built_in">pv</span> created</span><br></pre></td></tr></table></figure>
+<h2 id="4-安装-chart"><a href="#4-安装-chart" class="headerlink" title="4. 安装 chart"></a>4. 安装 chart</h2><figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line"># helm install --name wordpress stable/wordpress</span><br><span class="line"></span><br><span class="line">NAME:   wordpress                                  ---------①---------</span><br><span class="line">LAST DEPLOYED: Fri Jan  <span class="number">4</span> <span class="number">10</span>:<span class="number">32</span>:<span class="number">57</span> <span class="number">2019</span></span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: DEPLOYED</span><br><span class="line"></span><br><span class="line">RESOURCES:                                         ---------②---------</span><br><span class="line">==&gt; v1beta1/Deployment</span><br><span class="line">NAME                 DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE</span><br><span class="line">wordpress-wordpress  <span class="number">1</span>        <span class="number">1</span>        <span class="number">1</span>           <span class="number">0</span>          <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1beta1/StatefulSet</span><br><span class="line">NAME               DESIRED  CURRENT  AGE</span><br><span class="line">wordpress-mariadb  <span class="number">1</span>        <span class="number">1</span>        <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/<span class="constructor">Pod(<span class="params">related</span>)</span></span><br><span class="line">NAME                                  READY  STATUS   RESTARTS  AGE</span><br><span class="line">wordpress-wordpress-<span class="number">56794</span>ff7b9-rf98x  <span class="number">0</span>/<span class="number">1</span>    Pending  <span class="number">0</span>         <span class="number">0</span>s</span><br><span class="line">wordpress-mariadb-<span class="number">0</span>                   <span class="number">0</span>/<span class="number">1</span>    Pending  <span class="number">0</span>         <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Secret</span><br><span class="line">NAME                 TYPE    DATA  AGE</span><br><span class="line">wordpress-mariadb    Opaque  <span class="number">2</span>     <span class="number">0</span>s</span><br><span class="line">wordpress-wordpress  Opaque  <span class="number">1</span>     <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/ConfigMap</span><br><span class="line">NAME                     DATA  AGE</span><br><span class="line">wordpress-mariadb        <span class="number">1</span>     <span class="number">0</span>s</span><br><span class="line">wordpress-mariadb-tests  <span class="number">1</span>     <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">==&gt; v1/PersistentVolumeClaim</span><br><span class="line">NAME                 STATUS   VOLUME  CAPACITY  ACCESS MODES  STORAGECLASS  AGE</span><br><span class="line">wordpress-wordpress  Pending  <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line">RESOURCES:</span><br><span class="line">==&gt; v1/Service</span><br><span class="line">NAME                 TYPE          CLUSTER-IP      EXTERNAL-IP  <span class="constructor">PORT(S)</span>                     AGE</span><br><span class="line">wordpress-mariadb    ClusterIP     <span class="number">10.100</span>.<span class="number">218.132</span>  &lt;none&gt;       <span class="number">3306</span>/TCP                    <span class="number">0</span>s</span><br><span class="line">wordpress-wordpress  LoadBalancer  <span class="number">10.100</span>.<span class="number">36.64</span>    &lt;pending&gt;    <span class="number">80</span>:<span class="number">31051</span>/TCP,<span class="number">443</span>:<span class="number">30169</span>/TCP  <span class="number">0</span>s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NOTES:                                             ---------③---------</span><br><span class="line"><span class="number">1.</span> Get the WordPress URL:</span><br><span class="line"></span><br><span class="line">  NOTE: It may take a few minutes <span class="keyword">for</span> the LoadBalancer IP <span class="keyword">to</span> be available.</span><br><span class="line">        Watch the status <span class="keyword">with</span>: &#x27;kubectl get svc --namespace default -w wordpress-wordpress&#x27;</span><br><span class="line">  export SERVICE_IP=<span class="constructor">$(<span class="params">kubectl</span> <span class="params">get</span> <span class="params">svc</span> --<span class="params">namespace</span> <span class="params">default</span> <span class="params">wordpress</span>-<span class="params">wordpress</span> --<span class="params">template</span> <span class="string">&quot;&#123;&#123; range (index .status.loadBalancer.ingress 0) &#125;&#125;&#123;&#123;.&#125;&#125;&#123;&#123; end &#125;&#125;&quot;</span>)</span></span><br><span class="line">  echo <span class="string">&quot;WordPress URL: http://$SERVICE_IP/&quot;</span></span><br><span class="line">  echo <span class="string">&quot;WordPress Admin URL: http://$SERVICE_IP/admin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span> Login <span class="keyword">with</span> the following credentials <span class="keyword">to</span> see your blog</span><br><span class="line"></span><br><span class="line">  echo Username: user</span><br><span class="line">  echo Password: <span class="constructor">$(<span class="params">kubectl</span> <span class="params">get</span> <span class="params">secret</span> --<span class="params">namespace</span> <span class="params">default</span> <span class="params">wordpress</span>-<span class="params">wordpress</span> -<span class="params">o</span> <span class="params">jsonpath</span>=<span class="string">&quot;&#123;.data.wordpress-password&#125;&quot;</span> | <span class="params">base64</span> --<span class="params">decode</span>)</span></span><br></pre></td></tr></table></figure>
+<p>输出分为 3 部分（上文输出结果中的①②③）：</p>
+<ul>
+<li>① 本次部署 chart 的描述信息。包括 release 的名字（没有指定，则默认生成）。release 部署的 namespace，默认是 default。release的状态 DEPLOYED 表示已经将 chart 部署到集群。</li>
+<li>② release 包含的资源： Service、 Deployment、 Secret 等</li>
+<li>③ release 的使用方法</li>
+</ul>
+<h2 id="5-访问-wordpress"><a href="#5-访问-wordpress" class="headerlink" title="5. 访问  wordpress"></a>5. 访问  wordpress</h2><p>使用 <a target="_blank" rel="noopener" href="http://nodeip+service_port/">http://nodeip+service_port</a> 访问wordpress，访问地址为：<a target="_blank" rel="noopener" href="http://172.20.6.116:31051/">http://172.20.6.116:31051/</a><br><img data-src="/images/uploads/2019/01/wordpress.png" alt="wordpress"><br>其他信息，包括后台地址，管理员账号等信息可以参考release 的 NOTES 部分。</p>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>Helm 的使用有点类似 ubuntu 的 apt 或者 RHEL 的 yum，极大的简化了部署一个应用的流程。对于使用者而言，使用 Helm 后不用需要了解 Kubernetes 的 yaml 语法并编写应用部署文件，也无需考虑应用的各种依赖，可以直接通过 Helm 下载并在 kubernetes 上安装需要的应用。<br>除此以外，Helm 还提供了 kubernetes 上的软件部署，删除，升级，回滚应用的强大功能。</p>
+<hr>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/CloudMan6/article/details/80140789">Helm 架构 - 每天5分钟玩转 Docker 容器技术（161）</a><br><a target="_blank" rel="noopener" href="https://docs.helm.sh/using_helm/#installing-helm">Helm Quickstart</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+        
+    </div>
+        <div class="reward-container">
+  <div>请我喝一杯冰阔落</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="tanmx 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>tanmx
+  </li>
+  <li class="post-copyright-title">
+    <strong>本文标题： </strong>Kubernetes 安装 Helm 并使用 Helm 安装 wordpress</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html" title="Kubernetes 安装 Helm 并使用 Helm 安装 wordpress">https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"><i class="fa fa-tag"></i> kubernetes</a>
+              <a href="/tags/helm/" rel="tag"><i class="fa fa-tag"></i> helm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/docker/use-prometheus-operator-monitor-kubernetes.html" rel="prev" title="使用 Prometheus Operator 监控 Kubernetes">
+      <i class="fa fa-chevron-left"></i> 使用 Prometheus Operator 监控 Kubernetes
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/docker/use-kubeadmin-deploy-kubernetes.html" rel="next" title="使用 kubeadm 部署 kubernetes 1.13.1">
+      使用 kubeadm 部署 kubernetes 1.13.1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
   window.addEventListener('tabs:register', () => {
     let { activeClass } = CONFIG.comments;
     if (CONFIG.comments.storage) {
@@ -18,41 +433,110 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Helm-%E7%AE%80%E4%BB%8B"><span class="nav-text">Helm 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E9%83%A8%E7%BD%B2-Helm"><span class="nav-text">安装和部署 Helm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Helm-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">安装 Helm 客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-text">1. 下载安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="nav-text">2. 验证安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%85-helm-%E7%9A%84-bash-%E5%91%BD%E4%BB%A4%E8%A1%A5%E5%85%A8%E8%84%9A%E6%9C%AC"><span class="nav-text">3. 安装 helm 的 bash 命令补全脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Tiller-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">安装 Tiller 服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AF%BC%E5%85%A5-tiller-%E9%95%9C%E5%83%8F"><span class="nav-text">1. 导入 tiller 镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA-helm-%E6%9C%8D%E5%8A%A1%E8%B4%A6%E5%8F%B7"><span class="nav-text">2. 创建 helm 服务账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%83%A8%E7%BD%B2-tiller"><span class="nav-text">3. 部署 tiller</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%93%8D%E4%BD%9C"><span class="nav-text">验证操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9F%A5%E7%9C%8B-tiller-%E7%8A%B6%E6%80%81"><span class="nav-text">1. 查看 tiller 状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9F%A5%E7%9C%8B-helm-%E4%BF%A1%E6%81%AF"><span class="nav-text">2. 查看 helm 信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Helm-%E5%AE%89%E8%A3%85-wordpress"><span class="nav-text">使用 Helm 安装 wordpress</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%90%9C%E7%B4%A2-chart"><span class="nav-text">1. 搜索 chart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9F%A5%E7%9C%8B-chart-%E7%9A%84%E5%AD%98%E5%82%A8%E4%BF%A1%E6%81%AF"><span class="nav-text">2. 查看 chart 的存储信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA-chart-%E6%89%80%E9%9C%80%E7%9A%84-pv"><span class="nav-text">3. 手动创建 chart 所需的 pv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%89%E8%A3%85-chart"><span class="nav-text">4. 安装 chart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%AE%BF%E9%97%AE-wordpress"><span class="nav-text">5. 访问 wordpress</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-text">写在最后</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">参考文章</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="tanmx" src="/images/avatar.gif"><p class="site-author-name" itemprop="name">tanmx</p><div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">62</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">76</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i> Weibo</a></span><span class="links-of-author-item"><a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i> Zhihu</a></span><span class="links-of-author-item"><a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i> Twitter</a></span></div><div class="cc-license motion-element" itemprop="license"> <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2014 – <span itemprop="copyrightYear">2021</span><span class="with-love"><i class="fa fa-heart"></i></span> <span class="author" itemprop="copyrightHolder">tanmx</span></div><div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动</div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/local-search.js"></script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>
-      window.addEventListener('load', () => {
-      quicklink({
-        timeout : 3000,
-        priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/docker/kubernetes-install-helm-and-wordpress.html',]
-      });
-      });
-  </script><script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
-      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
-      placeholder: "(发表评论)",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : true,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : true,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script></body></html>    <i class="fa fa-heart"></i>
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Helm-%E7%AE%80%E4%BB%8B"><span class="nav-text">Helm 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E9%83%A8%E7%BD%B2-Helm"><span class="nav-text">安装和部署 Helm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Helm-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">安装 Helm 客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-text">1. 下载安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="nav-text">2. 验证安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%85-helm-%E7%9A%84-bash-%E5%91%BD%E4%BB%A4%E8%A1%A5%E5%85%A8%E8%84%9A%E6%9C%AC"><span class="nav-text">3. 安装 helm 的 bash 命令补全脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Tiller-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">安装 Tiller 服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AF%BC%E5%85%A5-tiller-%E9%95%9C%E5%83%8F"><span class="nav-text">1. 导入 tiller 镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA-helm-%E6%9C%8D%E5%8A%A1%E8%B4%A6%E5%8F%B7"><span class="nav-text">2. 创建 helm 服务账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%83%A8%E7%BD%B2-tiller"><span class="nav-text">3. 部署 tiller</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%93%8D%E4%BD%9C"><span class="nav-text">验证操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9F%A5%E7%9C%8B-tiller-%E7%8A%B6%E6%80%81"><span class="nav-text">1. 查看 tiller 状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9F%A5%E7%9C%8B-helm-%E4%BF%A1%E6%81%AF"><span class="nav-text">2. 查看 helm 信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Helm-%E5%AE%89%E8%A3%85-wordpress"><span class="nav-text">使用 Helm 安装 wordpress</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%90%9C%E7%B4%A2-chart"><span class="nav-text">1. 搜索 chart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9F%A5%E7%9C%8B-chart-%E7%9A%84%E5%AD%98%E5%82%A8%E4%BF%A1%E6%81%AF"><span class="nav-text">2. 查看 chart 的存储信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA-chart-%E6%89%80%E9%9C%80%E7%9A%84-pv"><span class="nav-text">3. 手动创建 chart 所需的 pv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%89%E8%A3%85-chart"><span class="nav-text">4. 安装 chart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%AE%BF%E9%97%AE-wordpress"><span class="nav-text">5. 访问  wordpress</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-text">写在最后</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">参考文章</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">tanmx</span>
 </div>
