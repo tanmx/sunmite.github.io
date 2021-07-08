@@ -2,12 +2,14 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 5.4.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_32x32.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-32x32.ico">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
   <meta name="google-site-verification" content="p-xBdBlsApXFuMJI3CuE7U5-tTxoULqLOVncnqxQ7cQ">
   <meta name="msvalidate.01" content="BF242B99BF281AFA7EA9899CD017DD41">
@@ -15,16 +17,14 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
-  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.sunmite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
-  <meta name="description" content="一个默默无闻的工程师的日常">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sunmite.com","root":"/","images":"/images","scheme":"Muse","version":"8.6.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="一个默默无闻的工程师的日常">
 <meta property="og:type" content="website">
 <meta property="og:title" content="谭明宵博客">
 <meta property="og:url" content="https://www.sunmite.com/page/3/index.html">
@@ -35,164 +35,183 @@
 <meta property="article:tag" content="“Hexo, OpenStack, Linux, VMware, Docker, Kubernetes, Python, Crawler”">
 <meta name="twitter:card" content="summary">
 
+
 <link rel="canonical" href="https://www.sunmite.com/page/3/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : true,
-    isPost : false,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>谭明宵博客 - Every day is May day!</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"page/3/index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>谭明宵博客 - Every day is May day!</title>
   
 
 
 
 
-
-
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
 <link rel="alternate" href="/atom.xml" title="谭明宵博客" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
+      <i class="logo-line"></i>
       <h1 class="site-title">谭明宵博客</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">Every day is May day!</p>
   </div>
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
   </ul>
 </nav>
 
 
 
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
 
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanmx"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">tanmx</p>
+  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="zhihu fa-fw"></i>Zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
 
-</div>
+
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
 
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
 
-          <div class="content index posts-expand">
-            
-      
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/linux/from-typecho-to-hexo.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -206,58 +225,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/linux/from-typecho-to-hexo.html" class="post-title-link" itemprop="url">博客从 typecho 迁移到 Hexo</a>
+          <a href="/linux/from-typecho-to-hexo.html" class="post-title-link" itemprop="url">博客从 typecho 迁移到 Hexo</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-02-11 20:32:00" itemprop="dateCreated datePublished" datetime="2018-02-11T20:32:00+08:00">2018-02-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-04 12:26:00" itemprop="dateModified" datetime="2020-03-04T12:26:00+08:00">2020-03-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/linux/from-typecho-to-hexo.html" class="post-meta-item leancloud_visitors" data-flag-title="博客从 typecho 迁移到 Hexo" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/linux/from-typecho-to-hexo.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/linux/from-typecho-to-hexo.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-11 20:32:00" itemprop="dateCreated datePublished" datetime="2018-02-11T20:32:00+08:00">2018-02-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-04 12:26:00" itemprop="dateModified" datetime="2020-03-04T12:26:00+08:00">2020-03-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/linux/from-typecho-to-hexo.html" class="post-meta-item leancloud_visitors" data-flag-title="博客从 typecho 迁移到 Hexo" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -266,8 +272,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h2 id="Hexo-环境搭建"><a href="#Hexo-环境搭建" class="headerlink" title="Hexo 环境搭建"></a>Hexo 环境搭建</h2><p>使用 <a target="_blank" rel="noopener" href="https://coding.net/pages/">coding</a> 和 <a target="_blank" rel="noopener" href="https://pages.github.com/">github.io</a> 的 pages 服务，绑定了自己的域名，做了双线解析，国内用户解析到 coding ,国外用户解析到 github.io，访问速度很满意(本来就是静态文件，访问速度很快)。<br>Hexo 环境的搭建，这里不再赘述，主要介绍如何导出 typecho 的数据和 Hexo 站点的配置以及 Next 主题的配置及优化。</p>
 <h2 id="typecho-数据导出"><a href="#typecho-数据导出" class="headerlink" title="typecho 数据导出"></a>typecho 数据导出</h2><h3 id="文章数据的导出"><a href="#文章数据的导出" class="headerlink" title="文章数据的导出"></a>文章数据的导出</h3><p>花了点时间把 typecho 的文章全部改写成 Markdown 的格式，方便我导出为 md 文件，使用了 github 上面一个开源的 python 项目 <a target="_blank" rel="noopener" href="https://github.com/zhourongyu/Typecho2Hexo">Typecho2Hexo
 </a> 进行 typecho 文章数据的导出。稍微修改后如下所示:</p>
@@ -290,18 +294,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/linux/Mining-program.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -315,58 +326,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/linux/Mining-program.html" class="post-title-link" itemprop="url">第一次遭遇挖矿程序</a>
+          <a href="/linux/Mining-program.html" class="post-title-link" itemprop="url">第一次遭遇挖矿程序</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-29 09:42:00" itemprop="dateCreated datePublished" datetime="2018-01-29T09:42:00+08:00">2018-01-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/linux/Mining-program.html" class="post-meta-item leancloud_visitors" data-flag-title="第一次遭遇挖矿程序" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/linux/Mining-program.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/linux/Mining-program.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-29 09:42:00" itemprop="dateCreated datePublished" datetime="2018-01-29T09:42:00+08:00">2018-01-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/linux/Mining-program.html" class="post-meta-item leancloud_visitors" data-flag-title="第一次遭遇挖矿程序" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -375,8 +373,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="1-两台服务器收到告警，top-查看进程发现如下可疑进程"><a href="#1-两台服务器收到告警，top-查看进程发现如下可疑进程" class="headerlink" title="1. 两台服务器收到告警，top 查看进程发现如下可疑进程"></a>1. 两台服务器收到告警，top 查看进程发现如下可疑进程</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># top</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">PID</span> USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line"><span class="attribute">19078</span> vmuser    <span class="number">20</span>   <span class="number">0</span>  <span class="number">680232</span>  <span class="number">14284</span>   <span class="number">1032</span> S <span class="number">342</span>.<span class="number">8</span>  <span class="number">0</span>.<span class="number">1</span>   <span class="number">1583</span>:<span class="number">11</span> md</span><br><span class="line"><span class="attribute">501</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3264</span>    <span class="number">760</span> R  <span class="number">55</span>.<span class="number">9</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">2172</span>:<span class="number">49</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">504</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3264</span>    <span class="number">760</span> R  <span class="number">46</span>.<span class="number">7</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">2000</span>:<span class="number">21</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">18469</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3504</span>    <span class="number">984</span> R  <span class="number">46</span>.<span class="number">1</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">1252</span>:<span class="number">47</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">18692</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3408</span>    <span class="number">908</span> R  <span class="number">43</span>.<span class="number">1</span>  <span class="number">0</span>.<span class="number">0</span> <span class="number">318</span>:<span class="number">58</span>.<span class="number">87</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">18695</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3536</span>   <span class="number">1020</span> R  <span class="number">42</span>.<span class="number">8</span>  <span class="number">0</span>.<span class="number">0</span> <span class="number">129</span>:<span class="number">26</span>.<span class="number">05</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">10547</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3412</span>    <span class="number">908</span> R  <span class="number">40</span>.<span class="number">8</span>  <span class="number">0</span>.<span class="number">0</span>  <span class="number">72</span>:<span class="number">19</span>.<span class="number">69</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">8658</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3400</span>    <span class="number">880</span> R  <span class="number">40</span>.<span class="number">5</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">4606</span>:<span class="number">03</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">8655</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3468</span>    <span class="number">948</span> R  <span class="number">40</span>.<span class="number">1</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">4383</span>:<span class="number">23</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">10542</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3408</span>    <span class="number">908</span> S  <span class="number">24</span>.<span class="number">7</span>  <span class="number">0</span>.<span class="number">0</span>  <span class="number">90</span>:<span class="number">27</span>.<span class="number">13</span><span class="meta"> [atd]</span></span><br><span class="line"><span class="attribute">8549</span> vmuser    <span class="number">20</span>   <span class="number">0</span>   <span class="number">32348</span>   <span class="number">3372</span>    <span class="number">868</span> R   <span class="number">9</span>.<span class="number">9</span>  <span class="number">0</span>.<span class="number">0</span> <span class="number">323</span>:<span class="number">27</span>.<span class="number">79</span><span class="meta"> [atd]</span></span><br></pre></td></tr></table></figure>
 <p>用户名为 vmuser 的可疑进程  </p>
 <h3 id="2-查看-md-进程详情"><a href="#2-查看-md-进程详情" class="headerlink" title="2. 查看 md 进程详情"></a>2. 查看 md 进程详情</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ps aux | grep 19078</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">vmuser</span>   <span class="number">19078</span>  <span class="number">343</span>  <span class="number">0</span>.<span class="number">0</span> <span class="number">680232</span> <span class="number">13764</span> ?        Sl   <span class="number">07</span>:<span class="number">38</span> <span class="number">1613</span>:<span class="number">58</span> -bash -a cryptonight -o stratum+tcp://etn-us-west<span class="number">1</span>.nanopool.org:<span class="number">13333</span> -u etnk<span class="number">5</span>c<span class="number">12</span>V<span class="number">3</span>YAb<span class="number">5</span>gLekc<span class="number">5</span>N<span class="number">8</span>SizEpbpDogviaU<span class="number">2</span>U<span class="number">9</span>tff<span class="number">2</span>F<span class="number">9</span>JafNFS<span class="number">9</span>pxmF<span class="number">1</span>PNf<span class="number">4</span>aZrMjRSqd<span class="number">9</span>bhjXn<span class="number">7</span>dbpmepNjKi<span class="number">586</span>ZtD<span class="number">9</span>Cv<span class="number">9</span>N -p x</span><br></pre></td></tr></table></figure>
@@ -400,18 +396,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/python/douban-file-top250.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -425,58 +428,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/python/douban-file-top250.html" class="post-title-link" itemprop="url">获取豆瓣电影TOP 250并存入文件</a>
+          <a href="/python/douban-file-top250.html" class="post-title-link" itemprop="url">获取豆瓣电影TOP 250并存入文件</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-25 10:05:00" itemprop="dateCreated datePublished" datetime="2018-01-25T10:05:00+08:00">2018-01-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/python/douban-file-top250.html" class="post-meta-item leancloud_visitors" data-flag-title="获取豆瓣电影TOP 250并存入文件" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/python/douban-file-top250.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/python/douban-file-top250.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-25 10:05:00" itemprop="dateCreated datePublished" datetime="2018-01-25T10:05:00+08:00">2018-01-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/python/douban-file-top250.html" class="post-meta-item leancloud_visitors" data-flag-title="获取豆瓣电影TOP 250并存入文件" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -485,8 +475,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># encoding=utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">import</span> codecs</span><br><span class="line"></span><br><span class="line">DOWNLOAD_URL = <span class="string">&#x27;http://movie.douban.com/top250&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">download_page</span>(<span class="params">url</span>):</span></span><br><span class="line">    headers = &#123;<span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0&#x27;</span>&#125;</span><br><span class="line">    data = requests.get(url, headers=headers).content</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_html</span>(<span class="params">html</span>):</span></span><br><span class="line">    <span class="comment">#更换解析器，详情 https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html#id9</span></span><br><span class="line">    soup = BeautifulSoup(html, <span class="string">&quot;lxml&quot;</span>)</span><br><span class="line">    movies_list_soup = soup.find(<span class="string">&#x27;ol&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;grid_view&#x27;</span>&#125;)</span><br><span class="line">    movie_name_list = []</span><br><span class="line">    movie_rating_num_list = []</span><br><span class="line">    movie_quote_list = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> movies_li <span class="keyword">in</span> movies_list_soup.find_all(<span class="string">&#x27;li&#x27;</span>):</span><br><span class="line">        movie_name = movies_li.find(<span class="string">&#x27;div&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;hd&#x27;</span>&#125;).find(<span class="string">&#x27;span&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;title&#x27;</span>&#125;).getText()</span><br><span class="line">        movie_rating = movies_li.find(<span class="string">&#x27;div&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;bd&#x27;</span>&#125;).find(<span class="string">&#x27;span&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;rating_num&#x27;</span>,</span><br><span class="line">                                                                                        <span class="string">&#x27;property&#x27;</span>: <span class="string">&#x27;v:average&#x27;</span>&#125;).getText()</span><br><span class="line">        <span class="comment">#movie_quote = movies_li.find(&#x27;div&#x27;, attrs=&#123;&#x27;class&#x27;: &#x27;bd&#x27;&#125;).find(&#x27;span&#x27;, attrs=&#123;&#x27;class&#x27;: &#x27;inq&#x27;&#125;).getText()</span></span><br><span class="line">        movie_quote_obj = movies_li.find(<span class="string">&#x27;div&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;bd&#x27;</span>&#125;).find(<span class="string">&#x27;span&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;inq&#x27;</span>&#125;)</span><br><span class="line">        <span class="comment">### 发现某部电影评价为空，此处判断评价是否为空</span></span><br><span class="line">        <span class="keyword">if</span> movie_quote_obj <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            movie_quote = <span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            movie_quote = movie_quote_obj.getText()</span><br><span class="line"></span><br><span class="line">        movie_name_list.append(movie_name)</span><br><span class="line">        movie_rating_num_list.append(movie_rating)</span><br><span class="line">        movie_quote_list.append(movie_quote)</span><br><span class="line"></span><br><span class="line">    next_page = soup.find(<span class="string">&#x27;span&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;next&#x27;</span>&#125;).find(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> next_page:</span><br><span class="line">        <span class="keyword">return</span> movie_name_list, movie_rating_num_list, movie_quote_list, DOWNLOAD_URL + next_page[<span class="string">&#x27;href&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> movie_name_list, movie_rating_num_list, movie_quote_list, <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    url = DOWNLOAD_URL</span><br><span class="line">    <span class="comment">#utf_8_sig 解决windows下csv文件乱码问题</span></span><br><span class="line">    <span class="keyword">with</span> codecs.<span class="built_in">open</span>(<span class="string">&#x27;movies_top_250.csv&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>, encoding=<span class="string">&#x27;utf_8_sig&#x27;</span>) <span class="keyword">as</span> csvFile:</span><br><span class="line">        writer = csv.writer(csvFile)</span><br><span class="line">        writer.writerow((<span class="string">u&#x27;电影名&#x27;</span>, <span class="string">u&#x27;评分&#x27;</span>, <span class="string">u&#x27;理由&#x27;</span>))</span><br><span class="line">        <span class="keyword">while</span> url:</span><br><span class="line">            html = download_page(url)</span><br><span class="line">            movies, rating, quote, url = parse_html(html)</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(movies)):</span><br><span class="line">                writer.writerow((movies[i], rating[i], quote[i]))</span><br><span class="line">                </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
       
     </div>
@@ -498,18 +486,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/ceilometer-gnocchi.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -523,58 +518,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/openstack/ceilometer-gnocchi.html" class="post-title-link" itemprop="url">openstack ocata部署ceilometer+gnocchi</a>
+          <a href="/openstack/ceilometer-gnocchi.html" class="post-title-link" itemprop="url">openstack ocata部署ceilometer+gnocchi</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-25 09:26:00" itemprop="dateCreated datePublished" datetime="2018-01-25T09:26:00+08:00">2018-01-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/openstack/ceilometer-gnocchi.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack ocata部署ceilometer+gnocchi" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/openstack/ceilometer-gnocchi.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/openstack/ceilometer-gnocchi.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-25 09:26:00" itemprop="dateCreated datePublished" datetime="2018-01-25T09:26:00+08:00">2018-01-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/openstack/ceilometer-gnocchi.html" class="post-meta-item leancloud_visitors" data-flag-title="openstack ocata部署ceilometer+gnocchi" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -583,8 +565,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h1 id="安装Gnocchi"><a href="#安装Gnocchi" class="headerlink" title="安装Gnocchi"></a>安装Gnocchi</h1><h2 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h2><h3 id="1-完成以下步骤，创建数据库"><a href="#1-完成以下步骤，创建数据库" class="headerlink" title="1. 完成以下步骤，创建数据库"></a>1. 完成以下步骤，创建数据库</h3><ul>
 <li>使用 root 用户登录数据库<figure class="highlight elixir"><table><tr><td class="code"><pre><span class="line"><span class="variable">$ </span>mysql -u root -p</span><br></pre></td></tr></table></figure></li>
 <li>创建 gnocchi 数据库<figure class="highlight n1ql"><table><tr><td class="code"><pre><span class="line">&gt; <span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> gnocchi;</span><br></pre></td></tr></table></figure></li>
@@ -617,18 +597,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/rabbitmq-can-not-join-cluster.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -642,58 +629,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/openstack/rabbitmq-can-not-join-cluster.html" class="post-title-link" itemprop="url">rabbitmq无法重新加入集群，启动失败的问题</a>
+          <a href="/openstack/rabbitmq-can-not-join-cluster.html" class="post-title-link" itemprop="url">rabbitmq无法重新加入集群，启动失败的问题</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-25 09:13:00" itemprop="dateCreated datePublished" datetime="2018-01-25T09:13:00+08:00">2018-01-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/openstack/rabbitmq-can-not-join-cluster.html" class="post-meta-item leancloud_visitors" data-flag-title="rabbitmq无法重新加入集群，启动失败的问题" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/openstack/rabbitmq-can-not-join-cluster.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/openstack/rabbitmq-can-not-join-cluster.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-25 09:13:00" itemprop="dateCreated datePublished" datetime="2018-01-25T09:13:00+08:00">2018-01-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/openstack/rabbitmq-can-not-join-cluster.html" class="post-meta-item leancloud_visitors" data-flag-title="rabbitmq无法重新加入集群，启动失败的问题" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -702,8 +676,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>原有的 rabbitmq 集群出现问题，无法启动，尝试删除 /var/lib/rabbitmq/.erlang.cookie 重新组集群，依旧无法启动</p>
 <figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line"><span class="comment"># systemctl start rabbitmq-server.service</span></span><br><span class="line">Job <span class="keyword">for</span> rabbitmq-server.service failed because <span class="keyword">the</span> control <span class="built_in">process</span> exited <span class="keyword">with</span> error code. See <span class="string">&quot;systemctl status rabbitmq-server.service&quot;</span> <span class="keyword">and</span> <span class="string">&quot;journalctl -xe&quot;</span> <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
 <h3 id="解决分析"><a href="#解决分析" class="headerlink" title="解决分析"></a>解决分析</h3><p>查看错误日志</p>
@@ -726,18 +698,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/rabbitmq-network-partition.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -751,58 +730,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/openstack/rabbitmq-network-partition.html" class="post-title-link" itemprop="url">RabbitMQ Network Partition</a>
+          <a href="/openstack/rabbitmq-network-partition.html" class="post-title-link" itemprop="url">RabbitMQ Network Partition</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-24 09:14:00" itemprop="dateCreated datePublished" datetime="2018-01-24T09:14:00+08:00">2018-01-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/openstack/rabbitmq-network-partition.html" class="post-meta-item leancloud_visitors" data-flag-title="RabbitMQ Network Partition" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/openstack/rabbitmq-network-partition.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/openstack/rabbitmq-network-partition.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-24 09:14:00" itemprop="dateCreated datePublished" datetime="2018-01-24T09:14:00+08:00">2018-01-24</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/openstack/rabbitmq-network-partition.html" class="post-meta-item leancloud_visitors" data-flag-title="RabbitMQ Network Partition" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -811,8 +777,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <p>线上的rabbitmq集群经常无法访问，集群状态也不正常，查找到如下资料：</p>
 <h3 id="一-环境概述"><a href="#一-环境概述" class="headerlink" title="一. 环境概述"></a>一. 环境概述</h3><h4 id="1-3个rabbitmq-node组成的集群镜像，当客户端无法连接或者连接rabbitmq超时的时候，集群的状态如下："><a href="#1-3个rabbitmq-node组成的集群镜像，当客户端无法连接或者连接rabbitmq超时的时候，集群的状态如下：" class="headerlink" title="1. 3个rabbitmq node组成的集群镜像，当客户端无法连接或者连接rabbitmq超时的时候，集群的状态如下："></a>1. 3个rabbitmq node组成的集群镜像，当客户端无法连接或者连接rabbitmq超时的时候，集群的状态如下：</h4><figure class="highlight perl"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rabbitmqctl cluster_status</span></span><br><span class="line">Cluster status of node rabbit@controller02 ...</span><br><span class="line">[&#123;nodes,[&#123;disc,[rabbit@controller01]&#125;,</span><br><span class="line">         &#123;ram,[rabbit@controller03,rabbit@controller02]&#125;]&#125;,</span><br><span class="line"> &#123;running_nodes,[rabbit@controller03,rabbit@controller02]&#125;,</span><br><span class="line"> &#123;cluster_name,&lt;&lt;<span class="string">&quot;rabbit@controller01&quot;</span>&gt;&gt;&#125;,</span><br><span class="line"> &#123;partitions,[&#123;rabbit@controller02,[rabbit@controller01]&#125;]&#125;,</span><br><span class="line"> &#123;alarms,[&#123;rabbit@controller03,[]&#125;,&#123;rabbit@controller02,[]&#125;]&#125;]</span><br></pre></td></tr></table></figure>
 <p>可以看到partitions中有内容，发生了网络分区。</p>
@@ -834,18 +798,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/use-rally-to-openstack-tempest-test.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -859,58 +830,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/openstack/use-rally-to-openstack-tempest-test.html" class="post-title-link" itemprop="url">通过 Rally 进行 OpenStack Tempest 测试</a>
+          <a href="/openstack/use-rally-to-openstack-tempest-test.html" class="post-title-link" itemprop="url">通过 Rally 进行 OpenStack Tempest 测试</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-09-04 08:33:07" itemprop="dateCreated datePublished" datetime="2017-09-04T08:33:07+08:00">2017-09-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/openstack/use-rally-to-openstack-tempest-test.html" class="post-meta-item leancloud_visitors" data-flag-title="通过 Rally 进行 OpenStack Tempest 测试" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/openstack/use-rally-to-openstack-tempest-test.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/openstack/use-rally-to-openstack-tempest-test.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-09-04 08:33:07" itemprop="dateCreated datePublished" datetime="2017-09-04T08:33:07+08:00">2017-09-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/openstack/use-rally-to-openstack-tempest-test.html" class="post-meta-item leancloud_visitors" data-flag-title="通过 Rally 进行 OpenStack Tempest 测试" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -919,8 +877,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h2 id="Rally-基本介绍"><a href="#Rally-基本介绍" class="headerlink" title="Rally 基本介绍"></a>Rally 基本介绍</h2><p>Rally 是OpenStack社区推出开源测试工具，可用于对OpenStack各个组件进行性能测试。通过使用Rally组件，用户可完成OpenStack云计算平台的安装部署、功能验证、大规模负载测试(性能测试)、输出测试报告等一系列动作。<br>Rally 的概况和结构如下图所示：<br><img data-src="/images/uploads/2017/09/2916469037.png" alt="image"><br>Rally 主要包括三大部分：</p>
 <ul>
 <li>Deploy engine：这不是一个真的部署工具，它只是一个插件形式的东西，它可以和其他部署工具（比如 DevStack，Fuel，Anvil 等）一起工作来简化和统一部署流程。</li>
@@ -947,18 +903,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/docker/use-docker-deploy-ceph.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -972,58 +935,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/docker/use-docker-deploy-ceph.html" class="post-title-link" itemprop="url">使用 docker 快速部署 ceph</a>
+          <a href="/docker/use-docker-deploy-ceph.html" class="post-title-link" itemprop="url">使用 docker 快速部署 ceph</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-06-19 06:34:00" itemprop="dateCreated datePublished" datetime="2017-06-19T06:34:00+08:00">2017-06-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/docker/use-docker-deploy-ceph.html" class="post-meta-item leancloud_visitors" data-flag-title="使用 docker 快速部署 ceph" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/docker/use-docker-deploy-ceph.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/docker/use-docker-deploy-ceph.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-06-19 06:34:00" itemprop="dateCreated datePublished" datetime="2017-06-19T06:34:00+08:00">2017-06-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/docker/use-docker-deploy-ceph.html" class="post-meta-item leancloud_visitors" data-flag-title="使用 docker 快速部署 ceph" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -1032,8 +982,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><ul>
 <li>至少需要三台虚拟机或者物理机，这里使用虚拟机</li>
 <li>每台虚拟机至少需要两块硬盘（一块系统盘，一块OSD），本例中有三块硬盘</li>
@@ -1063,18 +1011,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/devstack-turn-on-openstack-profiler.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1088,58 +1043,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/openstack/devstack-turn-on-openstack-profiler.html" class="post-title-link" itemprop="url">devstack dashboard 开启开发者选项 和 OpenStack Profiler</a>
+          <a href="/openstack/devstack-turn-on-openstack-profiler.html" class="post-title-link" itemprop="url">devstack dashboard 开启开发者选项 和 OpenStack Profiler</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-05-19 13:47:00" itemprop="dateCreated datePublished" datetime="2017-05-19T13:47:00+08:00">2017-05-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/openstack/devstack-turn-on-openstack-profiler.html" class="post-meta-item leancloud_visitors" data-flag-title="devstack dashboard 开启开发者选项 和 OpenStack Profiler" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/openstack/devstack-turn-on-openstack-profiler.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/openstack/devstack-turn-on-openstack-profiler.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-05-19 13:47:00" itemprop="dateCreated datePublished" datetime="2017-05-19T13:47:00+08:00">2017-05-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/openstack/devstack-turn-on-openstack-profiler.html" class="post-meta-item leancloud_visitors" data-flag-title="devstack dashboard 开启开发者选项 和 OpenStack Profiler" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -1148,8 +1090,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <p>在ocata的版本中，引入了一个新的“openstack profiler”的面板，启用openstack profiler可以方便的看到访问horizon页面时的API调用情况。如下图所示：<br><img data-src="/images/uploads/2017/05/2821496612.png" alt="image"><br>下面介绍如何启用 openstack profiler，首先需要一个正常运行的devstack环境，启用方法如下</p>
 <h3 id="安装mongoDB"><a href="#安装mongoDB" class="headerlink" title="安装mongoDB"></a>安装mongoDB</h3><p>Horizon会将API调用过程的数据都保存到mongodb中，mongodb可以安装在本机，也可以在本机能够访问的任意一台机器上。  </p>
 <h4 id="1-安装软件包"><a href="#1-安装软件包" class="headerlink" title="1. 安装软件包"></a>1. 安装软件包</h4>  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum install mongodb-server mongodb -y</span></span><br></pre></td></tr></table></figure>
@@ -1171,18 +1111,25 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://www.sunmite.com/openstack/ssh-key-login-problem.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1196,58 +1143,45 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/openstack/ssh-key-login-problem.html" class="post-title-link" itemprop="url">ssh 无密码访问的问题</a>
+          <a href="/openstack/ssh-key-login-problem.html" class="post-title-link" itemprop="url">ssh 无密码访问的问题</a>
         </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-05-10 10:12:00" itemprop="dateCreated datePublished" datetime="2017-05-10T10:12:00+08:00">2017-05-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/openstack/ssh-key-login-problem.html" class="post-meta-item leancloud_visitors" data-flag-title="ssh 无密码访问的问题" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/openstack/ssh-key-login-problem.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/openstack/ssh-key-login-problem.html" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-05-10 10:12:00" itemprop="dateCreated datePublished" datetime="2017-05-10T10:12:00+08:00">2017-05-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-25 10:17:02" itemprop="dateModified" datetime="2021-01-25T10:17:02+08:00">2021-01-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
   
-  
+    <span id="/openstack/ssh-key-login-problem.html" class="post-meta-item leancloud_visitors" data-flag-title="ssh 无密码访问的问题" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -1256,8 +1190,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <h3 id="ssh-无密码登录失败"><a href="#ssh-无密码登录失败" class="headerlink" title="ssh 无密码登录失败"></a>ssh 无密码登录失败</h3><p>虚拟机 resize 需要配置计算节点之间 nova 用户无密码访问，但是在配置过程中有一台始终不能用密钥登录，对比了正常可以无密码登录的日志如下。</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 正常登录</span></span><br><span class="line">debug2: we did not send a packet, disable method</span><br><span class="line">debug3: authmethod_lookup publickey</span><br><span class="line">debug3: remaining preferred: keyboard-interactive,password</span><br><span class="line">debug3: authmethod_is_enabled publickey</span><br><span class="line">debug1: Next authentication method: publickey</span><br><span class="line">debug1: Offering RSA public key: /var/lib/nova/.ssh/id_rsa</span><br><span class="line">debug3: send_pubkey_test</span><br><span class="line">debug2: we sent a publickey packet, wait for reply</span><br><span class="line">debug1: Server accepts key: pkalg ssh-rsa blen 279</span><br></pre></td></tr></table></figure>
           <!--noindex-->
@@ -1278,158 +1210,38 @@
     <div>
         
     </div>
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
-  
-  
+</div>
 
 
-  
+
+
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="tanmx"
-      src="/images/avatar.gif">
-  <p class="site-author-name" itemprop="name">tanmx</p>
-  <div class="site-description" itemprop="description">一个默默无闻的工程师的日常</div>
 </div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">62</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">12</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">76</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/tanmx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanmx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:tanmingxiao@gmail.com" title="E-Mail → mailto:tanmingxiao@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/lovelongerlonger" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;lovelongerlonger" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/tan-ming-xiao" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;tan-ming-xiao" rel="noopener" target="_blank"><i class="fa fa-fw fa-zhihu"></i>Zhihu</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://twitter.com/lianyu_" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;lianyu_" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
-      </span>
-  </div>
-  <div class="cc-license motion-element" itemprop="license">
-    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
-  </div>
+  </main>
 
+  <footer class="footer">
+    <div class="footer-inner">
 
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
 
 <div class="copyright">
-  
-  &copy; 2014 – 
+  &copy; 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">tanmx</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-        
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
       </span>
@@ -1437,8 +1249,7 @@
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
       </span>
@@ -1447,99 +1258,37 @@
       </span>
     </span>
 </div>
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
+    </div>
+  </footer>
+
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
 
   
 
 
 
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
 
   
-<script src="/js/local-search.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz","app_key":"1LuECitLMzy2tizSRV9k7oXW","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
 
 
-
-
-
-
-
-
-
-
-
-  
-
-  
-  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
-      window.addEventListener('load', () => {
-      quicklink({
-        timeout : 3000,
-        priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.sunmite.com/page/3/',]
-      });
-      });
-  </script>
-
-
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'PrhOstOSf2dO986Fj3hJLz4D-gzGzoHsz',
-      appKey     : '1LuECitLMzy2tizSRV9k7oXW',
-      placeholder: "(发表评论)",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : true,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : true,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":false,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://www.sunmite.com/page/3/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"https://github.com/tanmx/sunmite-utterances.git","issue_term":"title","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
 
 </body>
 </html>
