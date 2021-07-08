@@ -37,14 +37,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/remote-access-to-openstack-database.html</loc>
+    <loc>https://www.sunmite.com/docker/configure_docker_local_repository.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/configure_docker_local_repository.html</loc>
+    <loc>https://www.sunmite.com/openstack/remote-access-to-openstack-database.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -93,14 +93,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/container-system.html</loc>
+    <loc>https://www.sunmite.com/linux/deploy-hexo-to-vps.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/linux/deploy-hexo-to-vps.html</loc>
+    <loc>https://www.sunmite.com/docker/container-system.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -135,14 +135,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/windows/use-mstsc-connect-azure-ubuntu.html</loc>
+    <loc>https://www.sunmite.com/openstack/RabbitMQ-High-availability-with-Pacemaker.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/RabbitMQ-High-availability-with-Pacemaker.html</loc>
+    <loc>https://www.sunmite.com/windows/use-mstsc-connect-azure-ubuntu.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -226,14 +226,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/docker/openstack-use-nova-docker-driver.html</loc>
+    <loc>https://www.sunmite.com/openstack/openstack-connection-aborted.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/openstack/openstack-connection-aborted.html</loc>
+    <loc>https://www.sunmite.com/docker/openstack-use-nova-docker-driver.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -331,6 +331,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html</loc>
+    
+    <lastmod>2021-01-25</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.sunmite.com/openstack/rabbitmq-network-partition.html</loc>
     
     <lastmod>2021-01-25</lastmod>
@@ -339,13 +346,6 @@
   
   <url>
     <loc>https://www.sunmite.com/openstack/centos7-devstack-openstack-liberty.html</loc>
-    
-    <lastmod>2021-01-25</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/openstack/trystack-create-instance-and-use-ssh-login.html</loc>
     
     <lastmod>2021-01-25</lastmod>
     
@@ -508,13 +508,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/zun/</loc>
-    <lastmod>2021-07-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunmite.com/tags/Authenticate/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
@@ -523,6 +516,13 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/token/</loc>
+    <lastmod>2021-07-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunmite.com/tags/zun/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -585,6 +585,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunmite.com/tags/trystack/</loc>
+    <lastmod>2021-07-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunmite.com/tags/rabbitmq/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
@@ -607,13 +614,6 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/liberty/</loc>
-    <lastmod>2021-07-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/trystack/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -816,14 +816,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/ubuntu/</loc>
+    <loc>https://www.sunmite.com/tags/linux/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/tags/linux/</loc>
+    <loc>https://www.sunmite.com/tags/ubuntu/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -900,6 +900,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunmite.com/tags/repository/</loc>
+    <lastmod>2021-07-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunmite.com/tags/driver/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
@@ -908,13 +915,6 @@
   
   <url>
     <loc>https://www.sunmite.com/tags/database/</loc>
-    <lastmod>2021-07-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunmite.com/tags/repository/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -993,14 +993,14 @@
 
   
   <url>
-    <loc>https://www.sunmite.com/categories/zm/</loc>
+    <loc>https://www.sunmite.com/categories/linux/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunmite.com/categories/linux/</loc>
+    <loc>https://www.sunmite.com/categories/zm/</loc>
     <lastmod>2021-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
